@@ -2,15 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_financial/Components/home_history.dart';
 import 'package:personal_financial/models/income.dart';
+import 'package:personal_financial/views/saving_add.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'Components/pie_chart.dart';
 import 'Components/table.dart';
 import 'firebase_options.dart';
 import 'data_repository.dart';
 import 'models/income.dart';
+import 'package:expandable_bottom_sheet/expandable_bottom_sheet.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'views/saving.dart';
+import 'views/saving_dash.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'views/saving_details.dart';
 import 'views/addInOut.dart';
 
@@ -30,8 +32,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
+        '/saving_add': (context) => SavingAdd(),
         '/add': (context) => const AddInOut(),
-        '/saving_details': (context) => const SavingDetails()
       },
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
@@ -51,275 +53,254 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   bool choose = true;
   double size = 250;
   bool sizeCheck = true;
   ScrollMetrics? metrics;
   bool bottomNavigator = true;
-  final PageController controller = PageController();
+  TabController? controller;
+
   final List<String> items = [
     'Income',
     'Outcome',
   ];
+
   String selectedValue = 'Income';
   final DataRepository repository = DataRepository();
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      floatingActionButton: (bottomNavigator == true)
-          ? SizedBox(
-              width: 40,
-              child: FloatingActionButton(
-                  elevation: 0,
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/add');
-                  },
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  )),
-            )
-          : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      bottomNavigationBar: (bottomNavigator == true)
-          ? ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(10),
-                topLeft: Radius.circular(10),
-              ),
-              child: BottomAppBar(
-                  color: Colors.blue,
-                  shape: const CircularNotchedRectangle(),
-                  notchMargin: 5,
-                  elevation: 0,
-                  child: NotificationListener(
-                    onNotification: (ScrollNotification notify) {
-                      setState(() {
-                        if (notify.metrics.pixels > 30) {
-                          size = 400;
-                        } else {
-                          size = 250;
-                        }
-                      });
-                      return false;
-                    },
-                    child: Container(
-                      height: size,
-                      child: Container(
-                        child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 10),
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 20.0),
-                              child: StreamBuilder<QuerySnapshot>(
-                                  stream: repository.getStream(),
-                                  builder: (context, snapshot) {
-                                    if (!snapshot.hasData)
-                                      return LinearProgressIndicator();
+  void initState() {
+    controller = TabController(length: 2, vsync: this);
+    controller!.addListener(() {
+      setState(() {
+        if (controller!.index == 0) {
+          bottomNavigator = true;
+        }
+        if (controller!.index == 1) {
+          bottomNavigator = false;
+        }
+      });
+    });
+  }
 
-                                    return _buildList(
-                                        context, snapshot.data?.docs ?? []);
-                                  }),
-                            )),
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(80.0),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Icon(
+                    Icons.wallet,
+                    color: Colors.black,
+                    size: 30,
+                  ),
+                  IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.settings,
+                        color: Colors.black,
+                      ))
+                ]),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(80.0),
+              child: TabBar(
+                controller: controller,
+                physics: const BouncingScrollPhysics(),
+                onTap: (value) {
+                  setState(() {
+                    if (bottomNavigator == true) {
+                      bottomNavigator = false;
+                      if (value == 0) {
+                        bottomNavigator = true;
+                      } else {
+                        bottomNavigator = false;
+                      }
+                    }
+                    if (bottomNavigator == false) {
+                      bottomNavigator = true;
+                      if (value == 1) {
+                        bottomNavigator = false;
+                      } else {
+                        bottomNavigator = true;
+                      }
+                    }
+                  });
+                },
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.grey,
+                indicatorSize: TabBarIndicatorSize.label,
+                indicator: const UnderlineTabIndicator(
+                    borderSide:
+                        BorderSide(width: 3.0, color: Colors.blueAccent),
+                    insets: EdgeInsets.symmetric(horizontal: 40.0)),
+                tabs: const [
+                  Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: EdgeInsets.all(5.0),
+                      child: Text(
+                        'Home',
+                        style: TextStyle(fontSize: 18),
                       ),
                     ),
-                  )),
-            )
-          : null,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80.0),
-        child: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          title:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Icon(
-              Icons.wallet,
-              color: Colors.black,
-              size: 30,
-            ),
-            IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.settings,
-                  color: Colors.black,
-                ))
-          ]),
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(80.0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    TextButton(
-                        style: TextButton.styleFrom(primary: Colors.white),
-                        onPressed: (choose == false)
-                            ? () {
-                                setState(() {
-                                  controller.jumpToPage(0);
-                                  choose = true;
-                                });
-                              }
-                            : null,
-                        child: Text(
-                          'Home',
-                          style: (choose == true)
-                              ? const TextStyle(
-                                  color: Colors.black, fontSize: 18)
-                              : const TextStyle(
-                                  color: Colors.grey, fontSize: 18),
-                        )),
-                    TextButton(
-                        style: TextButton.styleFrom(primary: Colors.white),
-                        onPressed: (choose == true)
-                            ? () {
-                                setState(() {
-                                  controller.jumpToPage(1);
-                                  choose = false;
-                                });
-                              }
-                            : null,
-                        child: Text(
-                          'Saving',
-                          style: (choose == false)
-                              ? const TextStyle(
-                                  color: Colors.black, fontSize: 18)
-                              : const TextStyle(
-                                  color: Colors.grey, fontSize: 18),
-                        ))
-                  ],
-                ),
-                Container(
-                  width: (choose == true)
-                      ? MediaQuery.of(context).size.width * 0.59
-                      : MediaQuery.of(context).size.width * 0.58,
-                  child: AnimatedAlign(
-                    duration: const Duration(milliseconds: 250),
-                    alignment: (choose == true)
-                        ? Alignment.centerLeft
-                        : Alignment.centerRight,
-                    child: Column(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.19,
-                          height: 3,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.blue),
-                        ),
-                      ],
-                    ),
                   ),
-                )
-              ],
+                  Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: EdgeInsets.all(5.0),
+                      child: Text(
+                        'Saving',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      body: PageView(
-          onPageChanged: (page) {
-            setState(() {
-              bottomNavigator = !bottomNavigator;
-              choose = !choose;
-              sizeCheck = true;
-            });
-          },
-          controller: controller,
-          children: [
-            Stack(
+        body: ExpandableBottomSheet(
+          background: TabBarView(
+              controller: controller,
+              physics: const BouncingScrollPhysics(),
               children: [
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 5),
-                        child: Container(
+                Stack(
+                  children: [
+                    Container(
+                      child: Column(
+                        children: <Widget>[
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 5),
                             child: Container(
-                          child: Column(
-                            children: [
-                              Center(
-                                  child: Container(
-                                      height: 200,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.8,
-                                      child: PieChart())),
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
                                 child: Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.7,
-                                  child: Container(
+                              child: Column(
+                                children: [
+                                  Center(
                                       child: Container(
-                                    child: const TableInOutCome(),
+                                          height: 200,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.8,
+                                          child: PieChart())),
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.7,
+                                      child: Container(
+                                          child: Container(
+                                        child: const TableInOutCome(),
+                                      )),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const Center(
+                  child: ViewSaving(),
+                )
+              ]),
+          persistentContentHeight: 220,
+          persistentHeader: (bottomNavigator == true)
+              ? Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20.0),
+                        topRight: Radius.circular(20.0),
+                      )),
+                  child: Column(
+                    children: [
+                      Stack(
+                        children: [
+                          Positioned(
+                            right: 10,
+                            child: SizedBox(
+                              width: 40,
+                              child: FloatingActionButton(
+                                  elevation: 0,
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, '/add');
+                                  },
+                                  child: const Icon(
+                                    Icons.add,
+                                    color: Colors.white,
                                   )),
-                                ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(
+                                Icons.horizontal_rule_rounded,
+                                size: 50,
+                                color: Colors.grey,
                               ),
                             ],
                           ),
-                        )),
+                        ],
                       ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      // Padding(
-                      //   padding: const EdgeInsets.symmetric(
-                      //       horizontal: 30, vertical: 7),
-                      //   child: Row(
-                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //     children: [
-                      //       const Text(
-                      //         'Recent History',
-                      //         style: TextStyle(
-                      //             fontSize: 16, fontWeight: FontWeight.bold),
-                      //       ),
-                      //       DropdownButtonHideUnderline(
-                      //         child: DropdownButton2(
-                      //           items: items
-                      //               .map((item) => DropdownMenuItem<String>(
-                      //                     value: item,
-                      //                     child: Text(
-                      //                       item,
-                      //                       style: const TextStyle(
-                      //                         fontSize: 14,
-                      //                       ),
-                      //                     ),
-                      //                   ))
-                      //               .toList(),
-                      //           value: selectedValue,
-                      //           onChanged: (value) {
-                      //             setState(() {
-                      //               selectedValue = value as String;
-                      //             });
-                      //           },
-                      //           dropdownDecoration: BoxDecoration(
-                      //             borderRadius: BorderRadius.circular(14),
-                      //           ),
-                      //           buttonHeight: 40,
-                      //           buttonWidth: 100,
-                      //           dropdownOverButton: false,
-                      //           itemHeight: 40,
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            const Center(
-              child: Saving(),
-            )
-          ]),
+                )
+              : null,
+          expandableContent: (bottomNavigator == true)
+              ? Container(
+                  color: Colors.white,
+                  constraints: BoxConstraints(maxHeight: 500),
+                  height: 500,
+                  child: Container(
+                    child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 10),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: StreamBuilder<QuerySnapshot>(
+                              stream: repository.getAddStream(),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData)
+                                  return LinearProgressIndicator();
+
+                                return _buildList(
+                                    context, snapshot.data?.docs ?? []);
+                              }),
+                        )),
+                  ),
+                )
+              : Container(),
+        ),
+      ),
     );
   }
 }
@@ -332,8 +313,19 @@ class ChartData {
 }
 
 Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
-  return ListView(
-    children: snapshot.map((data) => _buildListItem(context, data)).toList(),
+  return Column(
+    children: [
+      Expanded(
+        child: ListView(
+          addAutomaticKeepAlives: true,
+          physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics()),
+          shrinkWrap: true,
+          children:
+              snapshot.map((data) => _buildListItem(context, data)).toList(),
+        ),
+      ),
+    ],
   );
 }
 
