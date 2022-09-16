@@ -103,13 +103,17 @@ class _PieChartState extends State<PieChart> {
     final List<ChartData> chartData = [
       ChartData(
           'Income',
-          (total == 0) ? 1 : (((total - totalOut) * 100) / total) / 10,
+          (total == 0)
+              ? 1
+              : (totalSave == 0)
+                  ? (((total - totalOut) * 100) / total)
+                  : (((total - (totalOut + totalSave)) * 100) / total) / 10,
           '${(total == 0) ? 0 : (totalSave == 0) ? (((total - totalOut) * 100) / total) : (((total - (totalOut + totalSave)) * 100) / total).toStringAsFixed(1)}%'),
       ChartData(
           'Outcome',
           (total == 0)
               ? 1
-              : (((totalOut == 0) ? 0 : ((totalOut / total) * 100))) / 10,
+              : (((totalOut == 0) ? 1 : ((totalOut / total) * 100))) / 10,
           '${((total == 0) ? 0 : (totalOut == 0 ? 0 : ((totalOut / total) * 100)).toStringAsFixed(1))}%'),
       ChartData(
           'Saving',

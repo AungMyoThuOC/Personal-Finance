@@ -140,8 +140,7 @@ class HomeHistory extends StatelessWidget {
                                       'Income',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold),
+                                          color: Colors.black, fontSize: 14),
                                     ),
                                   ),
                                 )
@@ -156,8 +155,7 @@ class HomeHistory extends StatelessWidget {
                                       'Outcome',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold),
+                                          color: Colors.white, fontSize: 14),
                                     ),
                                   ),
                                 ),

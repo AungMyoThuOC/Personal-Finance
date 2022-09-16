@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -165,7 +163,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 15.0),
               child: StreamBuilder<QuerySnapshot>(
-                  stream: repository.getRemain(),
+                  stream: repository.getMain(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return CircularProgressIndicator();

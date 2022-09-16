@@ -12,6 +12,7 @@ import 'dart:math';
 import 'package:pull_down_button/pull_down_button.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:top_modal_sheet/top_modal_sheet.dart';
 
 class SavingList extends StatefulWidget {
   const SavingList({Key? key, required this.saving}) : super(key: key);
@@ -54,6 +55,8 @@ class _SavingListState extends State<SavingList> {
   @override
   void initState() {
     getRemaining();
+    savingController.text = widget.saving.target;
+    sliderController.text = widget.saving.amount.toString();
     super.initState();
   }
 
@@ -168,212 +171,177 @@ class _SavingListState extends State<SavingList> {
                               PullDownMenuItem(
                                 title: 'Edit',
                                 onTap: () {
-                                  showMaterialModalBottomSheet(
-                                      context: context,
-                                      closeProgressThreshold: 0.6,
-                                      builder: (context) => StatefulBuilder(
-                                            builder: (context, setState) =>
-                                                Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Container(
-                                                height: 250,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 30),
-                                                  child: Column(
+                                  showTopModalSheet(
+                                      context,
+                                      StatefulBuilder(
+                                        builder: (context, setState) => Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Container(
+                                            height: 300,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 30),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
                                                     children: [
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        children: [
-                                                          const Icon(
-                                                            Icons
-                                                                .android_rounded,
-                                                            color: Colors.pink,
-                                                            size: 30,
-                                                          ),
-                                                          SizedBox(
-                                                            width: 300,
-                                                            child: TextField(
-                                                              controller:
-                                                                  savingController,
-                                                              style: const TextStyle(
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      const Icon(
+                                                        Icons.android_rounded,
+                                                        color: Colors.pink,
+                                                        size: 30,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 300,
+                                                        child: TextField(
+                                                          controller:
+                                                              savingController,
+                                                          style:
+                                                              const TextStyle(
                                                                   color: Colors
                                                                       .black),
-                                                              decoration:
-                                                                  InputDecoration(
-                                                                counterText:
-                                                                    "${widget.saving.target}",
-                                                                hintText:
-                                                                    "${widget.saving.target}",
-                                                                hintStyle: const TextStyle(
-                                                                    color: Colors
-                                                                        .grey),
-                                                                enabledBorder:
-                                                                    OutlineInputBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10),
-                                                                  borderSide: const BorderSide(
-                                                                      width: 1,
-                                                                      color: Color.fromARGB(
+                                                          decoration:
+                                                              InputDecoration(
+                                                            enabledBorder:
+                                                                OutlineInputBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                              borderSide: const BorderSide(
+                                                                  width: 1,
+                                                                  color: Color
+                                                                      .fromARGB(
                                                                           255,
                                                                           224,
                                                                           224,
                                                                           224)),
-                                                                ),
-                                                                focusedBorder:
-                                                                    OutlineInputBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10),
-                                                                  borderSide: const BorderSide(
-                                                                      width: 1,
-                                                                      color: Color.fromARGB(
+                                                            ),
+                                                            focusedBorder:
+                                                                OutlineInputBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                              borderSide: const BorderSide(
+                                                                  width: 1,
+                                                                  color: Color
+                                                                      .fromARGB(
                                                                           255,
                                                                           177,
                                                                           177,
                                                                           177)),
-                                                                ),
-                                                              ),
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),
-                                                      Container(
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            const Padding(
-                                                              padding: EdgeInsets
-                                                                  .only(
-                                                                      left: 30),
-                                                              child: Text(
-                                                                "Amount of Saving",
-                                                              ),
-                                                            ),
-                                                            Container(
-                                                              width: 80,
-                                                              child:
-                                                                  TextFormField(
-                                                                showCursor:
-                                                                    true,
-                                                                readOnly: true,
-                                                                controller:
-                                                                    sliderController,
-                                                                style:
-                                                                    const TextStyle(
-                                                                        fontSize:
-                                                                            20),
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  hintText:
-                                                                      "$_currentSlider",
-                                                                  hintStyle:
-                                                                      const TextStyle(
-                                                                          fontSize:
-                                                                              20),
-                                                                  border:
-                                                                      InputBorder
-                                                                          .none,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
                                                         ),
                                                       ),
-                                                      Slider(
-                                                        value: _currentSlider
-                                                            .toDouble(),
-                                                        divisions: 50,
-                                                        min: 1000,
-                                                        max: 4000000,
-                                                        label: _currentSlider
-                                                            .round()
-                                                            .toString(),
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            _currentSlider =
-                                                                value.toInt();
-                                                            sliderController
-                                                                    .text =
-                                                                _currentSlider
-                                                                    .toString();
-                                                          });
-                                                        },
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceAround,
-                                                        children: [
-                                                          Container(
-                                                            width: 100,
-                                                            height: 35,
-                                                            child:
-                                                                ElevatedButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      if (savingController
-                                                                              .text !=
-                                                                          null) {
-                                                                        DataRepository().updateSaving(
-                                                                            widget.saving.autoID.toString(),
-                                                                            Saving(
-                                                                              _currentSlider,
-                                                                              date: DateTime.now(),
-                                                                              target: savingController.text,
-                                                                            ));
-                                                                      }
-                                                                      Navigator.pop(
-                                                                          context,
-                                                                          '/home');
-                                                                    },
-                                                                    child:
-                                                                        const Text(
-                                                                      'Update',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          fontSize:
-                                                                              16),
-                                                                    )),
-                                                          ),
-                                                          Container(
-                                                            width: 100,
-                                                            height: 35,
-                                                            child:
-                                                                ElevatedButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    },
-                                                                    child:
-                                                                        const Text(
-                                                                      'Cancel',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          fontSize:
-                                                                              16),
-                                                                    )),
-                                                          ),
-                                                        ],
-                                                      )
                                                     ],
                                                   ),
-                                                ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Container(
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: const [
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 30),
+                                                          child: Text(
+                                                            "Amount of Saving",
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 30),
+                                                    child: TextField(
+                                                      controller:
+                                                          sliderController,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceAround,
+                                                    children: [
+                                                      Container(
+                                                        width: 100,
+                                                        height: 35,
+                                                        child: ElevatedButton(
+                                                            onPressed: () {
+                                                              if (savingController
+                                                                      .text !=
+                                                                  null) {
+                                                                DataRepository()
+                                                                    .updateSaving(
+                                                                        widget
+                                                                            .saving
+                                                                            .autoID
+                                                                            .toString(),
+                                                                        Saving(
+                                                                          _currentSlider,
+                                                                          date:
+                                                                              DateTime.now(),
+                                                                          target:
+                                                                              savingController.text,
+                                                                        ));
+                                                              }
+                                                              Navigator.pop(
+                                                                  context,
+                                                                  '/home');
+                                                            },
+                                                            child: const Text(
+                                                              'Update',
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 16),
+                                                            )),
+                                                      ),
+                                                      Container(
+                                                        width: 100,
+                                                        height: 35,
+                                                        child: ElevatedButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: const Text(
+                                                              'Cancel',
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 16),
+                                                            )),
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
                                               ),
                                             ),
-                                          ));
+                                          ),
+                                        ),
+                                      ));
                                 },
                               ),
                               const PullDownMenuDivider(),

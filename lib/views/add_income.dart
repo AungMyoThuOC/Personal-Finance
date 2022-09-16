@@ -185,152 +185,146 @@ class _AddIncomeState extends State<AddIncome> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Container(
-            color: Colors.transparent,
-            height: 600,
-            width: MediaQuery.of(context).size.width * 1,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Icon(navBarItem[result]),
-                          Container(
-                            width: 300,
-                            child: TextField(
-                              controller: amountController,
-                              style: const TextStyle(color: Colors.black),
-                              decoration: InputDecoration(
-                                hintText: "Amount",
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      width: 1,
-                                      color:
-                                          Color.fromARGB(255, 224, 224, 224)),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      width: 1,
-                                      color:
-                                          Color.fromARGB(255, 177, 177, 177)),
-                                ),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Container(
+          color: Colors.transparent,
+          height: 600,
+          width: MediaQuery.of(context).size.width * 1,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Icon(navBarItem[result]),
+                        Container(
+                          width: 300,
+                          child: TextField(
+                            controller: amountController,
+                            style: const TextStyle(color: Colors.black),
+                            decoration: InputDecoration(
+                              hintText: "Amount",
+                              hintStyle: const TextStyle(color: Colors.grey),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                    width: 1,
+                                    color: Color.fromARGB(255, 224, 224, 224)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                    width: 1,
+                                    color: Color.fromARGB(255, 177, 177, 177)),
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Column(
-                        children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  "Categories",
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Column(
+                      children: [
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Categories",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                              CircleAvatar(
+                                radius: 18,
+                                child: IconButton(
+                                  splashRadius: 22,
+                                  onPressed: () {
+                                    openDialog();
+                                  },
+                                  icon: const Icon(Icons.add),
+                                  iconSize: 18,
                                 ),
-                                CircleAvatar(
-                                  radius: 18,
-                                  child: IconButton(
-                                    splashRadius: 22,
-                                    onPressed: () {
-                                      openDialog();
-                                    },
-                                    icon: const Icon(Icons.add),
-                                    iconSize: 18,
-                                  ),
-                                ),
-                              ]),
-                          const SizedBox(
-                            height: 35,
-                          ),
-                          Container(
-                            width: 400,
-                            height: 200,
-                            child: StreamBuilder<QuerySnapshot>(
-                                stream: DataRepository().getCategory(),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData)
-                                    return LinearProgressIndicator();
+                              ),
+                            ]),
+                        const SizedBox(
+                          height: 35,
+                        ),
+                        Container(
+                          width: 400,
+                          height: 200,
+                          child: StreamBuilder<QuerySnapshot>(
+                              stream: DataRepository().getCategory(),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData)
+                                  return LinearProgressIndicator();
 
-                                  return GridView.count(
-                                      scrollDirection: Axis.horizontal,
-                                      addAutomaticKeepAlives: true,
-                                      shrinkWrap: true,
-                                      physics: const BouncingScrollPhysics(
-                                          parent:
-                                              AlwaysScrollableScrollPhysics()),
-                                      crossAxisCount: 2,
-                                      children: snapshot.data!.docs
-                                          .map((e) => MyCategory(
-                                              onClicked: (state, name) {
-                                                setState(() {
-                                                  result = state;
-                                                  catName = name;
-                                                  print(result);
-                                                  print(catName);
-                                                });
-                                              },
-                                              category:
-                                                  Category.fromSnapshot(e)))
-                                          .toList());
-                                }),
-                          ),
-                        ],
-                      ),
+                                return GridView.count(
+                                    scrollDirection: Axis.horizontal,
+                                    addAutomaticKeepAlives: true,
+                                    shrinkWrap: true,
+                                    physics: const BouncingScrollPhysics(
+                                        parent:
+                                            AlwaysScrollableScrollPhysics()),
+                                    crossAxisCount: 2,
+                                    children: snapshot.data!.docs
+                                        .map((e) => MyCategory(
+                                            onClicked: (state, name) {
+                                              setState(() {
+                                                result = state;
+                                                catName = name;
+                                              });
+                                            },
+                                            category: Category.fromSnapshot(e)))
+                                        .toList());
+                              }),
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                          width: 200,
+                          height: 40,
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                elevation: 15.0,
+                              ),
+                              onPressed: () {
+                                if (amountController.text != null &&
+                                    categoryController.text != null) {
+                                  DataRepository().addIncome(
+                                    Income(int.parse(amountController.text),
+                                        date: DateTime.now(),
+                                        category: state.toString(),
+                                        income: true,
+                                        catName: catName),
+                                  );
+                                  Navigator.popAndPushNamed(context, '/home');
+                                }
+                              },
+                              child: const Text(
+                                'Save',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              )),
+                        )
+                      ],
                     ),
-                  ]),
-            ),
+                  ),
+                ]),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 55),
-          child: Container(
-            width: 200,
-            height: 40,
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  elevation: 15.0,
-                ),
-                onPressed: () {
-                  if (amountController.text != null &&
-                      categoryController.text != null) {
-                    DataRepository().addIncome(Income(
-                        int.parse(amountController.text),
-                        date: DateTime.now(),
-                        category: result.toString(),
-                        income: true,
-                        catName: catName));
-                  }
-                },
-                child: const Text(
-                  'Save',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                )),
-          ),
-        )
-      ],
+      ),
     );
   }
 }

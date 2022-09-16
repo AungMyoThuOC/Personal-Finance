@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:personal_financial/models/remaning_saving.dart';
 import './models/income.dart';
 import 'dart:math';
@@ -48,15 +46,6 @@ class DataRepository {
     return ref
         .doc('${FirebaseAuth.instance.currentUser!.email}')
         .collection('Saving')
-        .snapshots();
-  }
-
-  Stream<QuerySnapshot> getRemainStream(String id) {
-    return ref
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
-        .collection('Saving')
-        .doc(id)
-        .collection("Remaining")
         .snapshots();
   }
 
@@ -162,6 +151,10 @@ class DataRepository {
         .doc(id)
         .collection("Remaining")
         .snapshots();
+  }
+
+  Stream<QuerySnapshot> getMain() {
+    return FirebaseFirestore.instance.collectionGroup('Remaining').snapshots();
   }
 
   Future deleteRemaining(String id, String remainID) async {

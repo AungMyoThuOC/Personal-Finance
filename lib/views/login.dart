@@ -291,7 +291,7 @@ class _LoginPageState extends State<LoginPage> {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
                                                   content: Container(
-                                                      height: 30,
+                                                      height: 20,
                                                       child:
                                                           Text(errorMessage)),
                                                   backgroundColor: Colors.red,
@@ -301,7 +301,7 @@ class _LoginPageState extends State<LoginPage> {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
                                                   content: Container(
-                                                      height: 30,
+                                                      height: 20,
                                                       child:
                                                           Text(e.toString())),
                                                   backgroundColor: Colors.red,
