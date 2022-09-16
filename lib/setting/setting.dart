@@ -12,78 +12,135 @@ class _SettingPageState extends State<SettingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          //  backgroundColor: Theme.of(context).colorScheme.secondary,
-          ),
+        automaticallyImplyLeading: false,
+
+        title: Row(
+          children: [
+            IconButton(
+                onPressed: () {
+                  Navigator.pop(context, 'home');
+                },
+                icon: const Icon(
+                  Icons.arrow_back,
+                )),
+            const SizedBox(
+              width: 40,
+            ),
+            const Text(
+              "Setting",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 30,
+              ),
+            ),
+          ],
+        ),
+        //  backgroundColor: Theme.of(context).colorScheme.secondary,
+      ),
       body: Container(
         child: Padding(
           padding: const EdgeInsets.only(left: 10),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Setting",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 50,
-                ),
-              ),
               const SizedBox(
-                height: 30,
+                height: 40,
               ),
               TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/color');
                   },
-                  child: const Text(
-                    "Colors",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      // color: Colors.black
+                  child: Container(
+                    width: 200,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Icon(Icons.color_lens),
+                        SizedBox(
+                          width: 30,
+                        ),
+                        Text(
+                          "Colors",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            // color: Colors.black
+                          ),
+                        ),
+                      ],
                     ),
                   )),
               const SizedBox(
-                height: 30,
+                height: 40,
               ),
               TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/language');
                   },
-                  child: const Text(
-                    "Language",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      // color: Colors.black
+                  child: Container(
+                    width: 200,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Icon(Icons.language),
+                        SizedBox(
+                          width: 30,
+                        ),
+                        Text(
+                          "Language",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            // color: Colors.black
+                          ),
+                        ),
+                      ],
                     ),
                   )),
               const SizedBox(
-                height: 30,
+                height: 40,
               ),
               TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/security');
                   },
-                  child: const Text(
-                    "Security",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      // color: Colors.black,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: const [
+                      Icon(Icons.security),
+                      SizedBox(
+                        width: 30,
+                      ),
+                      Text(
+                        "Security",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          // color: Colors.black,
+                        ),
+                      ),
+                    ],
                   )),
               const SizedBox(
-                height: 30,
+                height: 40,
               ),
               TextButton(
-                  onPressed: () {
-                  },
-                  child: const Text(
-                    "Reset Data",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
+                  onPressed: () {},
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: const [
+                      Icon(Icons.restart_alt),
+                      SizedBox(
+                        width: 30,
+                      ),
+                      Text(
+                        "Reset Data",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
                   )),
             ],
           ),

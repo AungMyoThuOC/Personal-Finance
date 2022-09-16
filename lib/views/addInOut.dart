@@ -5,6 +5,7 @@ import 'package:personal_financial/models/income.dart';
 import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:personal_financial/views/add_income.dart';
+import 'package:personal_financial/views/add_outcome.dart';
 
 class AddInOut extends StatefulWidget {
   const AddInOut({Key? key}) : super(key: key);
@@ -37,7 +38,7 @@ class _AddInOutState extends State<AddInOut>
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context, '/home');
               },
               icon: const Icon(
                 Icons.arrow_back,
@@ -81,9 +82,9 @@ class _AddInOutState extends State<AddInOut>
         ),
       ),
       body: TabBarView(
+        physics: NeverScrollableScrollPhysics(),
         controller: controller,
-        physics: const BouncingScrollPhysics(),
-        children: [AddIncome(onSubmit: (String value) {  },), AddIncome(onSubmit: (String value) {  },)],
+        children: [AddIncome(), AddOutcome()],
       ),
     );
   }

@@ -60,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage>
           preferredSize: Size.fromHeight(80.0),
           child: AppBar(
             backgroundColor: Colors.transparent,
+            automaticallyImplyLeading: false,
             elevation: 0,
             title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

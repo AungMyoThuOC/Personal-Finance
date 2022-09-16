@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:personal_financial/firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:personal_financial/models/remaning_saving.dart';
 
 class Remaining {
   int amount;
   DateTime date;
+  String? remainID;
 
   Remaining(
     this.amount, {
@@ -19,6 +21,8 @@ class Remaining {
   factory Remaining.fromSnapshot(DocumentSnapshot snapshot) {
     final newSaving =
         Remaining.fromJson(snapshot.data() as Map<String, dynamic>);
+    newSaving.remainID = snapshot.reference.id;
+    print(newSaving.remainID);
     return newSaving;
   }
 

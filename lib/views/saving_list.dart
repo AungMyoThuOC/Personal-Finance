@@ -8,7 +8,10 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:personal_financial/models/saving.dart';
 import 'package:personal_financial/data_repository.dart';
 import 'saving_details.dart';
+import 'dart:math';
 import 'package:pull_down_button/pull_down_button.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SavingList extends StatefulWidget {
   const SavingList({Key? key, required this.saving}) : super(key: key);
@@ -19,14 +22,69 @@ class SavingList extends StatefulWidget {
 }
 
 class _SavingListState extends State<SavingList> {
+  int _currentSlider = 1000;
+  bool edit = false;
+  TextEditingController savingController = TextEditingController();
+  TextEditingController sliderController = TextEditingController();
+  double sum = 0;
+  double total = 0;
+  double percent = 0;
+
+  double tot = 0;
+  final DataRepository repository = DataRepository();
+  void getRemaining() {
+    FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Saving')
+        .doc(widget.saving.autoID)
+        .collection('Remaining')
+        .get()
+        .then(
+      (str) {
+        str.docs.forEach((result) {
+          setState(() {
+            tot = tot + result.data()['amount'];
+          });
+        });
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    getRemaining();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    _currentSlider = widget.saving.amount;
     return Column(
       children: [
+        Container(
+          height: 1,
+          child: StreamBuilder<QuerySnapshot>(
+              stream: repository.getIncome(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+                var ds = snapshot.data!.docs;
+                double sum = 0.0;
+                for (int i = 0; i < ds.length; i++)
+                  sum += (ds[i]['amount']).toDouble();
+                return Text('');
+              }),
+        ),
         const SizedBox(
           height: 40,
         ),
-        Text('${widget.saving.autoID}'),
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: Material(
@@ -57,7 +115,7 @@ class _SavingListState extends State<SavingList> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            width: 100,
+                            width: 150,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -68,28 +126,255 @@ class _SavingListState extends State<SavingList> {
                                 ),
                                 Column(
                                   children: [
-                                    Text(
-                                      widget.saving.target,
-                                      style: const TextStyle(color: Colors.black),
+                                    Container(
+                                      child: Text(
+                                        widget.saving.target,
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(color: Colors.black),
+                                      ),
                                     ),
                                     const SizedBox(
                                       height: 5,
                                     ),
-                                    Text(
-                                      '0/${widget.saving.amount}',
-                                      style: const TextStyle(color: Colors.black),
-                                    )
+                                    Container(
+                                      child: StreamBuilder<QuerySnapshot>(
+                                          stream: repository.getRemaining(
+                                              widget.saving.autoID.toString()),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return CircularProgressIndicator();
+                                            }
+                                            var ds = snapshot.data!.docs;
+                                            double sum = 0.0;
+                                            for (int i = 0; i < ds.length; i++)
+                                              sum +=
+                                                  (ds[i]['amount']).toDouble();
+                                            return Text(
+                                              '${sum}/${widget.saving.amount}',
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                            );
+                                          }),
+                                    ),
                                   ],
                                 ),
                               ],
                             ),
                           ),
                           PullDownButton(
-                            backgroundColor: Colors.white60,
+                            backgroundColor: Colors.white,
                             itemBuilder: (context) => [
                               PullDownMenuItem(
                                 title: 'Edit',
-                                onTap: () {},
+                                onTap: () {
+                                  showMaterialModalBottomSheet(
+                                      context: context,
+                                      closeProgressThreshold: 0.6,
+                                      builder: (context) => StatefulBuilder(
+                                            builder: (context, setState) =>
+                                                Padding(
+                                              padding:
+                                                  const EdgeInsets.all(10.0),
+                                              child: Container(
+                                                height: 250,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 30),
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceEvenly,
+                                                        children: [
+                                                          const Icon(
+                                                            Icons
+                                                                .android_rounded,
+                                                            color: Colors.pink,
+                                                            size: 30,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 300,
+                                                            child: TextField(
+                                                              controller:
+                                                                  savingController,
+                                                              style: const TextStyle(
+                                                                  color: Colors
+                                                                      .black),
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                counterText:
+                                                                    "${widget.saving.target}",
+                                                                hintText:
+                                                                    "${widget.saving.target}",
+                                                                hintStyle: const TextStyle(
+                                                                    color: Colors
+                                                                        .grey),
+                                                                enabledBorder:
+                                                                    OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                  borderSide: const BorderSide(
+                                                                      width: 1,
+                                                                      color: Color.fromARGB(
+                                                                          255,
+                                                                          224,
+                                                                          224,
+                                                                          224)),
+                                                                ),
+                                                                focusedBorder:
+                                                                    OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                  borderSide: const BorderSide(
+                                                                      width: 1,
+                                                                      color: Color.fromARGB(
+                                                                          255,
+                                                                          177,
+                                                                          177,
+                                                                          177)),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Container(
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            const Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left: 30),
+                                                              child: Text(
+                                                                "Amount of Saving",
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                              width: 80,
+                                                              child:
+                                                                  TextFormField(
+                                                                showCursor:
+                                                                    true,
+                                                                readOnly: true,
+                                                                controller:
+                                                                    sliderController,
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            20),
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  hintText:
+                                                                      "$_currentSlider",
+                                                                  hintStyle:
+                                                                      const TextStyle(
+                                                                          fontSize:
+                                                                              20),
+                                                                  border:
+                                                                      InputBorder
+                                                                          .none,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Slider(
+                                                        value: _currentSlider
+                                                            .toDouble(),
+                                                        divisions: 50,
+                                                        min: 1000,
+                                                        max: 4000000,
+                                                        label: _currentSlider
+                                                            .round()
+                                                            .toString(),
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            _currentSlider =
+                                                                value.toInt();
+                                                            sliderController
+                                                                    .text =
+                                                                _currentSlider
+                                                                    .toString();
+                                                          });
+                                                        },
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceAround,
+                                                        children: [
+                                                          Container(
+                                                            width: 100,
+                                                            height: 35,
+                                                            child:
+                                                                ElevatedButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      if (savingController
+                                                                              .text !=
+                                                                          null) {
+                                                                        DataRepository().updateSaving(
+                                                                            widget.saving.autoID.toString(),
+                                                                            Saving(
+                                                                              _currentSlider,
+                                                                              date: DateTime.now(),
+                                                                              target: savingController.text,
+                                                                            ));
+                                                                      }
+                                                                      Navigator.pop(
+                                                                          context,
+                                                                          '/home');
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                      'Update',
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          fontSize:
+                                                                              16),
+                                                                    )),
+                                                          ),
+                                                          Container(
+                                                            width: 100,
+                                                            height: 35,
+                                                            child:
+                                                                ElevatedButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                      'Cancel',
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          fontSize:
+                                                                              16),
+                                                                    )),
+                                                          ),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ));
+                                },
                               ),
                               const PullDownMenuDivider(),
                               PullDownMenuItem(
@@ -119,15 +404,31 @@ class _SavingListState extends State<SavingList> {
                         animation: true,
                         lineHeight: 12,
                         animationDuration: 2000,
-                        percent: 0.9,
+                        percent: (tot == 0) ? 0 : tot / widget.saving.amount,
                         barRadius: const Radius.circular(10),
-                        center: const Text(
-                          "90%",
-                          style: TextStyle(fontSize: 10),
-                        ),
+                        center: StreamBuilder<QuerySnapshot>(
+                            stream: repository
+                                .getRemaining(widget.saving.autoID.toString()),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircularProgressIndicator();
+                              }
+                              var ds = snapshot.data!.docs;
+
+                              double sum = 0.0;
+                              for (int i = 0; i < ds.length; i++) {
+                                sum += (ds[i]['amount']).toDouble();
+                              }
+                              return Text(
+                                '${(sum / widget.saving.amount * 100).toStringAsFixed(2)}%',
+                                style: const TextStyle(
+                                    color: Colors.black, fontSize: 10),
+                              );
+                            }),
                         progressColor: Colors.greenAccent,
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),

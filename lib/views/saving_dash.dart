@@ -41,17 +41,13 @@ class _SavingState extends State<ViewSaving> {
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: Container(
-        height: 600,
-        color: Colors.amber,
-        child: StreamBuilder<QuerySnapshot>(
-            stream: repository.getSavingStream(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) return const LinearProgressIndicator();
+      body: StreamBuilder<QuerySnapshot>(
+          stream: repository.getSavingStream(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) return LinearProgressIndicator();
 
-              return _buildList(context, snapshot.data?.docs ?? []);
-            }),
-      ),
+            return _buildList(context, snapshot.data?.docs ?? []);
+          }),
     );
   }
 }

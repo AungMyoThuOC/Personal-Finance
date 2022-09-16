@@ -156,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                                   if (password == null || password.isEmpty) {
                                     return "Password can't be blank";
                                   } else if (password.length < 6) {
-                                    return "Password should be 6 word";
+                                    return "Password should be more than 6 words";
                                   } else {
                                     return null;
                                   }
@@ -245,9 +245,6 @@ class _LoginPageState extends State<LoginPage> {
                                         print('$username');
                                       });
                                       if (_formKey.currentState!.validate()) {
-                                        setState(() {
-                                          isLoading = true;
-                                        });
                                         // await Future.delayed(Duration(seconds: 5),
                                         //     () {
                                         //   setState(() {
@@ -289,20 +286,24 @@ class _LoginPageState extends State<LoginPage> {
                                           } else {
                                             errorMessage = e.code;
                                           }
-                                          // setState(() {
-                                          //   isLoading = false;
-                                          // });
+
                                           // ignore: use_build_context_synchronously
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
-                                                  content: Text(errorMessage),
+                                                  content: Container(
+                                                      height: 30,
+                                                      child:
+                                                          Text(errorMessage)),
                                                   backgroundColor: Colors.red,
                                                   duration: const Duration(
                                                       seconds: 2)));
                                         } catch (e) {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
-                                                  content: Text(e.toString()),
+                                                  content: Container(
+                                                      height: 30,
+                                                      child:
+                                                          Text(e.toString())),
                                                   backgroundColor: Colors.red,
                                                   duration: const Duration(
                                                       seconds: 2)));

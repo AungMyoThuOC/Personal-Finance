@@ -11,16 +11,14 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AddIncome extends StatefulWidget {
-  AddIncome({
-    Key? key,
-  }) : super(key: key);
-
+class EditIncome extends StatefulWidget {
+  EditIncome({Key? key, required this.income}) : super(key: key);
+  final Income income;
   @override
-  State<AddIncome> createState() => _AddIncomeState();
+  State<EditIncome> createState() => _AddIncomeState();
 }
 
-class _AddIncomeState extends State<AddIncome> {
+class _AddIncomeState extends State<EditIncome> {
   TextEditingController categoryController = TextEditingController();
 
   TextEditingController amountController = TextEditingController();
@@ -60,12 +58,19 @@ class _AddIncomeState extends State<AddIncome> {
     Icons.monetization_on,
     Icons.ac_unit_sharp,
   ];
+  bool main = false;
 
   List<dynamic> list = [];
   TabController? controller;
   void add() {
     DataRepository()
         .addCategory(Category(name: categoryController.text, icon: indexOne));
+  }
+
+  @override
+  void initState() {
+    amountController.text = widget.income.amount.toString();
+    super.initState();
   }
 
   Future openDialog() => showDialog(
@@ -156,7 +161,7 @@ class _AddIncomeState extends State<AddIncome> {
                       InkWell(
                         onTap: () {
                           add();
-                          Navigator.pop(context, '/home');
+                          Navigator.pop(context);
                         },
                         child: Container(
                           padding:
@@ -179,131 +184,161 @@ class _AddIncomeState extends State<AddIncome> {
             );
           })));
   void save() {
-    Navigator.pop(context, '/home');
+    Navigator.pop(context);
     amountController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Container(
-            color: Colors.transparent,
-            height: 600,
-            width: MediaQuery.of(context).size.width * 1,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Icon(navBarItem[result]),
-                          Container(
-                            width: 300,
-                            child: TextField(
-                              controller: amountController,
-                              style: const TextStyle(color: Colors.black),
-                              decoration: InputDecoration(
-                                hintText: "Amount",
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      width: 1,
-                                      color:
-                                          Color.fromARGB(255, 224, 224, 224)),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      width: 1,
-                                      color:
-                                          Color.fromARGB(255, 177, 177, 177)),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        title:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          IconButton(
+              onPressed: () {
+                Navigator.popAndPushNamed(context, '/');
+              },
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Colors.black,
+              )),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Text(
+                "Edit Income",
+                style: TextStyle(color: Colors.black),
+              ),
+            ],
+          )
+        ]),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              color: Colors.transparent,
+              height: 600,
+              width: MediaQuery.of(context).size.width * 1,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Icon((main == false)
+                                ? navBarItem[int.parse(widget.income.category)]
+                                : navBarItem[result]),
+                            Container(
+                              width: 300,
+                              child: TextField(
+                                controller: amountController,
+                                style: const TextStyle(color: Colors.black),
+                                decoration: InputDecoration(
+                                  hintText: "Amount",
+                                  hintStyle:
+                                      const TextStyle(color: Colors.grey),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                        width: 1,
+                                        color:
+                                            Color.fromARGB(255, 224, 224, 224)),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                        width: 1,
+                                        color:
+                                            Color.fromARGB(255, 177, 177, 177)),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Column(
-                        children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  "Categories",
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                CircleAvatar(
-                                  radius: 18,
-                                  child: IconButton(
-                                    splashRadius: 22,
-                                    onPressed: () {
-                                      openDialog();
-                                    },
-                                    icon: const Icon(Icons.add),
-                                    iconSize: 18,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Column(
+                          children: [
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    "Categories",
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                ),
-                              ]),
-                          const SizedBox(
-                            height: 35,
-                          ),
-                          Container(
-                            width: 400,
-                            height: 200,
-                            child: StreamBuilder<QuerySnapshot>(
-                                stream: DataRepository().getCategory(),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData)
-                                    return LinearProgressIndicator();
+                                  CircleAvatar(
+                                    radius: 18,
+                                    child: IconButton(
+                                      splashRadius: 22,
+                                      onPressed: () {
+                                        openDialog();
+                                      },
+                                      icon: const Icon(Icons.add),
+                                      iconSize: 18,
+                                    ),
+                                  ),
+                                ]),
+                            const SizedBox(
+                              height: 35,
+                            ),
+                            Container(
+                              width: 400,
+                              height: 200,
+                              child: StreamBuilder<QuerySnapshot>(
+                                  stream: DataRepository().getCategory(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData)
+                                      return LinearProgressIndicator();
 
-                                  return GridView.count(
-                                      scrollDirection: Axis.horizontal,
-                                      addAutomaticKeepAlives: true,
-                                      shrinkWrap: true,
-                                      physics: const BouncingScrollPhysics(
-                                          parent:
-                                              AlwaysScrollableScrollPhysics()),
-                                      crossAxisCount: 2,
-                                      children: snapshot.data!.docs
-                                          .map((e) => MyCategory(
-                                              onClicked: (state, name) {
-                                                setState(() {
-                                                  result = state;
-                                                  catName = name;
-                                                  print(result);
-                                                  print(catName);
-                                                });
-                                              },
-                                              category:
-                                                  Category.fromSnapshot(e)))
-                                          .toList());
-                                }),
-                          ),
-                        ],
+                                    return GridView.count(
+                                        scrollDirection: Axis.horizontal,
+                                        addAutomaticKeepAlives: true,
+                                        shrinkWrap: true,
+                                        physics: const BouncingScrollPhysics(
+                                            parent:
+                                                AlwaysScrollableScrollPhysics()),
+                                        crossAxisCount: 2,
+                                        children: snapshot.data!.docs
+                                            .map((e) => MyCategory(
+                                                onClicked: (state, name) {
+                                                  setState(() {
+                                                    main = true;
+                                                    result = state;
+                                                    catName = name;
+                                                    print(result);
+                                                    print(main);
+                                                    print(catName);
+                                                  });
+                                                },
+                                                category:
+                                                    Category.fromSnapshot(e)))
+                                            .toList());
+                                  }),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ]),
+                    ]),
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 55),
-          child: Container(
+          Container(
             width: 200,
             height: 40,
             child: ElevatedButton(
@@ -316,21 +351,23 @@ class _AddIncomeState extends State<AddIncome> {
                 onPressed: () {
                   if (amountController.text != null &&
                       categoryController.text != null) {
-                    DataRepository().addIncome(Income(
-                        int.parse(amountController.text),
-                        date: DateTime.now(),
-                        category: result.toString(),
-                        income: true,
-                        catName: catName));
+                    DataRepository().updateIncome(
+                        widget.income.autoID.toString(),
+                        Income(int.parse(amountController.text),
+                            date: DateTime.now(),
+                            category: result.toString(),
+                            income: true,
+                            catName: catName));
+                    Navigator.popAndPushNamed(context, '/home');
                   }
                 },
                 child: const Text(
-                  'Save',
+                  'Update',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 )),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 }

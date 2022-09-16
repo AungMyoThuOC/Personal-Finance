@@ -11,26 +11,26 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AddIncome extends StatefulWidget {
-  AddIncome({
+class AddOutcome extends StatefulWidget {
+  AddOutcome({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<AddIncome> createState() => _AddIncomeState();
+  State<AddOutcome> createState() => _AddIncomeState();
 }
 
-class _AddIncomeState extends State<AddIncome> {
+class _AddIncomeState extends State<AddOutcome> {
   TextEditingController categoryController = TextEditingController();
 
   TextEditingController amountController = TextEditingController();
   TextEditingController noteController = TextEditingController();
   int iconNum = 0;
-  String catName = '';
   bool choose = true;
   int indexOne = 0;
   int state = 0;
   int result = 0;
+  String catName = '';
   List<IconData> navBarItem = [
     Icons.family_restroom,
     Icons.cast_for_education,
@@ -185,125 +185,124 @@ class _AddIncomeState extends State<AddIncome> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Container(
-            color: Colors.transparent,
-            height: 600,
-            width: MediaQuery.of(context).size.width * 1,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Icon(navBarItem[result]),
-                          Container(
-                            width: 300,
-                            child: TextField(
-                              controller: amountController,
-                              style: const TextStyle(color: Colors.black),
-                              decoration: InputDecoration(
-                                hintText: "Amount",
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      width: 1,
-                                      color:
-                                          Color.fromARGB(255, 224, 224, 224)),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      width: 1,
-                                      color:
-                                          Color.fromARGB(255, 177, 177, 177)),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              color: Colors.transparent,
+              height: 600,
+              width: MediaQuery.of(context).size.width * 1,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Icon(navBarItem[result]),
+                            Container(
+                              width: 300,
+                              child: TextField(
+                                controller: amountController,
+                                style: const TextStyle(color: Colors.black),
+                                decoration: InputDecoration(
+                                  hintText: "Amount",
+                                  hintStyle:
+                                      const TextStyle(color: Colors.grey),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                        width: 1,
+                                        color:
+                                            Color.fromARGB(255, 224, 224, 224)),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                        width: 1,
+                                        color:
+                                            Color.fromARGB(255, 177, 177, 177)),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Column(
-                        children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  "Categories",
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                CircleAvatar(
-                                  radius: 18,
-                                  child: IconButton(
-                                    splashRadius: 22,
-                                    onPressed: () {
-                                      openDialog();
-                                    },
-                                    icon: const Icon(Icons.add),
-                                    iconSize: 18,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Column(
+                          children: [
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    "Categories",
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                ),
-                              ]),
-                          const SizedBox(
-                            height: 35,
-                          ),
-                          Container(
-                            width: 400,
-                            height: 200,
-                            child: StreamBuilder<QuerySnapshot>(
-                                stream: DataRepository().getCategory(),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData)
-                                    return LinearProgressIndicator();
+                                  CircleAvatar(
+                                    radius: 18,
+                                    child: IconButton(
+                                      splashRadius: 22,
+                                      onPressed: () {
+                                        openDialog();
+                                      },
+                                      icon: const Icon(Icons.add),
+                                      iconSize: 18,
+                                    ),
+                                  ),
+                                ]),
+                            const SizedBox(
+                              height: 35,
+                            ),
+                            Container(
+                              width: 400,
+                              height: 200,
+                              child: StreamBuilder<QuerySnapshot>(
+                                  stream: DataRepository().getCategory(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData)
+                                      return LinearProgressIndicator();
 
-                                  return GridView.count(
-                                      scrollDirection: Axis.horizontal,
-                                      addAutomaticKeepAlives: true,
-                                      shrinkWrap: true,
-                                      physics: const BouncingScrollPhysics(
-                                          parent:
-                                              AlwaysScrollableScrollPhysics()),
-                                      crossAxisCount: 2,
-                                      children: snapshot.data!.docs
-                                          .map((e) => MyCategory(
-                                              onClicked: (state, name) {
-                                                setState(() {
-                                                  result = state;
-                                                  catName = name;
-                                                  print(result);
-                                                  print(catName);
-                                                });
-                                              },
-                                              category:
-                                                  Category.fromSnapshot(e)))
-                                          .toList());
-                                }),
-                          ),
-                        ],
+                                    return GridView.count(
+                                        scrollDirection: Axis.horizontal,
+                                        addAutomaticKeepAlives: true,
+                                        shrinkWrap: true,
+                                        physics: const BouncingScrollPhysics(
+                                            parent:
+                                                AlwaysScrollableScrollPhysics()),
+                                        crossAxisCount: 2,
+                                        children: snapshot.data!.docs
+                                            .map((e) => MyCategory(
+                                                onClicked: (state, name) {
+                                                  setState(() {
+                                                    result = state;
+                                                    catName = name;
+                                                  });
+                                                },
+                                                category:
+                                                    Category.fromSnapshot(e)))
+                                            .toList());
+                                  }),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ]),
+                    ]),
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 55),
-          child: Container(
+          Container(
             width: 200,
             height: 40,
             child: ElevatedButton(
@@ -319,8 +318,8 @@ class _AddIncomeState extends State<AddIncome> {
                     DataRepository().addIncome(Income(
                         int.parse(amountController.text),
                         date: DateTime.now(),
-                        category: result.toString(),
-                        income: true,
+                        category: state.toString(),
+                        income: false,
                         catName: catName));
                   }
                 },
@@ -328,9 +327,9 @@ class _AddIncomeState extends State<AddIncome> {
                   'Save',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 )),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 }

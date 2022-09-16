@@ -71,8 +71,6 @@ class MyApp extends StatelessWidget {
             title: 'Finance',
             theme: AppThemes.main(
                 primaryColor: themeProvider.selectedPrimaryColor),
-            darkTheme: AppThemes.main(
-                isDark: true, primaryColor: themeProvider.selectedPrimaryColor),
             themeMode: themeProvider.selectedThemeMode,
             builder: EasyLoading.init(),
           ),

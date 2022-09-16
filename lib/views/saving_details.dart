@@ -7,6 +7,11 @@ import 'package:personal_financial/Components/home_history.dart';
 import 'package:personal_financial/data_repository.dart';
 import 'package:personal_financial/models/remaning_saving.dart';
 import 'package:personal_financial/models/saving.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:personal_financial/Components/remainig_history.dart';
+import 'package:personal_financial/firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SavingDetails extends StatefulWidget {
   SavingDetails({Key? key, required this.saving}) : super(key: key);
@@ -16,12 +21,48 @@ class SavingDetails extends StatefulWidget {
 }
 
 class _SavingDetailsState extends State<SavingDetails> {
-  int _currentSlider = 1000;
   bool check = true;
   AnimateIconController controller = AnimateIconController();
   bool visible = false;
   var opacity = 0.0;
+  double remaining = 0;
+  double tot = 0;
+  double result = 0;
+
+  final DataRepository repository = DataRepository();
+
   TextEditingController amountController = TextEditingController();
+  void getRemaining() {
+    FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Saving')
+        .doc(widget.saving!.autoID)
+        .collection('Remaining')
+        .get()
+        .then(
+      (StreamBuilder) {
+        StreamBuilder.docs.forEach((result) {
+          remaining = remaining + result.data()['amount'];
+        });
+        setState(() {
+          tot = remaining;
+          print(tot);
+        });
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    getRemaining();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +75,7 @@ class _SavingDetailsState extends State<SavingDetails> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             IconButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.popAndPushNamed(context, '/home');
                 },
                 icon: const Icon(
                   Icons.arrow_back,
@@ -45,7 +86,6 @@ class _SavingDetailsState extends State<SavingDetails> {
         body: Stack(children: [
           Column(
             children: [
-              Text(widget.saving!.autoID.toString()),
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Container(
@@ -72,39 +112,95 @@ class _SavingDetailsState extends State<SavingDetails> {
                                   radius: 60.0,
                                   lineWidth: 13.0,
                                   animation: true,
-                                  percent: 0.7,
-                                  center: const Text(
-                                    "70%",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20.0),
-                                  ),
+                                  percent: (tot == 0)
+                                      ? 0
+                                      : tot / widget.saving!.amount,
+                                  center: StreamBuilder<QuerySnapshot>(
+                                      stream: repository.getRemaining(
+                                          widget.saving!.autoID.toString()),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircularProgressIndicator();
+                                        }
+                                        var ds = snapshot.data!.docs;
+
+                                        double sum = 0.0;
+                                        for (int i = 0; i < ds.length; i++) {
+                                          sum += (ds[i]['amount']).toDouble();
+                                        }
+                                        return Text(
+                                          '${(sum / widget.saving!.amount * 100).toStringAsFixed(2)}%',
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        );
+                                      }),
                                   footer: Column(
-                                    children: const [
-                                      SizedBox(
+                                    children: [
+                                      const SizedBox(
                                         height: 20,
                                       ),
-                                      Text(
-                                        "0/2000 MMK",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18.0),
-                                      ),
+                                      StreamBuilder<QuerySnapshot>(
+                                          stream: repository.getRemaining(
+                                              widget.saving!.autoID.toString()),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return CircularProgressIndicator();
+                                            }
+                                            var ds = snapshot.data!.docs;
+                                            double sum = 0.0;
+                                            for (int i = 0; i < ds.length; i++)
+                                              sum +=
+                                                  (ds[i]['amount']).toDouble();
+                                            return Text(
+                                              '${sum}/${widget.saving!.amount}MMK',
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16,
+                                              ),
+                                            );
+                                          }),
                                     ],
                                   ),
                                   circularStrokeCap: CircularStrokeCap.round,
-                                  progressColor: Colors.purple,
+                                  progressColor: Colors.greenAccent,
                                 )
                               : Padding(
-                                  padding: const EdgeInsets.all(15.0),
+                                  padding: EdgeInsets.all(15.0),
                                   child: LinearPercentIndicator(
                                     width:
                                         MediaQuery.of(context).size.width - 50,
                                     animation: true,
                                     lineHeight: 20.0,
                                     animationDuration: 2000,
-                                    percent: 0.9,
-                                    center: const Text("70%"),
+                                    percent: (tot == 0)
+                                        ? 0
+                                        : tot / widget.saving!.amount,
+                                    center: StreamBuilder<QuerySnapshot>(
+                                        stream: repository.getRemaining(
+                                            widget.saving!.autoID.toString()),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return CircularProgressIndicator();
+                                          }
+                                          var ds = snapshot.data!.docs;
+
+                                          double sum = 0.0;
+                                          for (int i = 0; i < ds.length; i++) {
+                                            sum += (ds[i]['amount']).toDouble();
+                                          }
+                                          return Text(
+                                            '${(sum / widget.saving!.amount * 100).toStringAsFixed(2)}%',
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold),
+                                          );
+                                        }),
                                     barRadius: const Radius.circular(10),
                                     progressColor: Colors.greenAccent,
                                   ),
@@ -128,11 +224,11 @@ class _SavingDetailsState extends State<SavingDetails> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 25.0),
+                            padding: EdgeInsets.symmetric(vertical: 25.0),
                             child: Text(
                               '${widget.saving!.target}',
                               textAlign: TextAlign.end,
-                              style: const TextStyle(fontSize: 16),
+                              style: TextStyle(fontSize: 16),
                             ),
                           ),
                         ]),
@@ -146,16 +242,16 @@ class _SavingDetailsState extends State<SavingDetails> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 25.0),
+                            padding: EdgeInsets.symmetric(vertical: 25.0),
                             child: Text(
                               '${widget.saving!.amount}',
                               textAlign: TextAlign.end,
-                              style: const TextStyle(fontSize: 16),
+                              style: TextStyle(fontSize: 16),
                             ),
                           )
                         ]),
-                        const TableRow(children: [
-                          Padding(
+                        TableRow(children: [
+                          const Padding(
                             padding: EdgeInsets.symmetric(vertical: 25.0),
                             child: Text(
                               'Remaining',
@@ -166,7 +262,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 25.0),
                             child: Text(
-                              '2000',
+                              '${widget.saving!.amount - tot}',
                               textAlign: TextAlign.end,
                               style: TextStyle(fontSize: 16),
                             ),
@@ -182,11 +278,8 @@ class _SavingDetailsState extends State<SavingDetails> {
                           child: IconButton(
                             onPressed: () {
                               setState(() {
-                                openDialog();
+                                opacity = opacity == 0.0 ? 1 : 0;
                               });
-                              // setState(() {
-                              //   opacity = opacity == 0.0 ? 1 : 0;
-                              // });
                             },
                             icon: const Icon(
                               Icons.add,
@@ -209,133 +302,103 @@ class _SavingDetailsState extends State<SavingDetails> {
                   return false;
                 },
                 child: Container(
-                  height: 100,
-                  child: SingleChildScrollView(
-                      child: Column(
-                    children: [
-                      Container(
-                        height: 200,
-                      ),
-                      Container(
-                        height: 200,
-                      ),
-                      Container(
-                        height: 200,
-                      ),
-                      Container(
-                        height: 200,
-                      )
-                    ],
-                  )),
+                  height: 220,
+                  child: StreamBuilder<QuerySnapshot>(
+                      stream: repository
+                          .getRemaining(widget.saving!.autoID.toString()),
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (!snapshot.hasData) return LinearProgressIndicator();
+
+                        // return _buildList(context, snapshot.data?.docs ?? []);
+                        return Column(
+                          children: [
+                            Expanded(
+                              child: ListView(
+                                addAutomaticKeepAlives: true,
+                                physics: const BouncingScrollPhysics(
+                                    parent: AlwaysScrollableScrollPhysics()),
+                                shrinkWrap: true,
+                                children: snapshot.data!.docs
+                                    .map((data) => HistRemain(
+                                          remaining:
+                                              Remaining.fromSnapshot(data),
+                                          autoID:
+                                              widget.saving!.autoID.toString(),
+                                        ))
+                                    .toList(),
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
                 ),
               ),
             ],
           ),
-          // Positioned(
-          //     left: 80,
-          //     bottom: 280,
-          //     child: AnimatedOpacity(
-          //       duration: Duration(milliseconds: 500),
-          //       opacity: opacity,
-          //       child: Container(
-          //         decoration: BoxDecoration(
-          //           color: Colors.black,
-          //           borderRadius: BorderRadius.circular(10),
-          //           boxShadow: [
-          //             BoxShadow(
-          //               offset: const Offset(0, 3),
-          //               blurRadius: 2,
-          //               color: Colors.black.withOpacity(0.2),
-          //             ),
-          //           ],
-          //         ),
-          //         child: Container(
-          //           width: 200,
-          //           height: 200,
-          //           color: Colors.black,
-          //           child: Column(
-          //             children: [
-          //               TextField(
-          //                 controller: amountController,
-          //                 style: const TextStyle(color: Colors.white),
-          //                 decoration: InputDecoration(
-          //                   hintText: "Amount",
-          //                   hintStyle: const TextStyle(color: Colors.grey),
-          //                   enabledBorder: OutlineInputBorder(
-          //                     borderRadius: BorderRadius.circular(10),
-          //                     borderSide: const BorderSide(
-          //                         width: 1,
-          //                         color: Color.fromARGB(255, 224, 224, 224)),
-          //                   ),
-          //                   focusedBorder: OutlineInputBorder(
-          //                     borderRadius: BorderRadius.circular(10),
-          //                     borderSide: const BorderSide(
-          //                         width: 1,
-          //                         color: Color.fromARGB(255, 177, 177, 177)),
-          //                   ),
-          //                 ),
-          //               ),
-          //               Row(
-          //                 children: [
-          //                   ElevatedButton(
-          //                       onPressed: () {
-          //                         DataRepository().updateRemaining(
-          //                             widget.saving!.autoID.toString(),
-          //                             Remaining(
-          //                                 int.parse(amountController.text),
-          //                                 date: DateTime.now()));
-          //                       },
-          //                       child: const Text('Save'))
-          //                 ],
-          //               )
-          //             ],
-          //           ),
-          //         ),
-          //       ),
-          //     )),
+          Positioned(
+              left: 80,
+              bottom: 280,
+              child: AnimatedOpacity(
+                duration: Duration(milliseconds: 500),
+                opacity: opacity,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        offset: const Offset(0, 3),
+                        blurRadius: 2,
+                        color: Colors.black.withOpacity(0.2),
+                      ),
+                    ],
+                  ),
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    color: Colors.black,
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: amountController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: "Amount",
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  width: 1,
+                                  color: Color.fromARGB(255, 224, 224, 224)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                  width: 1,
+                                  color: Color.fromARGB(255, 177, 177, 177)),
+                            ),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  DataRepository().updateRemaining(
+                                      widget.saving!.autoID.toString(),
+                                      Remaining(
+                                        int.parse(amountController.text),
+                                        date: DateTime.now(),
+                                      ));
+                                },
+                                child: const Text('Save'))
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )),
         ]));
-  }
-
-  Future openDialog() => showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(builder: ((context, setState) {
-            return AlertDialog(
-              content: Container(
-                width: 100,
-                height: 50,
-                child: Slider(
-                  value: _currentSlider.toDouble(),
-                  divisions: 20,
-                  min: 0,
-                  max: 30000,
-                  label: _currentSlider.round().toString(),
-                  onChanged: (double value) {
-                    setState(() {
-                      _currentSlider = value.toInt();
-                      print(_currentSlider);
-                      amountController.text = _currentSlider.toString();
-                    });
-                  },
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: cancel, 
-                  child: const Text("Cancel")
-                ),
-                TextButton(
-                  onPressed: save, 
-                  child: const Text("Save")
-                )
-              ],
-            );
-          })));
-
-  void save() {
-    Navigator.pop(context);
-  }
-
-  void cancel() {
-    Navigator.of(context).pop();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -20,6 +21,7 @@ class SavingAdd extends StatefulWidget {
 class _SavingAddState extends State<SavingAdd> {
   int _currentSlider = 1000;
   String id = '';
+  String autoID = '';
 
   TextEditingController savingController = TextEditingController();
   TextEditingController sliderController = TextEditingController();
@@ -35,7 +37,7 @@ class _SavingAddState extends State<SavingAdd> {
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context, '/home');
               },
               icon: const Icon(
                 Icons.arrow_back,
@@ -116,6 +118,7 @@ class _SavingAddState extends State<SavingAdd> {
                 setState(() {
                   _currentSlider = value.toInt();
                   print(_currentSlider);
+
                   sliderController.text = _currentSlider.toString();
                 });
               },
@@ -126,12 +129,13 @@ class _SavingAddState extends State<SavingAdd> {
               child: ElevatedButton(
                   onPressed: () {
                     if (savingController.text != null) {
-                      DataRepository().addSaving(Saving(
-                        _currentSlider,
-                        date: DateTime.now(),
-                        vaccinations: [],
-                        target: savingController.text,
-                      ));
+                      DataRepository()
+                          .addSaving(Saving(
+                            _currentSlider,
+                            date: DateTime.now(),
+                            target: savingController.text,
+                          ))
+                          .then((value) => id = value.toString());
                     }
                     Navigator.pop(context);
                   },
