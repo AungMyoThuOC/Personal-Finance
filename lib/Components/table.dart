@@ -56,7 +56,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
               stream: repository.getIncome(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 }
                 var ds = snapshot.data!.docs;
                 double sum = 0.0;
@@ -70,7 +70,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
                       "Total is : $sum ",
                     ),
                   ),
-                  Text(
+                  const Text(
                     " ",
                   ),
                 ]);
@@ -88,7 +88,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.0),
+              padding: const EdgeInsets.symmetric(vertical: 15.0),
               child: Text(
                 '${sum}',
                 textAlign: TextAlign.end,

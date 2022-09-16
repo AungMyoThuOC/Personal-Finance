@@ -24,7 +24,7 @@ class HomeHistory extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Row(
@@ -63,7 +63,7 @@ class HomeHistory extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(right: 22),
+                    padding: const EdgeInsets.only(right: 22),
                     child: Text(
                       "${income.amount}",
                       style: const TextStyle(color: Colors.white, fontSize: 16),

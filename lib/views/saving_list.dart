@@ -70,14 +70,14 @@ class _SavingListState extends State<SavingList> {
                                   children: [
                                     Text(
                                       widget.saving.target,
-                                      style: TextStyle(color: Colors.black),
+                                      style: const TextStyle(color: Colors.black),
                                     ),
                                     const SizedBox(
                                       height: 5,
                                     ),
                                     Text(
                                       '0/${widget.saving.amount}',
-                                      style: TextStyle(color: Colors.black),
+                                      style: const TextStyle(color: Colors.black),
                                     )
                                   ],
                                 ),

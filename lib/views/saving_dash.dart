@@ -47,7 +47,7 @@ class _SavingState extends State<ViewSaving> {
         child: StreamBuilder<QuerySnapshot>(
             stream: repository.getSavingStream(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData) return LinearProgressIndicator();
+              if (!snapshot.hasData) return const LinearProgressIndicator();
 
               return _buildList(context, snapshot.data?.docs ?? []);
             }),

@@ -16,6 +16,7 @@ class SavingDetails extends StatefulWidget {
 }
 
 class _SavingDetailsState extends State<SavingDetails> {
+  int _currentSlider = 1000;
   bool check = true;
   AnimateIconController controller = AnimateIconController();
   bool visible = false;
@@ -95,7 +96,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                                   progressColor: Colors.purple,
                                 )
                               : Padding(
-                                  padding: EdgeInsets.all(15.0),
+                                  padding: const EdgeInsets.all(15.0),
                                   child: LinearPercentIndicator(
                                     width:
                                         MediaQuery.of(context).size.width - 50,
@@ -103,7 +104,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                                     lineHeight: 20.0,
                                     animationDuration: 2000,
                                     percent: 0.9,
-                                    center: Text("70%"),
+                                    center: const Text("70%"),
                                     barRadius: const Radius.circular(10),
                                     progressColor: Colors.greenAccent,
                                   ),
@@ -127,11 +128,11 @@ class _SavingDetailsState extends State<SavingDetails> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: 25.0),
+                            padding: const EdgeInsets.symmetric(vertical: 25.0),
                             child: Text(
                               '${widget.saving!.target}',
                               textAlign: TextAlign.end,
-                              style: TextStyle(fontSize: 16),
+                              style: const TextStyle(fontSize: 16),
                             ),
                           ),
                         ]),
@@ -145,11 +146,11 @@ class _SavingDetailsState extends State<SavingDetails> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: 25.0),
+                            padding: const EdgeInsets.symmetric(vertical: 25.0),
                             child: Text(
                               '${widget.saving!.amount}',
                               textAlign: TextAlign.end,
-                              style: TextStyle(fontSize: 16),
+                              style: const TextStyle(fontSize: 16),
                             ),
                           )
                         ]),
@@ -181,8 +182,11 @@ class _SavingDetailsState extends State<SavingDetails> {
                           child: IconButton(
                             onPressed: () {
                               setState(() {
-                                opacity = opacity == 0.0 ? 1 : 0;
+                                openDialog();
                               });
+                              // setState(() {
+                              //   opacity = opacity == 0.0 ? 1 : 0;
+                              // });
                             },
                             icon: const Icon(
                               Icons.add,
@@ -227,68 +231,111 @@ class _SavingDetailsState extends State<SavingDetails> {
               ),
             ],
           ),
-          Positioned(
-              left: 80,
-              bottom: 280,
-              child: AnimatedOpacity(
-                duration: Duration(milliseconds: 500),
-                opacity: opacity,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        offset: const Offset(0, 3),
-                        blurRadius: 2,
-                        color: Colors.black.withOpacity(0.2),
-                      ),
-                    ],
-                  ),
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    color: Colors.black,
-                    child: Column(
-                      children: [
-                        TextField(
-                          controller: amountController,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            hintText: "Amount",
-                            hintStyle: const TextStyle(color: Colors.grey),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                  width: 1,
-                                  color: Color.fromARGB(255, 224, 224, 224)),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                  width: 1,
-                                  color: Color.fromARGB(255, 177, 177, 177)),
-                            ),
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            ElevatedButton(
-                                onPressed: () {
-                                  DataRepository().updateRemaining(
-                                      widget.saving!.autoID.toString(),
-                                      Remaining(
-                                          int.parse(amountController.text),
-                                          date: DateTime.now()));
-                                },
-                                child: const Text('Save'))
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              )),
+          // Positioned(
+          //     left: 80,
+          //     bottom: 280,
+          //     child: AnimatedOpacity(
+          //       duration: Duration(milliseconds: 500),
+          //       opacity: opacity,
+          //       child: Container(
+          //         decoration: BoxDecoration(
+          //           color: Colors.black,
+          //           borderRadius: BorderRadius.circular(10),
+          //           boxShadow: [
+          //             BoxShadow(
+          //               offset: const Offset(0, 3),
+          //               blurRadius: 2,
+          //               color: Colors.black.withOpacity(0.2),
+          //             ),
+          //           ],
+          //         ),
+          //         child: Container(
+          //           width: 200,
+          //           height: 200,
+          //           color: Colors.black,
+          //           child: Column(
+          //             children: [
+          //               TextField(
+          //                 controller: amountController,
+          //                 style: const TextStyle(color: Colors.white),
+          //                 decoration: InputDecoration(
+          //                   hintText: "Amount",
+          //                   hintStyle: const TextStyle(color: Colors.grey),
+          //                   enabledBorder: OutlineInputBorder(
+          //                     borderRadius: BorderRadius.circular(10),
+          //                     borderSide: const BorderSide(
+          //                         width: 1,
+          //                         color: Color.fromARGB(255, 224, 224, 224)),
+          //                   ),
+          //                   focusedBorder: OutlineInputBorder(
+          //                     borderRadius: BorderRadius.circular(10),
+          //                     borderSide: const BorderSide(
+          //                         width: 1,
+          //                         color: Color.fromARGB(255, 177, 177, 177)),
+          //                   ),
+          //                 ),
+          //               ),
+          //               Row(
+          //                 children: [
+          //                   ElevatedButton(
+          //                       onPressed: () {
+          //                         DataRepository().updateRemaining(
+          //                             widget.saving!.autoID.toString(),
+          //                             Remaining(
+          //                                 int.parse(amountController.text),
+          //                                 date: DateTime.now()));
+          //                       },
+          //                       child: const Text('Save'))
+          //                 ],
+          //               )
+          //             ],
+          //           ),
+          //         ),
+          //       ),
+          //     )),
         ]));
+  }
+
+  Future openDialog() => showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(builder: ((context, setState) {
+            return AlertDialog(
+              content: Container(
+                width: 100,
+                height: 50,
+                child: Slider(
+                  value: _currentSlider.toDouble(),
+                  divisions: 20,
+                  min: 0,
+                  max: 30000,
+                  label: _currentSlider.round().toString(),
+                  onChanged: (double value) {
+                    setState(() {
+                      _currentSlider = value.toInt();
+                      print(_currentSlider);
+                      amountController.text = _currentSlider.toString();
+                    });
+                  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: cancel, 
+                  child: const Text("Cancel")
+                ),
+                TextButton(
+                  onPressed: save, 
+                  child: const Text("Save")
+                )
+              ],
+            );
+          })));
+
+  void save() {
+    Navigator.pop(context);
+  }
+
+  void cancel() {
+    Navigator.of(context).pop();
   }
 }
