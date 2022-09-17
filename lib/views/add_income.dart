@@ -13,8 +13,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddIncome extends StatefulWidget {
   AddIncome({
-    Key? key,
+    Key? key, required this.onSubmit,
   }) : super(key: key);
+
+  final ValueChanged<String> onSubmit;
 
   @override
   State<AddIncome> createState() => _AddIncomeState();
@@ -68,6 +70,36 @@ class _AddIncomeState extends State<AddIncome> {
         .addCategory(Category(name: categoryController.text, icon: indexOne));
   }
 
+  var text = '';
+
+  bool _submitted = false;
+
+  void _submit() {
+    setState(() => _submitted = true);
+    if (_errorText == null) {
+      widget.onSubmit(categoryController.value.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    categoryController.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  String? get _errorText {
+    final text = categoryController.value.text;
+
+    if (text.isEmpty) {
+      return "can't be empty";
+    }
+    if (text.length > 6) {
+      return "Too long";
+    }
+    return null;
+  }
+
   Future openDialog() => showDialog(
       context: context,
       builder: (context) => StatefulBuilder(builder: ((context, setState) {
@@ -92,12 +124,17 @@ class _AddIncomeState extends State<AddIncome> {
                           Icon(navBarItem[indexOne]),
                           SizedBox(
                             width: 200,
-                            child: TextField(
+                            child: TextFormField(
+                              keyboardType: TextInputType.text,
+                               autovalidateMode: _submitted
+                                  ? AutovalidateMode.onUserInteraction
+                                  : AutovalidateMode.disabled,
                               controller: categoryController,
                               style: const TextStyle(color: Colors.black),
                               decoration: InputDecoration(
                                 hintText: "Add Name",
                                 hintStyle: const TextStyle(color: Colors.grey),
+                                errorText: _errorText,
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: const BorderSide(
@@ -113,6 +150,7 @@ class _AddIncomeState extends State<AddIncome> {
                                           Color.fromARGB(255, 177, 177, 177)),
                                 ),
                               ),
+                              onChanged: (text) => setState(() => text),
                             ),
                           ),
                         ],

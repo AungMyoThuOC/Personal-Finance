@@ -1,5 +1,6 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:personal_financial/data_repository.dart';
@@ -12,7 +13,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SavingAdd extends StatefulWidget {
-  SavingAdd({Key? key}) : super(key: key);
+  SavingAdd({Key? key, required this.onSubmit}) : super(key: key);
+
+  final ValueChanged<String> onSubmit;
 
   @override
   State<SavingAdd> createState() => _SavingAddState();
@@ -25,6 +28,36 @@ class _SavingAddState extends State<SavingAdd> {
 
   TextEditingController savingController = TextEditingController();
   TextEditingController sliderController = TextEditingController();
+
+  var text = '';
+
+  bool _submitted = false;
+
+  void _submit() {
+    setState(() => _submitted = true);
+    if (_errorText == null) {
+      widget.onSubmit(savingController.value.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    savingController.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  String? get _errorText {
+    final text = savingController.value.text;
+
+    if (text.isEmpty) {
+      return "Can't be empty";
+    }
+    if (text.length > 8) {
+      return "Too long";
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,13 +106,18 @@ class _SavingAddState extends State<SavingAdd> {
                           ),
                           SizedBox(
                             width: 320,
-                            child: TextField(
+                            child: TextFormField(
+                              keyboardType: TextInputType.text,
+                              autovalidateMode: _submitted
+                                  ? AutovalidateMode.onUserInteraction
+                                  : AutovalidateMode.disabled,
                               controller: savingController,
                               style: const TextStyle(color: Colors.black),
                               decoration: const InputDecoration(
                                 hintText: "Target",
                                 hintStyle: const TextStyle(color: Colors.grey),
                               ),
+                              onChanged: (text) => setState(() => text),
                             ),
                           ),
                         ],
@@ -105,6 +143,10 @@ class _SavingAddState extends State<SavingAdd> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 30),
                             child: TextField(
+                              keyboardType: TextInputType.number,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
                               controller: sliderController,
                             ),
                           ),
@@ -128,6 +170,7 @@ class _SavingAddState extends State<SavingAdd> {
                       elevation: 15.0,
                     ),
                     onPressed: () {
+                      savingController.value.text.isNotEmpty ? _submit : null;
                       if (savingController.text != null) {
                         DataRepository()
                             .addSaving(Saving(

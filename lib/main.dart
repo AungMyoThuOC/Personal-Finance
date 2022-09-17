@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
               '/language': (context) => const LanguagePage(),
               '/security': (context) => SecurityPage(),
               '/color': (context) => const ColorPage(),
-              '/saving_add': (context) => SavingAdd(),
+              '/saving_add': (context) => SavingAdd(onSubmit: (String value) {  },),
               '/add': (context) => const AddInOut(),
             },
             debugShowCheckedModeBanner: false,

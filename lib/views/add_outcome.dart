@@ -14,7 +14,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class AddOutcome extends StatefulWidget {
   AddOutcome({
     Key? key,
+    required this.onSubmit,
   }) : super(key: key);
+
+  final ValueChanged<String> onSubmit;
 
   @override
   State<AddOutcome> createState() => _AddIncomeState();
@@ -68,6 +71,36 @@ class _AddIncomeState extends State<AddOutcome> {
         .addCategory(Category(name: categoryController.text, icon: indexOne));
   }
 
+  var text = '';
+
+  bool _submmitted = false;
+
+  void _submit() {
+    setState(() => _submmitted = true);
+    if (_errorText == null) {
+      widget.onSubmit(categoryController.value.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    categoryController.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  String? get _errorText {
+    final text = categoryController.value.text;
+
+    if (text.isEmpty) {
+      return "Can't be empty";
+    }
+    if (text.length > 6) {
+      return "Too long";
+    }
+    return null;
+  }
+
   Future openDialog() => showDialog(
       context: context,
       builder: (context) => StatefulBuilder(builder: ((context, setState) {
@@ -92,7 +125,11 @@ class _AddIncomeState extends State<AddOutcome> {
                           Icon(navBarItem[indexOne]),
                           SizedBox(
                             width: 200,
-                            child: TextField(
+                            child: TextFormField(
+                              keyboardType: TextInputType.text,
+                              autovalidateMode: _submmitted
+                                  ? AutovalidateMode.onUserInteraction
+                                  : AutovalidateMode.disabled,
                               controller: categoryController,
                               style: const TextStyle(color: Colors.black),
                               decoration: InputDecoration(
@@ -113,6 +150,7 @@ class _AddIncomeState extends State<AddOutcome> {
                                           Color.fromARGB(255, 177, 177, 177)),
                                 ),
                               ),
+                              onChanged: (text) => setState(() => text),
                             ),
                           ),
                         ],

@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
@@ -243,6 +244,10 @@ class _AddIncomeState extends State<EditIncome> {
                               Container(
                                 width: 300,
                                 child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                   controller: amountController,
                                   style: const TextStyle(color: Colors.black),
                                   decoration: InputDecoration(
