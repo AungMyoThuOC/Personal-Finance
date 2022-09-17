@@ -13,6 +13,7 @@ import 'package:pull_down_button/pull_down_button.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SavingList extends StatefulWidget {
   const SavingList({Key? key, required this.saving}) : super(key: key);
@@ -48,6 +49,23 @@ class _SavingListState extends State<SavingList> {
             tot = tot + result.data()['amount'];
           });
         });
+      },
+    );
+  }
+
+  void deleteRemain(String id) {
+    FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Saving')
+        .doc(id)
+        .collection("Remaining")
+        .get()
+        .then(
+      (snapshot) {
+        for (DocumentSnapshot ds in snapshot.docs) {
+          ds.reference.delete();
+        }
       },
     );
   }
@@ -117,53 +135,43 @@ class _SavingListState extends State<SavingList> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.android,
+                                size: 45,
+                                color: Colors.blueAccent,
+                              ),
+                              Container(
+                                width: 60,
+                                child: Text(
+                                  overflow: TextOverflow.ellipsis,
+                                  widget.saving.target,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ),
+                            ],
+                          ),
                           Container(
-                            width: 150,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Icon(
-                                  Icons.android,
-                                  size: 45,
-                                  color: Colors.blueAccent,
-                                ),
-                                Column(
-                                  children: [
-                                    Container(
-                                      child: Text(
-                                        widget.saving.target,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Container(
-                                      child: StreamBuilder<QuerySnapshot>(
-                                          stream: repository.getRemaining(
-                                              widget.saving.autoID.toString()),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return CircularProgressIndicator();
-                                            }
-                                            var ds = snapshot.data!.docs;
-                                            double sum = 0.0;
-                                            for (int i = 0; i < ds.length; i++)
-                                              sum +=
-                                                  (ds[i]['amount']).toDouble();
-                                            return Text(
-                                              '${sum}/${widget.saving.amount}',
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                            );
-                                          }),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                            child: StreamBuilder<QuerySnapshot>(
+                                stream: repository.getRemaining(
+                                    widget.saving.autoID.toString()),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return CircularProgressIndicator();
+                                  }
+                                  var ds = snapshot.data!.docs;
+                                  double sum = 0.0;
+                                  for (int i = 0; i < ds.length; i++)
+                                    sum += (ds[i]['amount']).toDouble();
+                                  return Text(
+                                    '${sum}/${widget.saving.amount}',
+                                    style: TextStyle(color: Colors.black),
+                                  );
+                                }),
                           ),
                           PullDownButton(
                             backgroundColor: Colors.white,
@@ -297,7 +305,8 @@ class _SavingListState extends State<SavingList> {
                                                                             .autoID
                                                                             .toString(),
                                                                         Saving(
-                                                                          _currentSlider,
+                                                                          int.parse(
+                                                                              sliderController.text),
                                                                           date:
                                                                               DateTime.now(),
                                                                           target:
@@ -348,6 +357,7 @@ class _SavingListState extends State<SavingList> {
                               PullDownMenuItem(
                                 title: 'Delete',
                                 onTap: () => {
+                                  deleteRemain(widget.saving.autoID!),
                                   DataRepository()
                                       .deleteSaving(widget.saving.autoID!)
                                 },
@@ -372,7 +382,7 @@ class _SavingListState extends State<SavingList> {
                         animation: true,
                         lineHeight: 12,
                         animationDuration: 2000,
-                        percent: (tot == 0) ? 0 : tot / widget.saving.amount,
+                        percent: 1,
                         barRadius: const Radius.circular(10),
                         center: StreamBuilder<QuerySnapshot>(
                             stream: repository

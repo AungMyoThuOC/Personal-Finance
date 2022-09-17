@@ -164,7 +164,9 @@ class _SavingDetailsState extends State<SavingDetails> {
             );
           })));
   void save() {
-    Navigator.pop(context, '/home');
+    Navigator.pop(
+      context,
+    );
     amountController.clear();
   }
 
@@ -192,7 +194,7 @@ class _SavingDetailsState extends State<SavingDetails> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             IconButton(
                 onPressed: () {
-                  Navigator.popAndPushNamed(context, '/home');
+                  Navigator.pop(context);
                 },
                 icon: const Icon(
                   Icons.arrow_back,

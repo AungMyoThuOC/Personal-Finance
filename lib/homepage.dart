@@ -138,6 +138,8 @@ class _MyHomePageState extends State<MyHomePage>
           ),
         ),
         body: ExpandableBottomSheet(
+          animationDurationContract: const Duration(milliseconds: 100),
+          animationDurationExtend: const Duration(milliseconds: 100),
           background: TabBarView(
               controller: controller,
               physics: const BouncingScrollPhysics(),
@@ -192,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage>
                   child: ViewSaving(),
                 )
               ]),
-          persistentContentHeight: 220,
+          persistentContentHeight: MediaQuery.of(context).size.height * 0.3,
           persistentHeader: (bottomNavigator == true)
               ? Container(
                   decoration: BoxDecoration(

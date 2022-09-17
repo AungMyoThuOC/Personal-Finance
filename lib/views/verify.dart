@@ -37,8 +37,11 @@ class _VerifyScreenState extends State<VerifyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text("An email has been sent to ${user.email} please verify"),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Center(
+          child: Text("An email has been sent to ${user.email} please verify"),
+        ),
       ),
     );
   }

@@ -202,13 +202,14 @@ class _TableInOutComeState extends State<TableInOutCome> {
                     double sum = 0.0;
                     for (int i = 0; i < ds.length; i++)
                       sum += (ds[i]['amount']).toDouble();
+
                     return Text(
                       '${sum}',
                       textAlign: TextAlign.end,
                     );
                   }),
-            )
-          ])
+            ),
+          ]),
         ]),
       ],
     );

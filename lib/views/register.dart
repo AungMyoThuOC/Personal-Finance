@@ -43,7 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context, '/');
               },
               icon: const Icon(
                 Icons.arrow_back,
@@ -77,8 +77,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 10),
                     child: Container(
-                      width: 470,
-                      height: 470,
+                      width: 350,
+                      height: 380,
                       decoration: BoxDecoration(
                         boxShadow: const <BoxShadow>[
                           BoxShadow(
@@ -104,38 +104,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         child: Column(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                style: const TextStyle(color: Colors.blue),
-                                cursorColor: Colors.blue,
-                                controller: userCont,
-                                validator: (user) {
-                                  if (user == null || user.isEmpty) {
-                                    return "Username can't be blank";
-                                  } else if (user.length < 6) {
-                                    return "Username should be more than 6 word";
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                                decoration: const InputDecoration(
-                                    // focusedBorder: OutlineInputBorder(
-                                    //     borderSide: BorderSide(color: Colors.blue)),
-                                    // labelText: "Username",
-                                    labelStyle: TextStyle(color: Colors.blue),
-                                    hintText: "Enter your username",
-                                    hintStyle: TextStyle(color: Colors.blue),
-                                    // prefixIconConstraints:
-                                    // BoxConstraints(maxHeight: 10, minWidth: 40),
-                                    prefixIcon: Icon(
-                                      Icons.person,
-                                      color: Colors.blue,
-                                    )),
-                              ),
-                            ),
                             const SizedBox(
                               height: 10,
                             ),
@@ -225,7 +193,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                             ),
                             const SizedBox(
-                              height: 50,
+                              height: 30,
                             ),
                             Padding(
                               padding:
@@ -234,6 +202,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                 width: double.infinity,
                                 height: 50,
                                 child: ElevatedButton(
+                                  style: ButtonStyle(
+                                      shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ))),
                                   onPressed: () async {
                                     // EasyLoading.show(
                                     //     status: 'loading...',
@@ -244,9 +218,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                     });
                                     // await Future.delayed(const Duration(seconds: 3));
                                     if (_fromKey.currentState!.validate()) {
-                                      setState(() {
-                                        isLoading = true;
-                                      });
                                       // await Future.delayed(Duration(seconds: 8),
                                       //     () {
                                       //   setState(() {
@@ -334,7 +305,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                   //     primary: Color.fromARGB(235, 229, 60, 60)),
                                   child: const Text(
                                     "Register",
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
                                   ),
                                 ),
                               ),

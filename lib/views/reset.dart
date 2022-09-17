@@ -100,6 +100,7 @@ class _ResetScreenState extends State<ResetScreen> {
                 color: Theme.of(context).colorScheme.secondary,
                 child: const Text(
                   "Reset Password",
+                  style: TextStyle(color: Colors.white),
                 ),
                 // color: Colors.blue[200],
               )

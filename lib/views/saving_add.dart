@@ -19,8 +19,8 @@ class SavingAdd extends StatefulWidget {
 }
 
 class _SavingAddState extends State<SavingAdd> {
-  int _currentSlider = 1000;
   String id = '';
+  int _currentSlider = 1000;
   String autoID = '';
 
   TextEditingController savingController = TextEditingController();
@@ -37,7 +37,9 @@ class _SavingAddState extends State<SavingAdd> {
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           IconButton(
               onPressed: () {
-                Navigator.pop(context, '/home');
+                Navigator.pop(
+                  context,
+                );
               },
               icon: const Icon(
                 Icons.arrow_back,
@@ -45,106 +47,108 @@ class _SavingAddState extends State<SavingAdd> {
               )),
         ]),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const Icon(
-                  Icons.android_rounded,
-                  color: Colors.pink,
-                  size: 30,
-                ),
-                SizedBox(
-                  width: 300,
-                  child: TextField(
-                    controller: savingController,
-                    style: const TextStyle(color: Colors.black),
-                    decoration: InputDecoration(
-                      hintText: "Target",
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            width: 1,
-                            color: Color.fromARGB(255, 224, 224, 224)),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: 450,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      const Icon(
+                        Icons.android,
+                        size: 60,
+                        color: Colors.pink,
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            width: 1,
-                            color: Color.fromARGB(255, 177, 177, 177)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          SizedBox(
+                            width: 320,
+                            child: TextField(
+                              controller: savingController,
+                              style: const TextStyle(color: Colors.black),
+                              decoration: const InputDecoration(
+                                hintText: "Target",
+                                hintStyle: const TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: const [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 30),
+                                  child: Text(
+                                    "Amount of Saving",
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 30),
+                            child: TextField(
+                              controller: sliderController,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 30),
-                    child: Text(
-                      "Amount of Saving",
-                    ),
-                  ),
-                  Container(
-                    width: 80,
-                    child: TextFormField(
-                      showCursor: true,
-                      readOnly: true,
-                      controller: sliderController,
-                      style: const TextStyle(fontSize: 20),
-                      decoration: const InputDecoration(
-                        hintText: "1000",
-                        hintStyle: TextStyle(fontSize: 20),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ],
               ),
-            ),
-            Slider(
-              value: _currentSlider.toDouble(),
-              divisions: 20,
-              max: 30000,
-              label: _currentSlider.round().toString(),
-              onChanged: (double value) {
-                setState(() {
-                  _currentSlider = value.toInt();
-                  print(_currentSlider);
-
-                  sliderController.text = _currentSlider.toString();
-                });
-              },
-            ),
-            Container(
-              width: 200,
-              height: 35,
-              child: ElevatedButton(
-                  onPressed: () {
-                    if (savingController.text != null) {
-                      DataRepository()
-                          .addSaving(Saving(
-                            _currentSlider,
-                            date: DateTime.now(),
-                            target: savingController.text,
-                          ))
-                          .then((value) => id = value.toString());
-                    }
-                    Navigator.pop(context);
-                  },
-                  child: const Text(
-                    'Save',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  )),
-            )
-          ],
+              Container(
+                width: 200,
+                height: 35,
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      elevation: 15.0,
+                    ),
+                    onPressed: () {
+                      if (savingController.text != null) {
+                        DataRepository()
+                            .addSaving(Saving(
+                              int.parse(sliderController.text),
+                              date: DateTime.now(),
+                              target: savingController.text,
+                            ))
+                            .then((value) => id = value.toString());
+                      }
+                      Navigator.pop(context, '/home');
+                    },
+                    child: const Text(
+                      'Save',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 16),
+                    )),
+              )
+            ],
+          ),
         ),
       ),
     );

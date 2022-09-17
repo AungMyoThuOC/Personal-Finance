@@ -97,6 +97,16 @@ class DataRepository {
         .delete();
   }
 
+  Future deleteRemain(String id) async {
+    return await ref
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Saving')
+        .doc(id)
+        .collection("Remaining")
+        .doc()
+        .delete();
+  }
+
   Future deleteIncome(String id) async {
     return await ref
         .doc('${FirebaseAuth.instance.currentUser!.email}')

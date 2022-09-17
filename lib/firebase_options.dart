@@ -44,42 +44,42 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAd026w0e46GPMldToRTcIo6gC9aWij47Q',
-    appId: '1:1015069589191:web:a3a80f075a5b451c6348e2',
-    messagingSenderId: '1015069589191',
-    projectId: 'finance-8f9a0',
-    authDomain: 'finance-8f9a0.firebaseapp.com',
-    storageBucket: 'finance-8f9a0.appspot.com',
-    measurementId: 'G-KCTVT9GC31',
+    apiKey: 'AIzaSyD1UsRKiHJi0hZvzF2wOtGL3MlMjeltpSE',
+    appId: '1:1015064810898:web:ce9aac313c64af43851d4b',
+    messagingSenderId: '1015064810898',
+    projectId: 'personalfinance-36baf',
+    authDomain: 'personalfinance-36baf.firebaseapp.com',
+    storageBucket: 'personalfinance-36baf.appspot.com',
+    measurementId: 'G-YVG4XRGTDG',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCTCK5jhW3PxzRyRJG62Mi34LjZxYNqYws',
-    appId: '1:1015069589191:android:cd96d28153bf7a456348e2',
-    messagingSenderId: '1015069589191',
-    projectId: 'finance-8f9a0',
-    storageBucket: 'finance-8f9a0.appspot.com',
+    apiKey: 'AIzaSyCa-0V2b7APveeSZy5D2ZaN2mYfMvHVJQU',
+    appId: '1:1015064810898:android:f3ea17f67673abdb851d4b',
+    messagingSenderId: '1015064810898',
+    projectId: 'personalfinance-36baf',
+    storageBucket: 'personalfinance-36baf.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyB7SFREibNgYSFJ9S8kiL2sqrPpGZPkLEE',
-    appId: '1:1015069589191:ios:b185cc3b08fd20a96348e2',
-    messagingSenderId: '1015069589191',
-    projectId: 'finance-8f9a0',
-    storageBucket: 'finance-8f9a0.appspot.com',
+    apiKey: 'AIzaSyDG2wOKnH3twjxd8lVVe539Ipad-OJ43SE',
+    appId: '1:1015064810898:ios:8d61a879b0bb15e4851d4b',
+    messagingSenderId: '1015064810898',
+    projectId: 'personalfinance-36baf',
+    storageBucket: 'personalfinance-36baf.appspot.com',
     iosClientId:
-        '1015069589191-9n7qjsmv18cien7l2j4l0tn1i7drof4n.apps.googleusercontent.com',
+        '1015064810898-sc1q6iput7g9vgk189nms1opechcfpk6.apps.googleusercontent.com',
     iosBundleId: 'com.example.personalFinancial',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyB7SFREibNgYSFJ9S8kiL2sqrPpGZPkLEE',
-    appId: '1:1015069589191:ios:b185cc3b08fd20a96348e2',
-    messagingSenderId: '1015069589191',
-    projectId: 'finance-8f9a0',
-    storageBucket: 'finance-8f9a0.appspot.com',
+    apiKey: 'AIzaSyDG2wOKnH3twjxd8lVVe539Ipad-OJ43SE',
+    appId: '1:1015064810898:ios:8d61a879b0bb15e4851d4b',
+    messagingSenderId: '1015064810898',
+    projectId: 'personalfinance-36baf',
+    storageBucket: 'personalfinance-36baf.appspot.com',
     iosClientId:
-        '1015069589191-9n7qjsmv18cien7l2j4l0tn1i7drof4n.apps.googleusercontent.com',
+        '1015064810898-sc1q6iput7g9vgk189nms1opechcfpk6.apps.googleusercontent.com',
     iosBundleId: 'com.example.personalFinancial',
   );
 }
