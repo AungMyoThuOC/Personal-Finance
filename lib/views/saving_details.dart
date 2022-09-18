@@ -162,11 +162,10 @@ class _SavingDetailsState extends State<SavingDetails> {
                                                 widget.saving!.autoID
                                                     .toString(),
                                                 Remaining(
-                                                    int.parse(
-                                                        sliderController.text),
-                                                    date: DateTime.now(),
-                                                    uid: FirebaseAuth.instance
-                                                        .currentUser!.uid));
+                                                  int.parse(
+                                                      sliderController.text),
+                                                  date: DateTime.now(),
+                                                ));
                                             amountController.clear();
                                           },
                                           child: Container(

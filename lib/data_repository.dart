@@ -163,13 +163,6 @@ class DataRepository {
         .snapshots();
   }
 
-  Stream<QuerySnapshot> getMain() {
-    return FirebaseFirestore.instance
-        .collectionGroup('Remaining')
-        .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-        .snapshots();
-  }
-
   Future deleteRemaining(String id, String remainID) async {
     return await ref
         .doc('${FirebaseAuth.instance.currentUser!.email}')
