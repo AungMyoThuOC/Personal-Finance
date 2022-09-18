@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddIncome extends StatefulWidget {
   AddIncome({
-    Key? key, required this.onSubmit,
+    Key? key,
+    required this.onSubmit,
   }) : super(key: key);
 
   final ValueChanged<String> onSubmit;
@@ -126,7 +128,7 @@ class _AddIncomeState extends State<AddIncome> {
                             width: 200,
                             child: TextFormField(
                               keyboardType: TextInputType.text,
-                               autovalidateMode: _submitted
+                              autovalidateMode: _submitted
                                   ? AutovalidateMode.onUserInteraction
                                   : AutovalidateMode.disabled,
                               controller: categoryController,
@@ -244,6 +246,10 @@ class _AddIncomeState extends State<AddIncome> {
                         Container(
                           width: 300,
                           child: TextField(
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             controller: amountController,
                             style: const TextStyle(color: Colors.black),
                             decoration: InputDecoration(
@@ -349,6 +355,9 @@ class _AddIncomeState extends State<AddIncome> {
                                   );
                                   Navigator.popAndPushNamed(context, '/home');
                                 }
+                                // amountController.value.text.isNotEmpty
+                                //   ? _submit
+                                //   : null;
                               },
                               child: const Text(
                                 'Save',

@@ -70,7 +70,7 @@ class HomeHistory extends StatelessWidget {
           dismissible: DismissiblePane(onDismissed: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => EditIncome(
-                      income: income,
+                      income: income, onSubmit: (String value) {  },
                     )));
           }),
           children: [
@@ -79,7 +79,7 @@ class HomeHistory extends StatelessWidget {
               onPressed: (mm) {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => EditIncome(
-                          income: income,
+                          income: income, onSubmit: (String value) {  },
                         )));
               },
               backgroundColor: Color(0xFF7BC043),
