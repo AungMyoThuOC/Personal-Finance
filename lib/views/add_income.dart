@@ -13,7 +13,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddIncome extends StatefulWidget {
   AddIncome({
-    Key? key, required this.onSubmit,
+    Key? key,
+    required this.onSubmit,
   }) : super(key: key);
 
   final ValueChanged<String> onSubmit;
@@ -84,7 +85,7 @@ class _AddIncomeState extends State<AddIncome> {
   @override
   void dispose() {
     categoryController.dispose();
-    // TODO: implement dispose
+
     super.dispose();
   }
 
@@ -94,7 +95,7 @@ class _AddIncomeState extends State<AddIncome> {
     if (text.isEmpty) {
       return "can't be empty";
     }
-    if (text.length > 6) {
+    if (text.length > 7) {
       return "Too long";
     }
     return null;
@@ -126,7 +127,7 @@ class _AddIncomeState extends State<AddIncome> {
                             width: 200,
                             child: TextFormField(
                               keyboardType: TextInputType.text,
-                               autovalidateMode: _submitted
+                              autovalidateMode: _submitted
                                   ? AutovalidateMode.onUserInteraction
                                   : AutovalidateMode.disabled,
                               controller: categoryController,
@@ -353,7 +354,9 @@ class _AddIncomeState extends State<AddIncome> {
                               child: const Text(
                                 'Save',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.white),
                               )),
                         )
                       ],

@@ -12,6 +12,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:personal_financial/Components/remainig_history.dart';
 import 'package:personal_financial/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/safe_area_values.dart';
+import 'package:top_snackbar_flutter/tap_bounce_container.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class SavingDetails extends StatefulWidget {
   SavingDetails({Key? key, required this.saving}) : super(key: key);
@@ -22,16 +26,25 @@ class SavingDetails extends StatefulWidget {
 
 class _SavingDetailsState extends State<SavingDetails> {
   bool check = true;
-  int _currentSlider = 1000;
   AnimateIconController controller = AnimateIconController();
   bool visible = false;
   var opacity = 0.0;
   double remaining = 0;
   double tot = 0;
+
   double result = 0;
   TextEditingController savingController = TextEditingController();
   TextEditingController sliderController = TextEditingController();
+  double sum = 0;
+  double sumOut = 0;
+  double totalOut = 0;
+  double total = 0;
+  double max = 0;
 
+  double resultIn = 0;
+  double value = 0;
+  bool validate = false;
+  double resultOut = 0;
   final DataRepository repository = DataRepository();
 
   TextEditingController amountController = TextEditingController();
@@ -50,7 +63,6 @@ class _SavingDetailsState extends State<SavingDetails> {
         });
         setState(() {
           tot = remaining;
-          print(tot);
         });
       },
     );
@@ -62,129 +74,165 @@ class _SavingDetailsState extends State<SavingDetails> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Future openDialog() => showDialog(
       context: context,
       builder: (context) => StatefulBuilder(builder: ((context, setState) {
-            return AlertDialog(
-              contentPadding: EdgeInsets.only(top: 10.0),
-              title: const Text("Add Remaining"),
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(32.0))),
-              content: Container(
-                  width: 300,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            return StreamBuilder<QuerySnapshot>(
+                stream:
+                    repository.getRemaining(widget.saving!.autoID.toString()),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+                  var ds = snapshot.data!.docs;
+                  double sum = 0.0;
+                  for (int i = 0; i < ds.length; i++)
+                    sum += (ds[i]['amount']).toDouble();
+                  return AlertDialog(
+                    contentPadding: EdgeInsets.only(top: 10.0),
+                    title: const Text("Add Remaining"),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(32.0))),
+                    content: Container(
+                        width: 300,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 30),
-                              child: Text(
-                                "Amount",
-                              ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            const SizedBox(
+                              height: 30,
                             ),
                             Container(
-                              width: 80,
-                              child: TextFormField(
-                                showCursor: true,
-                                readOnly: true,
-                                controller: sliderController,
-                                style: const TextStyle(fontSize: 20),
-                                decoration: const InputDecoration(
-                                  hintText: "100",
-                                  hintStyle: TextStyle(fontSize: 20),
-                                  border: InputBorder.none,
-                                ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: const [
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 30),
+                                    child: Text(
+                                      "Amount",
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      Slider(
-                        value: _currentSlider.toDouble(),
-                        min: 1000,
-                        max: 30000,
-                        label: _currentSlider.round().toString(),
-                        onChanged: (double value) {
-                          setState(() {
-                            _currentSlider = value.toInt();
-                            print(_currentSlider);
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 30),
+                              child: TextField(
+                                controller: sliderController,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            StreamBuilder<QuerySnapshot>(
+                                stream: repository.getIn(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return CircularProgressIndicator();
+                                  }
+                                  var ds = snapshot.data!.docs;
 
-                            sliderController.text = _currentSlider.toString();
-                          });
-                        },
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.pop(
-                            context,
-                          );
-                          DataRepository().updateRemaining(
-                              widget.saving!.autoID.toString(),
-                              Remaining(
-                                _currentSlider,
-                                date: DateTime.now(),
-                              ));
-                        },
-                        child: Container(
-                          padding:
-                              const EdgeInsets.only(top: 15.0, bottom: 15.0),
-                          decoration: const BoxDecoration(
-                            color: Colors.blueAccent,
-                            borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(32.0),
-                                bottomRight: Radius.circular(32.0)),
-                          ),
-                          child: const Text(
-                            "Save",
-                            style: TextStyle(color: Colors.white),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
-            );
+                                  double sum = 0.0;
+                                  for (int i = 0; i < ds.length; i++) {
+                                    sum += (ds[i]['amount']).toDouble();
+                                  }
+                                  return StreamBuilder<QuerySnapshot>(
+                                      stream: repository.getOut(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircularProgressIndicator();
+                                        }
+                                        var ds = snapshot.data!.docs;
+
+                                        double sum = 0.0;
+                                        for (int i = 0; i < ds.length; i++) {
+                                          sum += (ds[i]['amount']).toDouble();
+                                        }
+                                        return InkWell(
+                                          onTap: () {
+                                            Navigator.of(context).pop();
+                                            DataRepository().updateRemaining(
+                                                widget.saving!.autoID
+                                                    .toString(),
+                                                Remaining(
+                                                    int.parse(
+                                                        sliderController.text),
+                                                    date: DateTime.now(),
+                                                    uid: FirebaseAuth.instance
+                                                        .currentUser!.uid));
+                                            amountController.clear();
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.only(
+                                                top: 15.0, bottom: 15.0),
+                                            decoration: const BoxDecoration(
+                                              color: Colors.blueAccent,
+                                              borderRadius: BorderRadius.only(
+                                                  bottomLeft:
+                                                      Radius.circular(32.0),
+                                                  bottomRight:
+                                                      Radius.circular(32.0)),
+                                            ),
+                                            child: const Text(
+                                              "Save",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        );
+                                      });
+                                }),
+                          ],
+                        )),
+                  );
+                });
           })));
-  void save() {
-    Navigator.pop(
-      context,
-    );
-    amountController.clear();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton: SizedBox(
-          width: 45,
-          child: FloatingActionButton(
-              elevation: 0,
-              onPressed: () {
-                openDialog();
-              },
-              child: const Icon(
-                Icons.add,
-                color: Colors.white,
-              )),
-        ),
+        floatingActionButton: StreamBuilder<QuerySnapshot>(
+            stream: repository.getIn(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              }
+              var ds = snapshot.data!.docs;
+
+              double sum = 0.0;
+              for (int i = 0; i < ds.length; i++)
+                sum += (ds[i]['amount']).toDouble();
+              print(sum);
+              return SizedBox(
+                width: 45,
+                child: FloatingActionButton(
+                    elevation: 0,
+                    onPressed: (sum == 0)
+                        ? () {
+                            showTopSnackBar(
+                              context,
+                              const CustomSnackBar.error(
+                                message: "Please Add Income First",
+                              ),
+                            );
+                          }
+                        : () {
+                            openDialog();
+                          },
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    )),
+              );
+            }),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -226,64 +274,86 @@ class _SavingDetailsState extends State<SavingDetails> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          CircularPercentIndicator(
-                            progressColor: Colors.greenAccent,
-                            radius: 60.0,
-                            lineWidth: 13.0,
-                            animation: true,
-                            percent:
-                                (tot == 0) ? 0 : tot / widget.saving!.amount,
-                            center: StreamBuilder<QuerySnapshot>(
-                                stream: repository.getRemaining(
-                                    widget.saving!.autoID.toString()),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
-                                  }
-                                  var ds = snapshot.data!.docs;
+                          StreamBuilder<QuerySnapshot>(
+                              stream: repository.getRemaining(
+                                  widget.saving!.autoID.toString()),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return CircularProgressIndicator();
+                                }
+                                var ds = snapshot.data!.docs;
 
-                                  double sum = 0.0;
-                                  for (int i = 0; i < ds.length; i++) {
-                                    sum += (ds[i]['amount']).toDouble();
-                                  }
-                                  return Text(
-                                    '${(sum / widget.saving!.amount * 100).toStringAsFixed(2)}%',
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  );
-                                }),
-                            footer: Column(
-                              children: [
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                StreamBuilder<QuerySnapshot>(
-                                    stream: repository.getRemaining(
-                                        widget.saving!.autoID.toString()),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return CircularProgressIndicator();
-                                      }
-                                      var ds = snapshot.data!.docs;
-                                      double sum = 0.0;
-                                      for (int i = 0; i < ds.length; i++)
-                                        sum += (ds[i]['amount']).toDouble();
-                                      return Text(
-                                        '${sum}/${widget.saving!.amount}MMK',
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                        ),
-                                      );
-                                    }),
-                              ],
-                            ),
-                            circularStrokeCap: CircularStrokeCap.round,
-                          )
+                                double sum = 0.0;
+                                for (int i = 0; i < ds.length; i++)
+                                  sum += (ds[i]['amount']).toDouble();
+
+                                return CircularPercentIndicator(
+                                  progressColor: Colors.greenAccent,
+                                  radius: 60.0,
+                                  lineWidth: 13.0,
+                                  animation: true,
+                                  percent: sum / widget.saving!.amount,
+                                  center: StreamBuilder<QuerySnapshot>(
+                                      stream: repository.getRemaining(
+                                          widget.saving!.autoID.toString()),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircularProgressIndicator();
+                                        }
+                                        var ds = snapshot.data!.docs;
+
+                                        double sum = 0.0;
+                                        for (int i = 0; i < ds.length; i++) {
+                                          sum += (ds[i]['amount']).toDouble();
+                                        }
+                                        return Text(
+                                          '${(sum / widget.saving!.amount * 100).toStringAsFixed(2)}%',
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        );
+                                      }),
+                                  footer: Column(
+                                    children: [
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      StreamBuilder<QuerySnapshot>(
+                                          stream: repository.getRemaining(
+                                              widget.saving!.autoID.toString()),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return CircularProgressIndicator();
+                                            }
+                                            var ds = snapshot.data!.docs;
+                                            double sum = 0.0;
+                                            for (int i = 0; i < ds.length; i++)
+                                              sum +=
+                                                  (ds[i]['amount']).toDouble();
+                                            return Text(
+                                              '${sum}/${widget.saving!.amount}MMK',
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16,
+                                              ),
+                                            );
+                                          }),
+                                    ],
+                                  ),
+                                  circularStrokeCap: CircularStrokeCap.round,
+                                );
+                                // return Text(
+                                //   '${(sum / widget.saving!.amount * 100).toStringAsFixed(2)}%',
+                                //   style: const TextStyle(
+                                //       color: Colors.black,
+                                //       fontSize: 18,
+                                //       fontWeight: FontWeight.bold),
+                                // );
+                              }),
                         ],
                       ),
                     ),
@@ -368,8 +438,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                 ),
               ),
               Container(
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.3,
+                height: MediaQuery.of(context).size.height * 0.32,
                 child: StreamBuilder<QuerySnapshot>(
                     stream: repository
                         .getRemaining(widget.saving!.autoID.toString()),

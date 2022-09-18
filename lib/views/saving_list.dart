@@ -323,23 +323,8 @@ class _SavingListState extends State<SavingList> {
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  fontSize: 16),
-                                                            )),
-                                                      ),
-                                                      Container(
-                                                        width: 100,
-                                                        height: 35,
-                                                        child: ElevatedButton(
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            child: const Text(
-                                                              'Cancel',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                                                  color: Colors
+                                                                      .white,
                                                                   fontSize: 16),
                                                             )),
                                                       ),
@@ -378,34 +363,50 @@ class _SavingListState extends State<SavingList> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: LinearPercentIndicator(
-                        animation: true,
-                        lineHeight: 12,
-                        animationDuration: 2000,
-                        percent: 1,
-                        barRadius: const Radius.circular(10),
-                        center: StreamBuilder<QuerySnapshot>(
-                            stream: repository
-                                .getRemaining(widget.saving.autoID.toString()),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return CircularProgressIndicator();
-                              }
-                              var ds = snapshot.data!.docs;
+                      child: StreamBuilder<QuerySnapshot>(
+                          stream: repository
+                              .getRemaining(widget.saving.autoID.toString()),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            }
+                            var ds = snapshot.data!.docs;
 
-                              double sum = 0.0;
-                              for (int i = 0; i < ds.length; i++) {
-                                sum += (ds[i]['amount']).toDouble();
-                              }
-                              return Text(
-                                '${(sum / widget.saving.amount * 100).toStringAsFixed(2)}%',
-                                style: const TextStyle(
-                                    color: Colors.black, fontSize: 10),
-                              );
-                            }),
-                        progressColor: Colors.greenAccent,
-                      ),
+                            double sum = 0.0;
+                            for (int i = 0; i < ds.length; i++) {
+                              sum += (ds[i]['amount']).toDouble();
+                            }
+                            return LinearPercentIndicator(
+                              animation: true,
+                              lineHeight: 12,
+                              animationDuration: 2000,
+                              percent: sum / widget.saving.amount,
+                              barRadius: const Radius.circular(10),
+                              center: StreamBuilder<QuerySnapshot>(
+                                  stream: repository.getRemaining(
+                                      widget.saving.autoID.toString()),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return CircularProgressIndicator();
+                                    }
+                                    var ds = snapshot.data!.docs;
+
+                                    double sum = 0.0;
+                                    for (int i = 0; i < ds.length; i++) {
+                                      sum += (ds[i]['amount']).toDouble();
+                                    }
+                                    return Text(
+                                      '${(sum / widget.saving.amount * 100).toStringAsFixed(2)}%',
+                                      style: const TextStyle(
+                                          color: Colors.black, fontSize: 10),
+                                    );
+                                  }),
+                              progressColor: Colors.greenAccent,
+                            );
+                          }),
+                      //
                     ),
                   ],
                 ),

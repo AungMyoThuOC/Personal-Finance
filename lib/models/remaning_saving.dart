@@ -9,11 +9,9 @@ class Remaining {
   int amount;
   DateTime date;
   String? remainID;
+  String uid;
 
-  Remaining(
-    this.amount, {
-    required this.date,
-  });
+  Remaining(this.amount, {required this.date, required this.uid});
 
   factory Remaining.fromJson(Map<String, dynamic> json) =>
       _incomeFromJson(json);
@@ -22,7 +20,7 @@ class Remaining {
     final newSaving =
         Remaining.fromJson(snapshot.data() as Map<String, dynamic>);
     newSaving.remainID = snapshot.reference.id;
-    print(newSaving.remainID);
+
     return newSaving;
   }
 
@@ -30,13 +28,12 @@ class Remaining {
 }
 
 Remaining _incomeFromJson(Map<String, dynamic> json) {
-  return Remaining(
-    json['amount'] as int,
-    date: (json['date'] as Timestamp).toDate(),
-  );
+  return Remaining(json['amount'] as int,
+      date: (json['date'] as Timestamp).toDate(), uid: json['uid'] as String);
 }
 
 Map<String, dynamic> _incomeToJson(Remaining instance) => <String, dynamic>{
       'amount': instance.amount,
       'date': instance.date,
+      'uid': instance.uid
     };

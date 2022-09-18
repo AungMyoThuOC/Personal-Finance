@@ -31,6 +31,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
   Future<void> getCollectionData() async {
     await FirebaseFirestore.instance
         .collectionGroup('Remaining')
+        .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
         .get()
         .then((QuerySnapshot snapshot) {
       final docs = snapshot.docs;
