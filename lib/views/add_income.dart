@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
@@ -250,6 +251,10 @@ class _AddIncomeState extends State<AddIncome> {
                         Container(
                           width: 300,
                           child: TextField(
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             controller: amountController,
                             style: const TextStyle(color: Colors.black),
                             decoration: InputDecoration(
@@ -416,6 +421,9 @@ class _AddIncomeState extends State<AddIncome> {
                                   );
                                   Navigator.popAndPushNamed(context, '/home');
                                 }
+                                // amountController.value.text.isNotEmpty
+                                //   ? _submit
+                                //   : null;
                               },
                               child: const Text(
                                 'Save',

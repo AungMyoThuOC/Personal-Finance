@@ -131,7 +131,7 @@ class _HomeHistoryState extends State<HomeHistory> {
                                       showTopSnackBar(
                                         context,
                                         const CustomSnackBar.error(
-                                          message: "You can't delete",
+                                          message: "Your can't delete",
                                         ),
                                       );
                                     }

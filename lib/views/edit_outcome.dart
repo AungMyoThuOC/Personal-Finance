@@ -17,8 +17,11 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:animate_icons/animate_icons.dart';
 
 class EditIncome extends StatefulWidget {
-  EditIncome({Key? key, required this.income}) : super(key: key);
+  EditIncome({Key? key, required this.income, required this.onSubmit})
+      : super(key: key);
   final Income income;
+  final ValueChanged<String> onSubmit;
+
   @override
   State<EditIncome> createState() => _AddIncomeState();
 }
@@ -74,6 +77,36 @@ class _AddIncomeState extends State<EditIncome> {
         Category(name: categoryController.text, icon: indexOne, income: false));
   }
 
+  var text = '';
+
+  bool _submmitted = false;
+
+  void _submit() {
+    setState(() => _submmitted = true);
+    if (_errorText == null) {
+      widget.onSubmit(categoryController.value.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    categoryController.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  String? get _errorText {
+    final text = categoryController.value.text;
+
+    if (text.isEmpty) {
+      return "Can't be empty";
+    }
+    if (text.length > 6) {
+      return "Too long";
+    }
+    return null;
+  }
+
   @override
   void initState() {
     amountController.text = widget.income.amount.toString();
@@ -104,7 +137,11 @@ class _AddIncomeState extends State<EditIncome> {
                           Icon(navBarItem[indexOne]),
                           SizedBox(
                             width: 200,
-                            child: TextField(
+                            child: TextFormField(
+                              keyboardType: TextInputType.text,
+                              autovalidateMode: _submmitted
+                                  ? AutovalidateMode.onUserInteraction
+                                  : AutovalidateMode.disabled,
                               controller: categoryController,
                               style: const TextStyle(color: Colors.black),
                               decoration: InputDecoration(
@@ -125,6 +162,7 @@ class _AddIncomeState extends State<EditIncome> {
                                           Color.fromARGB(255, 177, 177, 177)),
                                 ),
                               ),
+                              onChanged: (text) => setState(() => text),
                             ),
                           ),
                         ],
