@@ -194,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage>
                   child: ViewSaving(),
                 )
               ]),
-          persistentContentHeight: MediaQuery.of(context).size.height * 0.3,
+          persistentContentHeight: MediaQuery.of(context).size.height * 0.25,
           persistentHeader: (bottomNavigator == true)
               ? Container(
                   decoration: BoxDecoration(
@@ -248,9 +248,8 @@ class _MyHomePageState extends State<MyHomePage>
               : null,
           expandableContent: (bottomNavigator == true)
               ? Container(
-                  color: Colors.white,
-                  constraints: BoxConstraints(maxHeight: 500),
                   height: 500,
+                  color: Colors.white,
                   child: Container(
                     child: Padding(
                         padding: const EdgeInsets.symmetric(

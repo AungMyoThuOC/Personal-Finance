@@ -16,127 +16,117 @@ class PieChart extends StatefulWidget {
 }
 
 class _PieChartState extends State<PieChart> {
-  double sum = 0;
-  double sumOut = 0;
-  double totalOut = 0;
-  double total = 0;
-  double sumSave = 0;
-  double totalSave = 0;
-  double resultIn = 0;
-  double resultOut = 0;
-  double saving = 0;
-  double tot = 0;
   final DataRepository repository = DataRepository();
-
-  void getOutcomeSum() {
-    FirebaseFirestore.instance
-        .collection('User')
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
-        .collection('Income')
-        .where('income', isEqualTo: false)
-        .get()
-        .then(
-      (StreamBuilder) {
-        StreamBuilder.docs.forEach((result) {
-          sumOut = sumOut + result.data()['amount'];
-        });
-        setState(() {
-          totalOut = sumOut;
-        });
-      },
-    );
-  }
-
-  void getIncomeSum() {
-    FirebaseFirestore.instance
-        .collection('User')
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
-        .collection('Income')
-        .where('income', isEqualTo: true)
-        .get()
-        .then(
-      (StreamBuilder) {
-        StreamBuilder.docs.forEach((result) {
-          sum = sum + result.data()['amount'];
-        });
-        setState(() {
-          total = sum;
-        });
-      },
-    );
-  }
-
-  Future<void> getSavingSum() async {
-    await FirebaseFirestore.instance
-        .collectionGroup('Remaining')
-        .get()
-        .then((StreamBuilder) {
-      StreamBuilder.docs.forEach((result) {
-        sumSave = sumSave + result.data()['amount'];
-        print(result.data()['amount']);
-      });
-      setState(() {
-        totalSave = sumSave;
-        print("?????$totalSave");
-      });
-    });
-  }
 
   @override
   void initState() {
-    getIncomeSum();
-    getOutcomeSum();
-    getSavingSum();
-    getPercent();
     super.initState();
   }
 
-  @override
-  void getPercent() {
-    setState(() {
-      resultOut == totalOut;
-      print(resultOut);
-    });
-  }
-
   Widget build(BuildContext context) {
-    final List<ChartData> chartData = [
-      ChartData(
-          'Income',
-          (total == 0)
-              ? 1
-              : (totalSave == 0)
-                  ? (((total - totalOut) * 100) / total)
-                  : (((total - (totalOut + totalSave)) * 100) / total) / 10,
-          '${(total == 0) ? 0 : (totalSave == 0) ? (((total - totalOut) * 100) / total) : (((total - (totalOut + totalSave)) * 100) / total).toStringAsFixed(1)}%'),
-      ChartData(
-          'Outcome',
-          (total == 0)
-              ? 1
-              : (((totalOut == 0) ? 1 : ((totalOut / total) * 100))) / 10,
-          '${((total == 0) ? 0 : (totalOut == 0 ? 0 : ((totalOut / total) * 100)).toStringAsFixed(1))}%'),
-      ChartData(
-          'Saving',
-          (total == 0)
-              ? 1
-              : (((totalSave == 0) ? 0 : ((totalSave / total) * 100))) / 10,
-          '${((total == 0) ? 0 : (totalSave == 0 ? 0 : ((totalSave / total) * 100)).toStringAsFixed(1))}%'),
-    ];
-    return Container(
-        child: SfCircularChart(
-            legend: Legend(isVisible: true),
-            series: <CircularSeries>[
-          PieSeries<ChartData, String>(
-            legendIconType: LegendIconType.rectangle,
-            dataLabelSettings: const DataLabelSettings(
-              isVisible: true,
-            ),
-            dataSource: chartData,
-            xValueMapper: (ChartData data, _) => data.x,
-            yValueMapper: (ChartData data, _) => data.y,
-            dataLabelMapper: (ChartData data, _) => data.size,
-          ),
-        ]));
+    return StreamBuilder<QuerySnapshot>(
+        stream: repository.getIn(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          }
+          var ds = snapshot.data!.docs;
+
+          double total = 0.0;
+          for (int i = 0; i < ds.length; i++)
+            total += (ds[i]['amount']).toDouble();
+
+          return StreamBuilder<QuerySnapshot>(
+              stream: repository.getOut(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+                var ds = snapshot.data!.docs;
+
+                double totalOut = 0.0;
+                for (int i = 0; i < ds.length; i++)
+                  totalOut += (ds[i]['amount']).toDouble();
+                return StreamBuilder<QuerySnapshot>(
+                    stream: repository.getMain(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      }
+                      var ds = snapshot.data!.docs;
+
+                      double sumTwo = 0.0;
+                      for (int i = 0; i < ds.length; i++)
+                        sumTwo += (ds[i]['amount']).toDouble();
+                      return StreamBuilder<QuerySnapshot>(
+                          stream: repository.getmain(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            }
+                            var ds = snapshot.data!.docs;
+
+                            double totalSave = 0.0;
+                            for (int i = 0; i < ds.length; i++)
+                              totalSave += (ds[i]['amount']).toDouble();
+
+                            return Container(
+                                child: SfCircularChart(
+                                    legend: Legend(isVisible: true),
+                                    series: <CircularSeries>[
+                                  PieSeries<ChartData, String>(
+                                    legendIconType: LegendIconType.rectangle,
+                                    dataLabelSettings: const DataLabelSettings(
+                                      isVisible: true,
+                                    ),
+                                    dataSource: [
+                                      ChartData(
+                                          'Income',
+                                          (total == 0)
+                                              ? 1
+                                              : (totalSave == 0)
+                                                  ? (((total - totalOut) *
+                                                          100) /
+                                                      total)
+                                                  : (((total -
+                                                                  (totalOut +
+                                                                      totalSave)) *
+                                                              100) /
+                                                          total) /
+                                                      10,
+                                          '${(total == 0) ? 0 : (totalSave == 0) ? (((total - totalOut) * 100) / total).toStringAsFixed(1) : (((total - (totalOut + totalSave)) * 100) / total).toStringAsFixed(1)}%'),
+                                      ChartData(
+                                          'Outcome',
+                                          (total == 0)
+                                              ? 1
+                                              : (((totalOut == 0)
+                                                      ? 1
+                                                      : ((totalOut / total) *
+                                                          100))) /
+                                                  10,
+                                          '${((total == 0) ? 0 : (totalOut == 0 ? 0 : ((totalOut / total) * 100)).toStringAsFixed(1))}%'),
+                                      ChartData(
+                                          'Saving',
+                                          (total == 0)
+                                              ? 1
+                                              : (((totalSave == 0)
+                                                      ? 0
+                                                      : ((totalSave / total) *
+                                                          100))) /
+                                                  10,
+                                          '${((total == 0) ? 0 : (totalSave == 0 ? 0 : ((totalSave / total) * 100)).toStringAsFixed(1))}%'),
+                                    ],
+                                    xValueMapper: (ChartData data, _) => data.x,
+                                    yValueMapper: (ChartData data, _) => data.y,
+                                    dataLabelMapper: (ChartData data, _) =>
+                                        data.size,
+                                  ),
+                                ]));
+                          });
+                    });
+              });
+        });
   }
 }
 

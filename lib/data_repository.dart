@@ -115,6 +115,14 @@ class DataRepository {
         .delete();
   }
 
+  Future deleteCategory(String id) async {
+    return await ref
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Category')
+        .doc(id)
+        .delete();
+  }
+
   Stream<QuerySnapshot> getIncome() {
     return ref
         .doc('${FirebaseAuth.instance.currentUser!.email}')
@@ -147,10 +155,19 @@ class DataRepository {
         .snapshots();
   }
 
-  Stream<QuerySnapshot> getCategory() {
+  Stream<QuerySnapshot> getCategoryIncome() {
     return ref
         .doc('${FirebaseAuth.instance.currentUser!.email}')
         .collection('Category')
+        .where('income', isEqualTo: true)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getCategoryOut() {
+    return ref
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Category')
+        .where('income', isEqualTo: false)
         .snapshots();
   }
 
@@ -161,6 +178,17 @@ class DataRepository {
         .doc(id)
         .collection("Remaining")
         .snapshots();
+  }
+
+  Stream<QuerySnapshot> getMain() {
+    return ref
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Saving')
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getmain() {
+    return FirebaseFirestore.instance.collectionGroup('Remaining').snapshots();
   }
 
   Future deleteRemaining(String id, String remainID) async {
@@ -183,7 +211,7 @@ class DataRepository {
 
   Future deleteAll() async {
     return await ref
-        .doc('${FirebaseAuth.instance.currentUser!.email}m')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
         .delete();
   }
 

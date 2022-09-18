@@ -38,7 +38,7 @@ class _AddInOutState extends State<AddInOut>
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           IconButton(
               onPressed: () {
-                Navigator.pop(context, '/home');
+                Navigator.popAndPushNamed(context, '/home');
               },
               icon: const Icon(
                 Icons.arrow_back,
@@ -84,7 +84,14 @@ class _AddInOutState extends State<AddInOut>
       body: TabBarView(
         physics: NeverScrollableScrollPhysics(),
         controller: controller,
-        children: [AddIncome(onSubmit: (String value) {  },), AddOutcome(onSubmit: (String value) {  },)],
+        children: [
+          AddIncome(
+            onSubmit: (String value) {},
+          ),
+          AddOutcome(
+            onSubmit: (String value) {},
+          )
+        ],
       ),
     );
   }

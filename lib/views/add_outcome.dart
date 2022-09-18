@@ -10,6 +10,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/safe_area_values.dart';
+import 'package:top_snackbar_flutter/tap_bounce_container.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:animate_icons/animate_icons.dart';
 
 class AddOutcome extends StatefulWidget {
   AddOutcome({
@@ -29,10 +35,14 @@ class _AddIncomeState extends State<AddOutcome> {
   TextEditingController amountController = TextEditingController();
   TextEditingController noteController = TextEditingController();
   int iconNum = 0;
+  double sumRemain = 0;
+  double totRemain = 0;
   bool choose = true;
   int indexOne = 0;
+  AnimateIconController animatedController = AnimateIconController();
   int state = 0;
   int result = 0;
+  bool checkDelete = false;
   String catName = '';
   List<IconData> navBarItem = [
     Icons.family_restroom,
@@ -67,8 +77,32 @@ class _AddIncomeState extends State<AddOutcome> {
   List<dynamic> list = [];
   TabController? controller;
   void add() {
-    DataRepository()
-        .addCategory(Category(name: categoryController.text, icon: indexOne));
+    DataRepository().addCategory(
+        Category(name: categoryController.text, icon: indexOne, income: false));
+  }
+
+  Future<void> getCollectionData() async {
+    await FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Saving')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        FirebaseFirestore.instance
+            .collectionGroup('Remaining')
+            .get()
+            .then((value) {
+          value.docs.forEach((result) {
+            sumRemain = sumRemain + result.data()['amount'];
+            print(sumRemain);
+          });
+          setState(() {
+            totRemain = sumRemain;
+          });
+        });
+      });
+    });
   }
 
   var text = '';
@@ -80,13 +114,6 @@ class _AddIncomeState extends State<AddOutcome> {
     if (_errorText == null) {
       widget.onSubmit(categoryController.value.text);
     }
-  }
-
-  @override
-  void dispose() {
-    categoryController.dispose();
-    // TODO: implement dispose
-    super.dispose();
   }
 
   String? get _errorText {
@@ -280,17 +307,41 @@ class _AddIncomeState extends State<AddOutcome> {
                                 style: TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold),
                               ),
-                              CircleAvatar(
-                                radius: 18,
-                                child: IconButton(
-                                  splashRadius: 22,
-                                  onPressed: () {
-                                    openDialog();
-                                  },
-                                  icon: const Icon(Icons.add),
-                                  iconSize: 18,
-                                ),
-                              ),
+                              Row(
+                                children: [
+                                  AnimateIcons(
+                                    startIcon: Icons.cancel,
+                                    endIcon: Icons.cancel_outlined,
+                                    size: 42.0,
+                                    controller: animatedController,
+                                    onStartIconPress: () {
+                                      setState(() {
+                                        checkDelete = true;
+                                      });
+                                      return true;
+                                    },
+                                    onEndIconPress: () {
+                                      setState(() {
+                                        checkDelete = false;
+                                      });
+                                      return true;
+                                    },
+                                    duration: Duration(milliseconds: 500),
+                                    clockwise: false,
+                                  ),
+                                  CircleAvatar(
+                                    radius: 18,
+                                    child: IconButton(
+                                      splashRadius: 22,
+                                      onPressed: () {
+                                        openDialog();
+                                      },
+                                      icon: const Icon(Icons.add),
+                                      iconSize: 18,
+                                    ),
+                                  ),
+                                ],
+                              )
                             ]),
                         const SizedBox(
                           height: 35,
@@ -299,7 +350,7 @@ class _AddIncomeState extends State<AddOutcome> {
                           width: 400,
                           height: 200,
                           child: StreamBuilder<QuerySnapshot>(
-                              stream: DataRepository().getCategory(),
+                              stream: DataRepository().getCategoryOut(),
                               builder: (context, snapshot) {
                                 if (!snapshot.hasData)
                                   return LinearProgressIndicator();
@@ -313,14 +364,51 @@ class _AddIncomeState extends State<AddOutcome> {
                                             AlwaysScrollableScrollPhysics()),
                                     crossAxisCount: 2,
                                     children: snapshot.data!.docs
-                                        .map((e) => MyCategory(
-                                            onClicked: (state, name) {
-                                              setState(() {
-                                                result = state;
-                                                catName = name;
-                                              });
-                                            },
-                                            category: Category.fromSnapshot(e)))
+                                        .map(
+                                          (e) => StreamBuilder<QuerySnapshot>(
+                                              stream: DataRepository().getOut(),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return CircularProgressIndicator();
+                                                }
+                                                var ds = snapshot.data!.docs;
+
+                                                List sum = [];
+                                                for (int i = 0;
+                                                    i < ds.length;
+                                                    i++)
+                                                  sum.add(ds[i]['catName']);
+
+                                                return MyCategory(
+                                                  delete: checkDelete,
+                                                  onClicked: (state, name) {
+                                                    setState(() {
+                                                      result = state;
+                                                      catName = name;
+                                                    });
+                                                  },
+                                                  category:
+                                                      Category.fromSnapshot(e),
+                                                  deleteClick: (sum == [])
+                                                      ? (autoID) {
+                                                          DataRepository()
+                                                              .deleteCategory(
+                                                                  autoID);
+                                                        }
+                                                      : (autoID) {
+                                                          showTopSnackBar(
+                                                            context,
+                                                            const CustomSnackBar
+                                                                .error(
+                                                              message:
+                                                                  "This category used in Outcome",
+                                                            ),
+                                                          );
+                                                        },
+                                                );
+                                              }),
+                                        )
                                         .toList());
                               }),
                         ),
@@ -330,30 +418,132 @@ class _AddIncomeState extends State<AddOutcome> {
                         Container(
                           width: 200,
                           height: 40,
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                elevation: 15.0,
-                              ),
-                              onPressed: () {
-                                if (amountController.text != null &&
-                                    categoryController.text != null) {
-                                  DataRepository().addIncome(Income(
-                                      int.parse(amountController.text),
-                                      date: DateTime.now(),
-                                      category: state.toString(),
-                                      income: false,
-                                      catName: catName));
-                                  Navigator.popAndPushNamed(context, '/home');
+                          child: StreamBuilder<QuerySnapshot>(
+                              stream: DataRepository().getIn(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return CircularProgressIndicator();
                                 }
-                              },
-                              child: const Text(
-                                'Save',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
-                              )),
+                                var ds = snapshot.data!.docs;
+
+                                double sumOne = 0.0;
+                                for (int i = 0; i < ds.length; i++)
+                                  sumOne += (ds[i]['amount']).toDouble();
+
+                                return StreamBuilder<QuerySnapshot>(
+                                    stream: DataRepository().getOut(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return CircularProgressIndicator();
+                                      }
+                                      var ds = snapshot.data!.docs;
+
+                                      double sum = 0.0;
+                                      for (int i = 0; i < ds.length; i++)
+                                        sum += (ds[i]['amount']).toDouble();
+                                      return StreamBuilder<QuerySnapshot>(
+                                          stream: DataRepository().getMain(),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return CircularProgressIndicator();
+                                            }
+                                            var ds = snapshot.data!.docs;
+
+                                            double sumTwo = 0.0;
+                                            for (int i = 0; i < ds.length; i++)
+                                              sumTwo +=
+                                                  (ds[i]['amount']).toDouble();
+                                            return StreamBuilder<QuerySnapshot>(
+                                                stream:
+                                                    DataRepository().getmain(),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return CircularProgressIndicator();
+                                                  }
+                                                  var ds = snapshot.data!.docs;
+
+                                                  double totRemain = 0.0;
+                                                  for (int i = 0;
+                                                      i < ds.length;
+                                                      i++)
+                                                    totRemain += (ds[i]
+                                                            ['amount'])
+                                                        .toDouble();
+                                                  print(sum);
+                                                  return ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(25),
+                                                        ),
+                                                        elevation: 15.0,
+                                                      ),
+                                                      onPressed: (sumOne == 0)
+                                                          ? () {
+                                                              showTopSnackBar(
+                                                                context,
+                                                                CustomSnackBar
+                                                                    .error(
+                                                                  message:
+                                                                      "Your income left  ${sumOne - (sum + totRemain)}",
+                                                                ),
+                                                              );
+                                                            }
+                                                          : () {
+                                                              if (int.parse(
+                                                                      amountController
+                                                                          .text) >
+                                                                  (sumOne -
+                                                                      (sum +
+                                                                          totRemain))) {
+                                                                showTopSnackBar(
+                                                                  context,
+                                                                  CustomSnackBar
+                                                                      .error(
+                                                                    message:
+                                                                        "Your income left  ${sumOne - (sum + totRemain)}",
+                                                                  ),
+                                                                );
+                                                              } else {
+                                                                DataRepository().addIncome(Income(
+                                                                    int.parse(
+                                                                        amountController
+                                                                            .text),
+                                                                    date: DateTime
+                                                                        .now(),
+                                                                    category: state
+                                                                        .toString(),
+                                                                    income:
+                                                                        false,
+                                                                    catName:
+                                                                        catName));
+                                                                Navigator
+                                                                    .popAndPushNamed(
+                                                                        context,
+                                                                        '/home');
+                                                              }
+                                                            },
+                                                      child: const Text(
+                                                        'Save',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 16,
+                                                            color:
+                                                                Colors.white),
+                                                      ));
+                                                });
+                                          });
+                                    });
+                              }),
                         )
                       ],
                     ),
@@ -367,11 +557,17 @@ class _AddIncomeState extends State<AddOutcome> {
 }
 
 class MyCategory extends StatefulWidget {
-  MyCategory({Key? key, required this.category, required this.onClicked})
+  MyCategory(
+      {Key? key,
+      required this.category,
+      required this.onClicked,
+      required this.delete,
+      required this.deleteClick})
       : super(key: key);
   final Category category;
   final Function onClicked;
-
+  final Function deleteClick;
+  bool delete = false;
   @override
   State<MyCategory> createState() => _MyCategoryState();
 }
@@ -406,7 +602,6 @@ class _MyCategoryState extends State<MyCategory> {
     Icons.monetization_on,
     Icons.ac_unit_sharp,
   ];
-  bool isActive = false;
 
   set categoryController(icon) {
     icon = widget.category.icon;
@@ -420,16 +615,29 @@ class _MyCategoryState extends State<MyCategory> {
           CircleAvatar(
             radius: 25,
             child: IconButton(
-              onPressed: () {
-                widget.onClicked(widget.category.icon, widget.category.name);
-              },
-              icon: Icon(navBarItem[widget.category.icon]),
+              onPressed: (widget.delete == false)
+                  ? () {
+                      widget.onClicked(
+                          widget.category.icon, widget.category.name);
+                    }
+                  : () {
+                      widget.deleteClick(widget.category.autoID);
+                    },
+              icon: (widget.delete == false)
+                  ? Icon(navBarItem[widget.category.icon])
+                  : const Icon(
+                      Icons.close,
+                      color: Colors.redAccent,
+                    ),
             ),
+          ),
+          SizedBox(
+            height: 10,
           ),
           Text(
             widget.category.name,
             style: TextStyle(fontSize: 14),
-          )
+          ),
         ],
       ),
     );

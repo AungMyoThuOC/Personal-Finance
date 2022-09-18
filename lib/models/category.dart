@@ -7,8 +7,9 @@ class Category {
   String name;
   int icon;
   String? autoID;
+  bool income;
 
-  Category({required this.name, required this.icon});
+  Category({required this.name, required this.icon, required this.income});
 
   factory Category.fromJson(Map<String, dynamic> json) => _incomeFromJson(json);
 
@@ -26,10 +27,14 @@ class Category {
 }
 
 Category _incomeFromJson(Map<String, dynamic> json) {
-  return Category(name: json['name'] as String, icon: json['icon'] as int);
+  return Category(
+      name: json['name'] as String,
+      icon: json['icon'] as int,
+      income: json['income'] as bool);
 }
 
 Map<String, dynamic> _incomeToJson(Category instance) => <String, dynamic>{
       'name': instance.name,
       'icon': instance.icon,
+      'income': instance.income
     };

@@ -34,24 +34,6 @@ class _SavingListState extends State<SavingList> {
 
   double tot = 0;
   final DataRepository repository = DataRepository();
-  void getRemaining() {
-    FirebaseFirestore.instance
-        .collection('User')
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
-        .collection('Saving')
-        .doc(widget.saving.autoID)
-        .collection('Remaining')
-        .get()
-        .then(
-      (str) {
-        str.docs.forEach((result) {
-          setState(() {
-            tot = tot + result.data()['amount'];
-          });
-        });
-      },
-    );
-  }
 
   void deleteRemain(String id) {
     FirebaseFirestore.instance
@@ -72,7 +54,6 @@ class _SavingListState extends State<SavingList> {
 
   @override
   void initState() {
-    getRemaining();
     savingController.text = widget.saving.target;
     sliderController.text = widget.saving.amount.toString();
     super.initState();

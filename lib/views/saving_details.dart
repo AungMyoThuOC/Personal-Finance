@@ -45,32 +45,13 @@ class _SavingDetailsState extends State<SavingDetails> {
   double value = 0;
   bool validate = false;
   double resultOut = 0;
+
   final DataRepository repository = DataRepository();
 
   TextEditingController amountController = TextEditingController();
-  void getRemaining() {
-    FirebaseFirestore.instance
-        .collection('User')
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
-        .collection('Saving')
-        .doc(widget.saving!.autoID)
-        .collection('Remaining')
-        .get()
-        .then(
-      (StreamBuilder) {
-        StreamBuilder.docs.forEach((result) {
-          remaining = remaining + result.data()['amount'];
-        });
-        setState(() {
-          tot = remaining;
-        });
-      },
-    );
-  }
 
   @override
   void initState() {
-    getRemaining();
     super.initState();
   }
 
@@ -138,10 +119,10 @@ class _SavingDetailsState extends State<SavingDetails> {
                                   }
                                   var ds = snapshot.data!.docs;
 
-                                  double sum = 0.0;
-                                  for (int i = 0; i < ds.length; i++) {
-                                    sum += (ds[i]['amount']).toDouble();
-                                  }
+                                  double sumOne = 0.0;
+                                  for (int i = 0; i < ds.length; i++)
+                                    sumOne += (ds[i]['amount']).toDouble();
+
                                   return StreamBuilder<QuerySnapshot>(
                                       stream: repository.getOut(),
                                       builder: (context, snapshot) {
@@ -152,41 +133,127 @@ class _SavingDetailsState extends State<SavingDetails> {
                                         var ds = snapshot.data!.docs;
 
                                         double sum = 0.0;
-                                        for (int i = 0; i < ds.length; i++) {
+                                        for (int i = 0; i < ds.length; i++)
                                           sum += (ds[i]['amount']).toDouble();
-                                        }
-                                        return InkWell(
-                                          onTap: () {
-                                            Navigator.of(context).pop();
-                                            DataRepository().updateRemaining(
-                                                widget.saving!.autoID
-                                                    .toString(),
-                                                Remaining(
-                                                  int.parse(
-                                                      sliderController.text),
-                                                  date: DateTime.now(),
-                                                ));
-                                            amountController.clear();
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.only(
-                                                top: 15.0, bottom: 15.0),
-                                            decoration: const BoxDecoration(
-                                              color: Colors.blueAccent,
-                                              borderRadius: BorderRadius.only(
-                                                  bottomLeft:
-                                                      Radius.circular(32.0),
-                                                  bottomRight:
-                                                      Radius.circular(32.0)),
-                                            ),
-                                            child: const Text(
-                                              "Save",
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        );
+                                        return StreamBuilder<QuerySnapshot>(
+                                            stream: repository.getMain(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return CircularProgressIndicator();
+                                              }
+                                              var ds = snapshot.data!.docs;
+
+                                              double sumTwo = 0.0;
+                                              for (int i = 0;
+                                                  i < ds.length;
+                                                  i++)
+                                                sumTwo += (ds[i]['amount'])
+                                                    .toDouble();
+                                              return StreamBuilder<
+                                                      QuerySnapshot>(
+                                                  stream: repository.getmain(),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState
+                                                            .waiting) {
+                                                      return CircularProgressIndicator();
+                                                    }
+                                                    var ds =
+                                                        snapshot.data!.docs;
+
+                                                    double totRemain = 0.0;
+                                                    for (int i = 0;
+                                                        i < ds.length;
+                                                        i++)
+                                                      totRemain += (ds[i]
+                                                              ['amount'])
+                                                          .toDouble();
+                                                    print(sum);
+                                                    return InkWell(
+                                                      onTap: () {
+                                                        if (int.parse(
+                                                                sliderController
+                                                                    .text) >
+                                                            (sumOne -
+                                                                (sum +
+                                                                    totRemain))) {
+                                                          showTopSnackBar(
+                                                            context,
+                                                            CustomSnackBar
+                                                                .error(
+                                                              message:
+                                                                  "Your income left  ${sumOne - (sum + totRemain)}",
+                                                            ),
+                                                          );
+                                                        } else {
+                                                          if (int.parse(
+                                                                  sliderController
+                                                                      .text) >
+                                                              (widget.saving!
+                                                                  .amount)) {
+                                                            showTopSnackBar(
+                                                              context,
+                                                              CustomSnackBar
+                                                                  .error(
+                                                                message:
+                                                                    "Your goal is to reach ${widget.saving!.amount}",
+                                                              ),
+                                                            );
+                                                          } else {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            DataRepository()
+                                                                .updateRemaining(
+                                                                    widget
+                                                                        .saving!
+                                                                        .autoID
+                                                                        .toString(),
+                                                                    Remaining(
+                                                                      int.parse(
+                                                                          sliderController
+                                                                              .text),
+                                                                      date: DateTime
+                                                                          .now(),
+                                                                    ));
+                                                            amountController
+                                                                .clear();
+                                                          }
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                top: 15.0,
+                                                                bottom: 15.0),
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          color:
+                                                              Colors.blueAccent,
+                                                          borderRadius:
+                                                              BorderRadius.only(
+                                                                  bottomLeft: Radius
+                                                                      .circular(
+                                                                          32.0),
+                                                                  bottomRight: Radius
+                                                                      .circular(
+                                                                          32.0)),
+                                                        ),
+                                                        child: const Text(
+                                                          "Save",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  });
+                                            });
                                       });
                                 }),
                           ],
@@ -345,13 +412,6 @@ class _SavingDetailsState extends State<SavingDetails> {
                                   ),
                                   circularStrokeCap: CircularStrokeCap.round,
                                 );
-                                // return Text(
-                                //   '${(sum / widget.saving!.amount * 100).toStringAsFixed(2)}%',
-                                //   style: const TextStyle(
-                                //       color: Colors.black,
-                                //       fontSize: 18,
-                                //       fontWeight: FontWeight.bold),
-                                // );
                               }),
                         ],
                       ),
