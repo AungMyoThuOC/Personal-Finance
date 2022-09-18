@@ -22,7 +22,6 @@ class Remaining {
     final newSaving =
         Remaining.fromJson(snapshot.data() as Map<String, dynamic>);
     newSaving.remainID = snapshot.reference.id;
-    print(newSaving.remainID);
     return newSaving;
   }
 

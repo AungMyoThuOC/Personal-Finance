@@ -86,7 +86,7 @@ class _AddIncomeState extends State<AddIncome> {
   @override
   void dispose() {
     categoryController.dispose();
-    // TODO: implement dispose
+
     super.dispose();
   }
 
@@ -96,7 +96,7 @@ class _AddIncomeState extends State<AddIncome> {
     if (text.isEmpty) {
       return "can't be empty";
     }
-    if (text.length > 6) {
+    if (text.length > 7) {
       return "Too long";
     }
     return null;
@@ -362,7 +362,9 @@ class _AddIncomeState extends State<AddIncome> {
                               child: const Text(
                                 'Save',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.white),
                               )),
                         )
                       ],

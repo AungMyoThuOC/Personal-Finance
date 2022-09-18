@@ -25,16 +25,31 @@ class _TableInOutComeState extends State<TableInOutCome> {
   double totalOut = 0;
   double saving = 0;
   double tot = 0;
+  double sumRemain = 0;
+  double totRemain = 0;
   DocumentReference? reference;
   final DataRepository repository = DataRepository();
 
   Future<void> getCollectionData() async {
     await FirebaseFirestore.instance
-        .collectionGroup('Remaining')
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Saving')
         .get()
-        .then((QuerySnapshot snapshot) {
-      final docs = snapshot.docs;
-      for (var data in docs) {}
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        FirebaseFirestore.instance
+            .collectionGroup('Remaining')
+            .get()
+            .then((value) {
+          value.docs.forEach((result) {
+            sumRemain = sumRemain + result.data()['amount'];
+          });
+          setState(() {
+            totRemain = sumRemain;
+          });
+        });
+      });
     });
   }
 
@@ -162,24 +177,10 @@ class _TableInOutComeState extends State<TableInOutCome> {
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 15.0),
-              child: StreamBuilder<QuerySnapshot>(
-                  stream: repository.getMain(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    }
-                    var ds = snapshot.data!.docs;
-
-                    double sum = 0.0;
-
-                    for (int i = 0; i < ds.length; i++)
-                      sum += (ds[i]['amount']).toDouble();
-
-                    return Text(
-                      '${sum}',
-                      textAlign: TextAlign.end,
-                    );
-                  }),
+              child: Text(
+                '${totRemain}',
+                textAlign: TextAlign.end,
+              ),
             )
           ]),
           TableRow(children: [
