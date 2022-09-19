@@ -14,20 +14,19 @@ class ColorPage extends StatelessWidget {
         title: const Text("Colors"),
       ),
       body: PageWrapper(
-        body: Column(
-          // ignore: prefer_const_literals_to_create_immutables
-          children: [
-            // SizedBox(
-            //   height: 30,
-            // ),
-            // ThemeSwitcher(),
-            const SizedBox(
-              height: 20,
-            ),
-            const PrimaryColorSwitcher(),
-          ],
-        )
-      ),
+          body: Column(
+        // ignore: prefer_const_literals_to_create_immutables
+        children: [
+          // SizedBox(
+          //   height: 30,
+          // ),
+          // ThemeSwitcher(),
+          const SizedBox(
+            height: 20,
+          ),
+          const PrimaryColorSwitcher(),
+        ],
+      )),
     );
   }
 }
