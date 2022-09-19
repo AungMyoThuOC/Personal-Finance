@@ -274,7 +274,7 @@ class _AddIncomeState extends State<AddOutcome> {
                           child: TextField(
                             keyboardType: TextInputType.number,
                             inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
+                              FilteringTextInputFormatter.digitsOnly
                             ],
                             controller: amountController,
                             style: const TextStyle(color: Colors.black),

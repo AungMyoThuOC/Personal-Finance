@@ -170,7 +170,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                                                       totRemain += (ds[i]
                                                               ['amount'])
                                                           .toDouble();
-                                                    print(sum);
+
                                                     return InkWell(
                                                       onTap: () {
                                                         if (int.parse(
@@ -202,24 +202,51 @@ class _SavingDetailsState extends State<SavingDetails> {
                                                               ),
                                                             );
                                                           } else {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                            DataRepository()
-                                                                .updateRemaining(
-                                                                    widget
-                                                                        .saving!
-                                                                        .autoID
-                                                                        .toString(),
-                                                                    Remaining(
-                                                                      int.parse(
-                                                                          sliderController
-                                                                              .text),
-                                                                      date: DateTime
-                                                                          .now(),
-                                                                    ));
-                                                            amountController
-                                                                .clear();
+                                                            if (int.parse(
+                                                                    sliderController
+                                                                        .text) >
+                                                                (widget.saving!
+                                                                        .amount -
+                                                                    totRemain)) {
+                                                              showTopSnackBar(
+                                                                context,
+                                                                CustomSnackBar
+                                                                    .error(
+                                                                  message:
+                                                                      "Your goal is to reach ${widget.saving!.amount}",
+                                                                ),
+                                                              );
+                                                            } else {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                              DataRepository()
+                                                                  .updateRemaining(
+                                                                      widget
+                                                                          .saving!
+                                                                          .autoID
+                                                                          .toString(),
+                                                                      Remaining(
+                                                                        int.parse(
+                                                                            sliderController.text),
+                                                                        date: DateTime
+                                                                            .now(),
+                                                                      ));
+                                                              amountController
+                                                                  .clear();
+                                                              if (totRemain ==
+                                                                  widget.saving!
+                                                                      .amount) {
+                                                                showTopSnackBar(
+                                                                  context,
+                                                                  const CustomSnackBar
+                                                                      .success(
+                                                                    message:
+                                                                        "Congratulations",
+                                                                  ),
+                                                                );
+                                                              }
+                                                            }
                                                           }
                                                         }
                                                       },
@@ -277,27 +304,63 @@ class _SavingDetailsState extends State<SavingDetails> {
               for (int i = 0; i < ds.length; i++)
                 sum += (ds[i]['amount']).toDouble();
               print(sum);
-              return SizedBox(
-                width: 45,
-                child: FloatingActionButton(
-                    elevation: 0,
-                    onPressed: (sum == 0)
-                        ? () {
-                            showTopSnackBar(
-                              context,
-                              const CustomSnackBar.error(
-                                message: "Please Add Income First",
-                              ),
-                            );
+              return StreamBuilder<QuerySnapshot>(
+                  stream: repository.getMain(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    }
+                    var ds = snapshot.data!.docs;
+
+                    double sumTwo = 0.0;
+                    for (int i = 0; i < ds.length; i++)
+                      sumTwo += (ds[i]['amount']).toDouble();
+                    return StreamBuilder<QuerySnapshot>(
+                        stream: repository.getmain(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
                           }
-                        : () {
-                            openDialog();
-                          },
-                    child: const Icon(
-                      Icons.add,
-                      color: Colors.white,
-                    )),
-              );
+                          var ds = snapshot.data!.docs;
+
+                          double totRemain = 0.0;
+                          for (int i = 0; i < ds.length; i++)
+                            totRemain += (ds[i]['amount']).toDouble();
+
+                          return SizedBox(
+                            width: 45,
+                            child: FloatingActionButton(
+                                elevation: 0,
+                                onPressed: (sum == 0)
+                                    ? () {
+                                        showTopSnackBar(
+                                          context,
+                                          const CustomSnackBar.error(
+                                            message: "Please Add Income First",
+                                          ),
+                                        );
+                                      }
+                                    : (totRemain == widget.saving!.amount)
+                                        ? () {
+                                            showTopSnackBar(
+                                              context,
+                                              const CustomSnackBar.success(
+                                                message:
+                                                    "You already reach your goal",
+                                              ),
+                                            );
+                                          }
+                                        : () {
+                                            openDialog();
+                                          },
+                                child: const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                )),
+                          );
+                        });
+                  });
             }),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         appBar: AppBar(

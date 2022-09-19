@@ -14,6 +14,10 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/safe_area_values.dart';
+import 'package:top_snackbar_flutter/tap_bounce_container.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class SavingList extends StatefulWidget {
   const SavingList({Key? key, required this.saving}) : super(key: key);
@@ -274,40 +278,95 @@ class _SavingListState extends State<SavingList> {
                                                       Container(
                                                         width: 100,
                                                         height: 35,
-                                                        child: ElevatedButton(
-                                                            onPressed: () {
-                                                              if (savingController
-                                                                      .text !=
-                                                                  null) {
-                                                                DataRepository()
-                                                                    .updateSaving(
-                                                                        widget
-                                                                            .saving
-                                                                            .autoID
-                                                                            .toString(),
-                                                                        Saving(
-                                                                          int.parse(
-                                                                              sliderController.text),
-                                                                          date:
-                                                                              DateTime.now(),
-                                                                          target:
-                                                                              savingController.text,
-                                                                        ));
+                                                        child: StreamBuilder<
+                                                                QuerySnapshot>(
+                                                            stream: repository
+                                                                .getMain(),
+                                                            builder: (context,
+                                                                snapshot) {
+                                                              if (snapshot
+                                                                      .connectionState ==
+                                                                  ConnectionState
+                                                                      .waiting) {
+                                                                return CircularProgressIndicator();
                                                               }
-                                                              Navigator.pop(
-                                                                  context,
-                                                                  '/home');
-                                                            },
-                                                            child: const Text(
-                                                              'Update',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 16),
-                                                            )),
+                                                              var ds = snapshot
+                                                                  .data!.docs;
+
+                                                              double sumTwo =
+                                                                  0.0;
+                                                              for (int i = 0;
+                                                                  i < ds.length;
+                                                                  i++)
+                                                                sumTwo += (ds[i]
+                                                                        [
+                                                                        'amount'])
+                                                                    .toDouble();
+                                                              return StreamBuilder<
+                                                                      QuerySnapshot>(
+                                                                  stream: repository
+                                                                      .getmain(),
+                                                                  builder: (context,
+                                                                      snapshot) {
+                                                                    if (snapshot
+                                                                            .connectionState ==
+                                                                        ConnectionState
+                                                                            .waiting) {
+                                                                      return CircularProgressIndicator();
+                                                                    }
+                                                                    var ds =
+                                                                        snapshot
+                                                                            .data!
+                                                                            .docs;
+
+                                                                    double
+                                                                        totRemain =
+                                                                        0.0;
+                                                                    for (int i =
+                                                                            0;
+                                                                        i <
+                                                                            ds
+                                                                                .length;
+                                                                        i++)
+                                                                      totRemain +=
+                                                                          (ds[i]['amount'])
+                                                                              .toDouble();
+
+                                                                    return ElevatedButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          if ((int.parse(sliderController.text)) <
+                                                                              (totRemain)) {
+                                                                            print(totRemain);
+                                                                            showTopSnackBar(
+                                                                              context,
+                                                                              const CustomSnackBar.info(
+                                                                                message: "Please update your goal more than saving",
+                                                                              ),
+                                                                            );
+                                                                          } else {
+                                                                            DataRepository().updateSaving(
+                                                                                widget.saving.autoID.toString(),
+                                                                                Saving(
+                                                                                  int.parse(sliderController.text),
+                                                                                  date: DateTime.now(),
+                                                                                  target: savingController.text,
+                                                                                ));
+                                                                          }
+                                                                          Navigator.pop(
+                                                                              context,
+                                                                              '/home');
+                                                                        },
+                                                                        child:
+                                                                            const Text(
+                                                                          'Update',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: Colors.white,
+                                                                              fontSize: 16),
+                                                                        ));
+                                                                  });
+                                                            }),
                                                       ),
                                                     ],
                                                   )
