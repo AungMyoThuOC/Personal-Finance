@@ -77,12 +77,12 @@ class _AddIncomeState extends State<AddIncome> {
         Category(name: categoryController.text, icon: indexOne, income: true));
   }
 
-  var text = '';
+  // var text = '';
 
-  bool _submitted = false;
+  bool submitted = false;
 
-  void _submit() {
-    setState(() => _submitted = true);
+  void submit() {
+    setState(() => submitted = true);
     if (_errorText == null) {
       widget.onSubmit(categoryController.value.text);
     }
@@ -111,7 +111,7 @@ class _AddIncomeState extends State<AddIncome> {
       context: context,
       builder: (context) => StatefulBuilder(builder: ((context, setState) {
             return AlertDialog(
-              contentPadding: EdgeInsets.only(top: 10.0),
+              contentPadding: const EdgeInsets.only(top: 10.0),
               title: const Text("New Category"),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(32.0))),
@@ -132,10 +132,10 @@ class _AddIncomeState extends State<AddIncome> {
                           SizedBox(
                             width: 200,
                             child: TextFormField(
-                              keyboardType: TextInputType.text,
-                              autovalidateMode: _submitted
+                              autovalidateMode: submitted
                                   ? AutovalidateMode.onUserInteraction
                                   : AutovalidateMode.disabled,
+                              keyboardType: TextInputType.text,
                               controller: categoryController,
                               style: const TextStyle(color: Colors.black),
                               decoration: InputDecoration(
@@ -199,10 +199,16 @@ class _AddIncomeState extends State<AddIncome> {
                         height: 30,
                       ),
                       InkWell(
-                        onTap: () {
-                          add();
-                          Navigator.pop(context, '/home');
-                        },
+                        onTap: (categoryController.text.isEmpty)
+                            ? () {
+                                setState() {
+                                  submitted = true;
+                                }
+                              }
+                            : () {
+                                add();
+                                Navigator.pop(context, '/home');
+                              },
                         child: Container(
                           padding:
                               const EdgeInsets.only(top: 15.0, bottom: 15.0),
@@ -310,7 +316,7 @@ class _AddIncomeState extends State<AddIncome> {
                                       });
                                       return true;
                                     },
-                                    duration: Duration(milliseconds: 500),
+                                    duration: const Duration(milliseconds: 500),
                                     clockwise: false,
                                   ),
                                   CircleAvatar(
@@ -354,7 +360,7 @@ class _AddIncomeState extends State<AddIncome> {
                                               builder: (context, snapshot) {
                                                 if (snapshot.connectionState ==
                                                     ConnectionState.waiting) {
-                                                  return CircularProgressIndicator();
+                                                  return const CircularProgressIndicator();
                                                 }
                                                 var ds = snapshot.data!.docs;
 
@@ -410,8 +416,12 @@ class _AddIncomeState extends State<AddIncome> {
                                 elevation: 15.0,
                               ),
                               onPressed: () {
-                                if (amountController.text != null &&
-                                    categoryController.text != null) {
+                                if (amountController.text.isEmpty &&
+                                    categoryController.text.isEmpty) {
+                                  setState(() {
+                                    submitted = true;
+                                  });
+                                } else {
                                   DataRepository().addIncome(
                                     Income(int.parse(amountController.text),
                                         date: DateTime.now(),
@@ -444,6 +454,7 @@ class _AddIncomeState extends State<AddIncome> {
   }
 }
 
+// ignore: must_be_immutable
 class MyCategory extends StatefulWidget {
   MyCategory(
       {Key? key,
@@ -519,12 +530,12 @@ class _MyCategoryState extends State<MyCategory> {
                     ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Text(
             widget.category.name,
-            style: TextStyle(fontSize: 14),
+            style: const TextStyle(fontSize: 14),
           ),
         ],
       ),

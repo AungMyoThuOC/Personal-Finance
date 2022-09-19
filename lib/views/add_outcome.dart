@@ -19,7 +19,7 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:animate_icons/animate_icons.dart';
 
 class AddOutcome extends StatefulWidget {
-  AddOutcome({
+  const AddOutcome({
     Key? key,
     required this.onSubmit,
   }) : super(key: key);
@@ -82,6 +82,35 @@ class _AddIncomeState extends State<AddOutcome> {
         Category(name: categoryController.text, icon: indexOne, income: false));
   }
 
+  // var text = '';
+
+  bool submmitted = false;
+
+  void submit() {
+    setState(() => submmitted = true);
+    if (_errorText == null) {
+      widget.onSubmit(categoryController.value.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    categoryController.dispose();
+    super.dispose();
+  }
+
+  String? get _errorText {
+    final text = categoryController.value.text;
+
+    if (text.isEmpty) {
+      return "Can't be empty";
+    }
+    if (text.length > 7) {
+      return "Too long";
+    }
+    return null;
+  }
+
   Future<void> getCollectionData() async {
     await FirebaseFirestore.instance
         .collection('User')
@@ -106,34 +135,11 @@ class _AddIncomeState extends State<AddOutcome> {
     });
   }
 
-  var text = '';
-
-  bool _submmitted = false;
-
-  void _submit() {
-    setState(() => _submmitted = true);
-    if (_errorText == null) {
-      widget.onSubmit(categoryController.value.text);
-    }
-  }
-
-  String? get _errorText {
-    final text = categoryController.value.text;
-
-    if (text.isEmpty) {
-      return "Can't be empty";
-    }
-    if (text.length > 6) {
-      return "Too long";
-    }
-    return null;
-  }
-
   Future openDialog() => showDialog(
       context: context,
       builder: (context) => StatefulBuilder(builder: ((context, setState) {
             return AlertDialog(
-              contentPadding: EdgeInsets.only(top: 10.0),
+              contentPadding: const EdgeInsets.only(top: 10.0),
               title: const Text("New Category"),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(32.0))),
@@ -155,7 +161,7 @@ class _AddIncomeState extends State<AddOutcome> {
                             width: 200,
                             child: TextFormField(
                               keyboardType: TextInputType.text,
-                              autovalidateMode: _submmitted
+                              autovalidateMode: submmitted
                                   ? AutovalidateMode.onUserInteraction
                                   : AutovalidateMode.disabled,
                               controller: categoryController,
@@ -220,10 +226,16 @@ class _AddIncomeState extends State<AddOutcome> {
                         height: 30,
                       ),
                       InkWell(
-                        onTap: () {
-                          add();
-                          Navigator.pop(context, '/home');
-                        },
+                        onTap: (categoryController.text.isEmpty)
+                            ? () {
+                                setState() {
+                                  submmitted = true;
+                                }
+                              }
+                            : () {
+                                add();
+                                Navigator.pop(context, '/home');
+                              },
                         child: Container(
                           padding:
                               const EdgeInsets.only(top: 15.0, bottom: 15.0),
@@ -331,7 +343,7 @@ class _AddIncomeState extends State<AddOutcome> {
                                       });
                                       return true;
                                     },
-                                    duration: Duration(milliseconds: 500),
+                                    duration: const Duration(milliseconds: 500),
                                     clockwise: false,
                                   ),
                                   CircleAvatar(
@@ -375,7 +387,7 @@ class _AddIncomeState extends State<AddOutcome> {
                                               builder: (context, snapshot) {
                                                 if (snapshot.connectionState ==
                                                     ConnectionState.waiting) {
-                                                  return CircularProgressIndicator();
+                                                  return const CircularProgressIndicator();
                                                 }
                                                 var ds = snapshot.data!.docs;
 
@@ -428,7 +440,7 @@ class _AddIncomeState extends State<AddOutcome> {
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return CircularProgressIndicator();
+                                  return const CircularProgressIndicator();
                                 }
                                 var ds = snapshot.data!.docs;
 
@@ -441,7 +453,7 @@ class _AddIncomeState extends State<AddOutcome> {
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState ==
                                           ConnectionState.waiting) {
-                                        return CircularProgressIndicator();
+                                        return const CircularProgressIndicator();
                                       }
                                       var ds = snapshot.data!.docs;
 
@@ -561,6 +573,7 @@ class _AddIncomeState extends State<AddOutcome> {
   }
 }
 
+// ignore: must_be_immutable
 class MyCategory extends StatefulWidget {
   MyCategory(
       {Key? key,
@@ -636,12 +649,12 @@ class _MyCategoryState extends State<MyCategory> {
                     ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Text(
             widget.category.name,
-            style: TextStyle(fontSize: 14),
+            style: const TextStyle(fontSize: 14),
           ),
         ],
       ),

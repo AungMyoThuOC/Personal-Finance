@@ -75,34 +75,7 @@ class _SettingPageState extends State<SettingPage> {
               ),
               TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/language');
-                  },
-                  child: Container(
-                    width: 200,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: const [
-                        Icon(Icons.language),
-                        SizedBox(
-                          width: 30,
-                        ),
-                        Text(
-                          "Language",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            // color: Colors.black
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
-              const SizedBox(
-                height: 40,
-              ),
-              TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/security');
+                     Navigator.pushNamed(context, '/security');
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,

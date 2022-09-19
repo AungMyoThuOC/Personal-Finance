@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -17,9 +18,11 @@ import 'package:top_snackbar_flutter/safe_area_values.dart';
 import 'package:top_snackbar_flutter/tap_bounce_container.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
+// ignore: must_be_immutable
 class SavingDetails extends StatefulWidget {
-  SavingDetails({Key? key, required this.saving}) : super(key: key);
+  SavingDetails({Key? key, required this.saving, required this.onSubmit}) : super(key: key);
   Saving? saving;
+  final ValueChanged<String> onSubmit;
   @override
   State<SavingDetails> createState() => _SavingDetailsState();
 }
@@ -50,6 +53,32 @@ class _SavingDetailsState extends State<SavingDetails> {
 
   TextEditingController amountController = TextEditingController();
 
+  // var num = '';
+
+  bool submmitted = false;
+
+  void submit() {
+    setState(() => submmitted = true);
+    if (_errorText == null) {
+      widget.onSubmit(amountController.value.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    amountController.dispose();
+    super.dispose();
+  }
+
+  String? get _errorText {
+    final text = amountController.value.text;
+
+    if (text.isEmpty) {
+      return "Can't be empty";
+    }
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -63,14 +92,14 @@ class _SavingDetailsState extends State<SavingDetails> {
                     repository.getRemaining(widget.saving!.autoID.toString()),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   }
                   var ds = snapshot.data!.docs;
                   double sum = 0.0;
                   for (int i = 0; i < ds.length; i++)
                     sum += (ds[i]['amount']).toDouble();
                   return AlertDialog(
-                    contentPadding: EdgeInsets.only(top: 10.0),
+                    contentPadding: const EdgeInsets.only(top: 10.0),
                     title: const Text("Add Remaining"),
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(32.0))),
@@ -103,7 +132,14 @@ class _SavingDetailsState extends State<SavingDetails> {
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 30),
-                              child: TextField(
+                              child: TextFormField(
+                                autovalidateMode: submmitted
+                                    ? AutovalidateMode.onUserInteraction
+                                    : AutovalidateMode.disabled,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
                                 controller: sliderController,
                               ),
                             ),
@@ -115,7 +151,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
+                                    return const CircularProgressIndicator();
                                   }
                                   var ds = snapshot.data!.docs;
 
@@ -128,7 +164,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState ==
                                             ConnectionState.waiting) {
-                                          return CircularProgressIndicator();
+                                          return const CircularProgressIndicator();
                                         }
                                         var ds = snapshot.data!.docs;
 
@@ -140,7 +176,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                                             builder: (context, snapshot) {
                                               if (snapshot.connectionState ==
                                                   ConnectionState.waiting) {
-                                                return CircularProgressIndicator();
+                                                return const CircularProgressIndicator();
                                               }
                                               var ds = snapshot.data!.docs;
 
@@ -158,7 +194,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                                                             .connectionState ==
                                                         ConnectionState
                                                             .waiting) {
-                                                      return CircularProgressIndicator();
+                                                      return const CircularProgressIndicator();
                                                     }
                                                     var ds =
                                                         snapshot.data!.docs;
@@ -296,7 +332,7 @@ class _SavingDetailsState extends State<SavingDetails> {
             stream: repository.getIn(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               }
               var ds = snapshot.data!.docs;
 
@@ -308,7 +344,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                   stream: repository.getMain(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     }
                     var ds = snapshot.data!.docs;
 
@@ -320,7 +356,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return const CircularProgressIndicator();
                           }
                           var ds = snapshot.data!.docs;
 
@@ -409,7 +445,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return CircularProgressIndicator();
+                                  return const CircularProgressIndicator();
                                 }
                                 var ds = snapshot.data!.docs;
 
@@ -429,7 +465,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState ==
                                             ConnectionState.waiting) {
-                                          return CircularProgressIndicator();
+                                          return const CircularProgressIndicator();
                                         }
                                         var ds = snapshot.data!.docs;
 
@@ -456,7 +492,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==
                                                 ConnectionState.waiting) {
-                                              return CircularProgressIndicator();
+                                              return const CircularProgressIndicator();
                                             }
                                             var ds = snapshot.data!.docs;
                                             double sum = 0.0;
@@ -513,11 +549,11 @@ class _SavingDetailsState extends State<SavingDetails> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: 25.0),
+                            padding: const EdgeInsets.symmetric(vertical: 25.0),
                             child: Text(
                               '${widget.saving!.amount}',
                               textAlign: TextAlign.end,
-                              style: TextStyle(fontSize: 16),
+                              style: const TextStyle(fontSize: 16),
                             ),
                           )
                         ]),
@@ -538,7 +574,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
+                                    return const CircularProgressIndicator();
                                   }
                                   var ds = snapshot.data!.docs;
 

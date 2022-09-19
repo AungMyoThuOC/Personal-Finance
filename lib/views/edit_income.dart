@@ -16,8 +16,10 @@ import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class EditIncome extends StatefulWidget {
-  EditIncome({Key? key, required this.income}) : super(key: key);
+  EditIncome({Key? key, required this.income, required this.onSubmit})
+      : super(key: key);
   final Income income;
+  final ValueChanged<String> onSubmit;
   @override
   State<EditIncome> createState() => _AddIncomeState();
 }
@@ -73,6 +75,35 @@ class _AddIncomeState extends State<EditIncome> {
         Category(name: categoryController.text, icon: indexOne, income: true));
   }
 
+  // var text = '';
+
+  bool submmitted = false;
+
+  void submit() {
+    setState(() => submmitted = true);
+    if (_errorText == null) {
+      widget.onSubmit(categoryController.value.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    categoryController.dispose();
+    super.dispose();
+  }
+
+  String? get _errorText {
+    final text = categoryController.value.text;
+
+    if (text.isEmpty) {
+      return "Can't be empty";
+    }
+    if (text.length > 7) {
+      return "Too long";
+    }
+    return null;
+  }
+
   @override
   void initState() {
     catName = widget.income.catName;
@@ -85,7 +116,7 @@ class _AddIncomeState extends State<EditIncome> {
       context: context,
       builder: (context) => StatefulBuilder(builder: ((context, setState) {
             return AlertDialog(
-              contentPadding: EdgeInsets.only(top: 10.0),
+              contentPadding: const EdgeInsets.only(top: 10.0),
               title: const Text("New Category"),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(32.0))),
@@ -105,7 +136,11 @@ class _AddIncomeState extends State<EditIncome> {
                           Icon(navBarItem[indexOne]),
                           SizedBox(
                             width: 200,
-                            child: TextField(
+                            child: TextFormField(
+                              autovalidateMode: submmitted
+                                  ? AutovalidateMode.onUserInteraction
+                                  : AutovalidateMode.disabled,
+                              keyboardType: TextInputType.text,
                               controller: categoryController,
                               style: const TextStyle(color: Colors.black),
                               decoration: InputDecoration(
@@ -315,7 +350,7 @@ class _AddIncomeState extends State<EditIncome> {
                                             });
                                             return true;
                                           },
-                                          duration: Duration(milliseconds: 500),
+                                          duration: const Duration(milliseconds: 500),
                                           clockwise: false,
                                         ),
                                         CircleAvatar(
@@ -365,7 +400,7 @@ class _AddIncomeState extends State<EditIncome> {
                                                               .connectionState ==
                                                           ConnectionState
                                                               .waiting) {
-                                                        return CircularProgressIndicator();
+                                                        return const CircularProgressIndicator();
                                                       }
                                                       var ds =
                                                           snapshot.data!.docs;
@@ -462,6 +497,7 @@ class _AddIncomeState extends State<EditIncome> {
   }
 }
 
+// ignore: must_be_immutable
 class MyCategory extends StatefulWidget {
   MyCategory(
       {Key? key,
@@ -537,12 +573,12 @@ class _MyCategoryState extends State<MyCategory> {
                     ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Text(
             widget.category.name,
-            style: TextStyle(fontSize: 14),
+            style: const TextStyle(fontSize: 14),
           ),
         ],
       ),

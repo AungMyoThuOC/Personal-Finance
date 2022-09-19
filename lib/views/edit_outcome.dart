@@ -77,12 +77,12 @@ class _AddIncomeState extends State<EditIncome> {
         Category(name: categoryController.text, icon: indexOne, income: false));
   }
 
-  var text = '';
+  // var text = '';
 
-  bool _submmitted = false;
+  bool submmitted = false;
 
-  void _submit() {
-    setState(() => _submmitted = true);
+  void submit() {
+    setState(() => submmitted = true);
     if (_errorText == null) {
       widget.onSubmit(categoryController.value.text);
     }
@@ -91,7 +91,6 @@ class _AddIncomeState extends State<EditIncome> {
   @override
   void dispose() {
     categoryController.dispose();
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -101,7 +100,7 @@ class _AddIncomeState extends State<EditIncome> {
     if (text.isEmpty) {
       return "Can't be empty";
     }
-    if (text.length > 6) {
+    if (text.length > 7) {
       return "Too long";
     }
     return null;
@@ -117,7 +116,7 @@ class _AddIncomeState extends State<EditIncome> {
       context: context,
       builder: (context) => StatefulBuilder(builder: ((context, setState) {
             return AlertDialog(
-              contentPadding: EdgeInsets.only(top: 10.0),
+              contentPadding: const EdgeInsets.only(top: 10.0),
               title: const Text("New Category"),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(32.0))),
@@ -139,7 +138,7 @@ class _AddIncomeState extends State<EditIncome> {
                             width: 200,
                             child: TextFormField(
                               keyboardType: TextInputType.text,
-                              autovalidateMode: _submmitted
+                              autovalidateMode: submmitted
                                   ? AutovalidateMode.onUserInteraction
                                   : AutovalidateMode.disabled,
                               controller: categoryController,
@@ -352,7 +351,7 @@ class _AddIncomeState extends State<EditIncome> {
                                             });
                                             return true;
                                           },
-                                          duration: Duration(milliseconds: 500),
+                                          duration: const Duration(milliseconds: 500),
                                           clockwise: false,
                                         ),
                                         CircleAvatar(
@@ -401,7 +400,7 @@ class _AddIncomeState extends State<EditIncome> {
                                                               .connectionState ==
                                                           ConnectionState
                                                               .waiting) {
-                                                        return CircularProgressIndicator();
+                                                        return const CircularProgressIndicator();
                                                       }
                                                       var ds =
                                                           snapshot.data!.docs;
@@ -460,7 +459,7 @@ class _AddIncomeState extends State<EditIncome> {
                   stream: DataRepository().getIn(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     }
                     var ds = snapshot.data!.docs;
 
@@ -473,7 +472,7 @@ class _AddIncomeState extends State<EditIncome> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return const CircularProgressIndicator();
                           }
                           var ds = snapshot.data!.docs;
 
@@ -485,7 +484,7 @@ class _AddIncomeState extends State<EditIncome> {
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return CircularProgressIndicator();
+                                  return const CircularProgressIndicator();
                                 }
                                 var ds = snapshot.data!.docs;
 
@@ -497,7 +496,7 @@ class _AddIncomeState extends State<EditIncome> {
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState ==
                                           ConnectionState.waiting) {
-                                        return CircularProgressIndicator();
+                                        return const CircularProgressIndicator();
                                       }
                                       var ds = snapshot.data!.docs;
 
@@ -571,6 +570,7 @@ class _AddIncomeState extends State<EditIncome> {
   }
 }
 
+// ignore: must_be_immutable
 class MyCategory extends StatefulWidget {
   MyCategory(
       {Key? key,
@@ -646,12 +646,12 @@ class _MyCategoryState extends State<MyCategory> {
                     ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Text(
             widget.category.name,
-            style: TextStyle(fontSize: 14),
+            style: const TextStyle(fontSize: 14),
           ),
         ],
       ),

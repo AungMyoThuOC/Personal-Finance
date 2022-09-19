@@ -109,7 +109,7 @@ class _SavingListState extends State<SavingList> {
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => SavingDetails(
-                            saving: widget.saving,
+                            saving: widget.saving, onSubmit: (String value) {  },
                           )));
                 },
                 child: Column(
@@ -146,7 +146,7 @@ class _SavingListState extends State<SavingList> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
+                                    return const CircularProgressIndicator();
                                   }
                                   var ds = snapshot.data!.docs;
                                   double sum = 0.0;
@@ -312,7 +312,7 @@ class _SavingListState extends State<SavingList> {
                                                                             .connectionState ==
                                                                         ConnectionState
                                                                             .waiting) {
-                                                                      return CircularProgressIndicator();
+                                                                      return const CircularProgressIndicator();
                                                                     }
                                                                     var ds =
                                                                         snapshot
@@ -409,7 +409,7 @@ class _SavingListState extends State<SavingList> {
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return CircularProgressIndicator();
+                              return const CircularProgressIndicator();
                             }
                             var ds = snapshot.data!.docs;
 
@@ -429,7 +429,7 @@ class _SavingListState extends State<SavingList> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return CircularProgressIndicator();
+                                      return const CircularProgressIndicator();
                                     }
                                     var ds = snapshot.data!.docs;
 

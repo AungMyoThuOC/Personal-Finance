@@ -164,7 +164,7 @@ class _HomeHistoryState extends State<HomeHistory> {
                                     Navigator.of(context)
                                         .push(MaterialPageRoute(
                                             builder: (context) => EditIncome(
-                                                  income: widget.income,
+                                                  income: widget.income, onSubmit: (String value) {  },
                                                 )));
                                   }),
                                   children: [
@@ -175,7 +175,8 @@ class _HomeHistoryState extends State<HomeHistory> {
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     EditIncome(
-                                                      income: widget.income,
+                                                      income: widget.income, 
+                                                      onSubmit: (String value) {  },
                                                     )));
                                       },
                                       backgroundColor: Color(0xFF7BC043),
