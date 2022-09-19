@@ -7,7 +7,6 @@ import 'package:personal_financial/presentationColor/styles/app_themes.dart';
 import 'package:personal_financial/servicesColor/service_locator.dart';
 import 'package:personal_financial/servicesColor/storage/storage_service.dart';
 import 'package:personal_financial/setting/colors.dart';
-import 'package:personal_financial/setting/language.dart';
 import 'package:personal_financial/setting/security.dart';
 import 'package:personal_financial/setting/setting.dart';
 import 'package:personal_financial/views/get_start.dart';
@@ -61,10 +60,11 @@ class MyApp extends StatelessWidget {
               '/login': (context) => const LoginPage(),
               '/home': (context) => const MyHomePage(),
               '/setting': (context) => const SettingPage(),
-              '/language': (context) => const LanguagePage(),
               '/security': (context) => SecurityPage(),
               '/color': (context) => const ColorPage(),
-              '/saving_add': (context) => SavingAdd(onSubmit: (String value) {  },),
+              '/saving_add': (context) => SavingAdd(
+                    onSubmit: (String value) {},
+                  ),
               '/add': (context) => const AddInOut(),
             },
             debugShowCheckedModeBanner: false,

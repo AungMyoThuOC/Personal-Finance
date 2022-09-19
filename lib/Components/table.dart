@@ -25,33 +25,8 @@ class _TableInOutComeState extends State<TableInOutCome> {
   double totalOut = 0;
   double saving = 0;
   double tot = 0;
-  double sumRemain = 0;
-  double totRemain = 0;
   DocumentReference? reference;
   final DataRepository repository = DataRepository();
-
-  Future<void> getCollectionData() async {
-    await FirebaseFirestore.instance
-        .collection('User')
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
-        .collection('Saving')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
-        FirebaseFirestore.instance
-            .collectionGroup('Remaining')
-            .get()
-            .then((value) {
-          value.docs.forEach((result) {
-            sumRemain = sumRemain + result.data()['amount'];
-          });
-          setState(() {
-            totRemain = sumRemain;
-          });
-        });
-      });
-    });
-  }
 
   void getIncomeSum() {
     FirebaseFirestore.instance
@@ -112,7 +87,6 @@ class _TableInOutComeState extends State<TableInOutCome> {
 
   @override
   void initState() {
-    getCollectionData();
     getRemaining();
     getIncomeSum();
     super.initState();
@@ -176,12 +150,37 @@ class _TableInOutComeState extends State<TableInOutCome> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.0),
-              child: Text(
-                '${totRemain}',
-                textAlign: TextAlign.end,
-              ),
-            )
+                padding: EdgeInsets.symmetric(vertical: 15.0),
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: repository.getMain(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      }
+                      var ds = snapshot.data!.docs;
+
+                      double sumTwo = 0.0;
+                      for (int i = 0; i < ds.length; i++)
+                        sumTwo += (ds[i]['amount']).toDouble();
+                      return StreamBuilder<QuerySnapshot>(
+                          stream: repository.getmain(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            }
+                            var ds = snapshot.data!.docs;
+
+                            double totRemain = 0.0;
+                            for (int i = 0; i < ds.length; i++)
+                              totRemain += (ds[i]['amount']).toDouble();
+
+                            return Text(
+                              '${totRemain}',
+                              textAlign: TextAlign.end,
+                            );
+                          });
+                    }))
           ]),
           TableRow(children: [
             const Padding(

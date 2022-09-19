@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:personal_financial/data_repository.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({Key? key}) : super(key: key);
@@ -18,10 +22,11 @@ class _SettingPageState extends State<SettingPage> {
           children: [
             IconButton(
                 onPressed: () {
-                  Navigator.pop(context, 'home');
+                  Navigator.pop(context, '/home');
                 },
                 icon: const Icon(
                   Icons.arrow_back,
+                  color: Colors.white,
                 )),
             const SizedBox(
               width: 40,
@@ -29,9 +34,9 @@ class _SettingPageState extends State<SettingPage> {
             const Text(
               "Setting",
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
-              ),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                  color: Colors.white),
             ),
           ],
         ),
@@ -75,33 +80,6 @@ class _SettingPageState extends State<SettingPage> {
               ),
               TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/language');
-                  },
-                  child: Container(
-                    width: 200,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: const [
-                        Icon(Icons.language),
-                        SizedBox(
-                          width: 30,
-                        ),
-                        Text(
-                          "Language",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            // color: Colors.black
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
-              const SizedBox(
-                height: 40,
-              ),
-              TextButton(
-                  onPressed: () {
                     Navigator.pushNamed(context, '/security');
                   },
                   child: Row(
@@ -125,7 +103,60 @@ class _SettingPageState extends State<SettingPage> {
                 height: 40,
               ),
               TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) =>
+                            StatefulBuilder(builder: ((context, setState) {
+                              return AlertDialog(
+                                  contentPadding:
+                                      const EdgeInsets.only(top: 10.0),
+                                  title: const Text(
+                                      "Do you wanna delete all of your records?"),
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(32.0))),
+                                  content: Container(
+                                      child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                        const SizedBox(
+                                          height: 30,
+                                        ),
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator
+                                                        .pushReplacementNamed(
+                                                            context, '/home');
+                                                  },
+                                                  child: const Text(
+                                                    "Reset",
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  )),
+                                              ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text(
+                                                    "Cancel",
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ))
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 15,
+                                        ),
+                                      ])));
+                            })));
+                  },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: const [

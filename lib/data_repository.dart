@@ -20,9 +20,11 @@ class DataRepository {
   }
 
   Future updateUserData(String name) async {
-    return await ref.doc(name).collection('Income').doc().set({
-      'name': name,
-    });
+    return await ref
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .collection('Income')
+        .doc()
+        .set({'name': FirebaseAuth.instance.currentUser!.email});
   }
 
   final CollectionReference collection =
@@ -207,12 +209,6 @@ class DataRepository {
         .collection('Category')
         .doc(id)
         .get();
-  }
-
-  Future deleteAll() async {
-    return await ref
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
-        .delete();
   }
 
   Future<dynamic> fetchImages() async {
