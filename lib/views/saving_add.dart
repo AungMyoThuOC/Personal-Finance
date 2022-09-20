@@ -33,7 +33,7 @@ class _SavingAddState extends State<SavingAdd> {
 
   bool _submitted = false;
 
-  void _submit() {
+  void submit() {
     setState(() => _submitted = true);
     if (_errorText == null) {
       widget.onSubmit(savingController.value.text);
@@ -43,7 +43,6 @@ class _SavingAddState extends State<SavingAdd> {
   @override
   void dispose() {
     savingController.dispose();
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -113,9 +112,10 @@ class _SavingAddState extends State<SavingAdd> {
                                   : AutovalidateMode.disabled,
                               controller: savingController,
                               style: const TextStyle(color: Colors.black),
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 hintText: "Target",
                                 hintStyle: const TextStyle(color: Colors.grey),
+                                errorText: _errorText,
                               ),
                               onChanged: (text) => setState(() => text),
                             ),
@@ -170,8 +170,12 @@ class _SavingAddState extends State<SavingAdd> {
                       elevation: 15.0,
                     ),
                     onPressed: () {
-                      savingController.value.text.isNotEmpty ? _submit : null;
-                      if (savingController.text != null) {
+                      // savingController.value.text.isNotEmpty ? _submit : null;
+                      if (savingController.text.isEmpty) {
+                        setState(() {
+                          _submitted = true;
+                        });
+                      } else {
                         DataRepository()
                             .addSaving(Saving(
                               int.parse(sliderController.text),
@@ -179,8 +183,8 @@ class _SavingAddState extends State<SavingAdd> {
                               target: savingController.text,
                             ))
                             .then((value) => id = value.toString());
+                        Navigator.pop(context, '/home');
                       }
-                      Navigator.pop(context, '/home');
                     },
                     child: const Text(
                       'Save',
