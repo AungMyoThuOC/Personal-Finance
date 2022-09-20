@@ -17,17 +17,17 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:animate_icons/animate_icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class EditIncome extends StatefulWidget {
-  EditIncome({Key? key, required this.income, required this.onSubmit})
+class EditOutcome extends StatefulWidget {
+  EditOutcome({Key? key, required this.income, required this.onSubmit})
       : super(key: key);
   final Income income;
   final ValueChanged<String> onSubmit;
 
   @override
-  State<EditIncome> createState() => _AddIncomeState();
+  State<EditOutcome> createState() => _AddIncomeState();
 }
 
-class _AddIncomeState extends State<EditIncome> {
+class _AddIncomeState extends State<EditOutcome> {
   TextEditingController categoryController = TextEditingController();
 
   TextEditingController amountController = TextEditingController();
@@ -137,6 +137,9 @@ class _AddIncomeState extends State<EditIncome> {
 
   @override
   void initState() {
+    catName = widget.income.catName;
+    result = int.parse(widget.income.category);
+    getCollectionData();
     amountController.text = widget.income.amount.toString();
     super.initState();
   }
@@ -558,39 +561,33 @@ class _AddIncomeState extends State<EditIncome> {
                                       ),
                                       elevation: 15.0,
                                     ),
-                                    onPressed: (sumOne == 0)
-                                        ? () {
-                                            showTopSnackBar(
-                                              context,
-                                              CustomSnackBar.error(
-                                                message:
-                                                    "Your income left  ${sumOne - (sum + totRemain)}",
-                                              ),
-                                            );
-                                          }
-                                        : () {
-                                            if (int.parse(
-                                                    amountController.text) >
-                                                (sumOne - (sum + totRemain))) {
-                                              showTopSnackBar(
-                                                context,
-                                                CustomSnackBar.error(
-                                                  message:
-                                                      "Your income left  ${sumOne - (sum + totRemain)}",
-                                                ),
-                                              );
-                                            } else {
-                                              DataRepository().addIncome(Income(
-                                                  int.parse(
-                                                      amountController.text),
-                                                  date: DateTime.now(),
-                                                  category: state.toString(),
-                                                  income: false,
-                                                  catName: catName));
-                                              Navigator.popAndPushNamed(
-                                                  context, '/home');
-                                            }
-                                          },
+                                    onPressed: () {
+                                      if (sumOne -
+                                              (int.parse(
+                                                  amountController.text)) <
+                                          ((sum + totRemain))) {
+                                        print(widget.income.income);
+                                        showTopSnackBar(
+                                          context,
+                                          CustomSnackBar.error(
+                                            message:
+                                                "Your income left  ${sumOne - (sum + totRemain)}",
+                                          ),
+                                        );
+                                      } else {
+                                        DataRepository().updateIncome(
+                                            widget.income.autoID.toString(),
+                                            Income(
+                                                int.parse(
+                                                    amountController.text),
+                                                date: DateTime.now(),
+                                                category: result.toString(),
+                                                income: false,
+                                                catName: catName));
+                                        Navigator.popAndPushNamed(
+                                            context, '/home');
+                                      }
+                                    },
                                     child: const Text(
                                       'Save',
                                       style: TextStyle(

@@ -37,6 +37,7 @@ class _AddIncomeState extends State<AddIncome> {
   bool choose = true;
   int indexOne = 0;
   int state = 0;
+  int num = 0;
   AnimateIconController animatedController = AnimateIconController();
   bool checkDelete = false;
   int result = 0;
@@ -410,10 +411,6 @@ class _AddIncomeState extends State<AddIncome> {
                                                                         "This category used in Income",
                                                                   ),
                                                                 );
-                                                              } else {
-                                                                DataRepository()
-                                                                    .deleteCategory(
-                                                                        autoID);
                                                               }
                                                             }
                                                           });
@@ -436,6 +433,9 @@ class _AddIncomeState extends State<AddIncome> {
                                 elevation: 15.0,
                               ),
                               onPressed: () {
+                                if (catName == '') {
+                                  catName = "Category";
+                                }
                                 if (amountController.text.isEmpty &&
                                     categoryController.text.isEmpty) {
                                   setState(() {
@@ -451,9 +451,6 @@ class _AddIncomeState extends State<AddIncome> {
                                   );
                                   Navigator.popAndPushNamed(context, '/home');
                                 }
-                                // amountController.value.text.isNotEmpty
-                                //   ? _submit
-                                //   : null;
                               },
                               child: const Text(
                                 'Save',

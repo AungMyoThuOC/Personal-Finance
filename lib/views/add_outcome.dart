@@ -74,45 +74,6 @@ class _AddIncomeState extends State<AddOutcome> {
     Icons.monetization_on,
     Icons.ac_unit_sharp,
   ];
-
-  List<dynamic> list = [];
-  TabController? controller;
-  void add() {
-    DataRepository().addCategory(
-        Category(name: categoryController.text, icon: indexOne, income: false));
-  }
-
-  // var text = '';
-
-  bool submmitted = false;
-
-  void submit() {
-    setState(() => submmitted = true);
-    if (_errorText == null) {
-      widget.onSubmit(categoryController.value.text);
-    }
-  }
-
-  @override
-  void dispose() {
-    categoryController.dispose();
-    super.dispose();
-  }
-
-  String? get _errorText {
-    final text = categoryController.value.text;
-
-    if (text.isEmpty) {
-      return "Can't be empty";
-    }
-    if (text.length > 7) {
-      return "Too long";
-    }
-    return null;
-  }
-
-  String resultCat = '';
-
   Future<void> getCollectionData() async {
     await FirebaseFirestore.instance
         .collection('User')
@@ -136,6 +97,48 @@ class _AddIncomeState extends State<AddOutcome> {
       });
     });
   }
+
+  List<dynamic> list = [];
+  TabController? controller;
+  void add() {
+    DataRepository().addCategory(
+        Category(name: categoryController.text, icon: indexOne, income: false));
+  }
+
+  bool submmitted = false;
+
+  void submit() {
+    setState(() => submmitted = true);
+    if (_errorText == null) {
+      widget.onSubmit(categoryController.value.text);
+    }
+  }
+
+  @override
+  void initState() {
+    getCollectionData();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    categoryController.dispose();
+    super.dispose();
+  }
+
+  String? get _errorText {
+    final text = categoryController.value.text;
+
+    if (text.isEmpty) {
+      return "Can't be empty";
+    }
+    if (text.length > 7) {
+      return "Too long";
+    }
+    return null;
+  }
+
+  String resultCat = '';
 
   Future openDialog() => showDialog(
       context: context,
@@ -529,6 +532,9 @@ class _AddIncomeState extends State<AddOutcome> {
                                                                   "Your income left  ${sumOne - (sum + totRemain)}",
                                                             ),
                                                           );
+                                                        }
+                                                        if (catName == '') {
+                                                          catName = "Category";
                                                         } else {
                                                           DataRepository()
                                                               .addIncome(Income(

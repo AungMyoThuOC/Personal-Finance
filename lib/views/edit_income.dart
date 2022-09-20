@@ -14,6 +14,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:animate_icons/animate_icons.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class EditIncome extends StatefulWidget {
   EditIncome({Key? key, required this.income, required this.onSubmit})
@@ -87,6 +88,31 @@ class _AddIncomeState extends State<EditIncome> {
   }
 
   String resultCat = '';
+  double sumRemain = 0;
+  double totRemain = 0;
+  Future<void> getCollectionData() async {
+    await FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Saving')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        FirebaseFirestore.instance
+            .collectionGroup('Remaining')
+            .get()
+            .then((value) {
+          value.docs.forEach((result) {
+            sumRemain = sumRemain + result.data()['amount'];
+            print(sumRemain);
+          });
+          setState(() {
+            totRemain = sumRemain;
+          });
+        });
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -110,6 +136,7 @@ class _AddIncomeState extends State<EditIncome> {
   void initState() {
     catName = widget.income.catName;
     result = int.parse(widget.income.category);
+    getCollectionData();
     amountController.text = widget.income.amount.toString();
     super.initState();
   }
@@ -397,7 +424,7 @@ class _AddIncomeState extends State<EditIncome> {
                                                 (e) => StreamBuilder<
                                                         QuerySnapshot>(
                                                     stream: DataRepository()
-                                                        .getOut(),
+                                                        .getIn(),
                                                     builder:
                                                         (context, snapshot) {
                                                       if (snapshot
@@ -480,40 +507,78 @@ class _AddIncomeState extends State<EditIncome> {
             Container(
               width: 200,
               height: 40,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    elevation: 15.0,
-                  ),
-                  onPressed: () {
-                    if (amountController.text != null &&
-                        categoryController.text != null) {
-                      if (int.parse(amountController.text) >=
-                          widget.income.amount) {
-                        DataRepository().updateIncome(
-                            widget.income.autoID.toString(),
-                            Income(int.parse(amountController.text),
-                                date: DateTime.now(),
-                                category: result.toString(),
-                                income: true,
-                                catName: catName));
-                        Navigator.popAndPushNamed(context, '/home');
-                      } else {
-                        showTopSnackBar(
-                          context,
-                          const CustomSnackBar.error(
-                            message: "Income cannot be reduced",
-                          ),
-                        );
-                      }
+              child: StreamBuilder<QuerySnapshot>(
+                  stream: DataRepository().getIn(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
                     }
-                  },
-                  child: const Text(
-                    'Update',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  )),
+                    var ds = snapshot.data!.docs;
+
+                    double sum = 0.0;
+                    for (int i = 0; i < ds.length; i++)
+                      sum += (ds[i]['amount']).toDouble();
+
+                    return StreamBuilder<QuerySnapshot>(
+                        stream: DataRepository().getOut(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          }
+                          var ds = snapshot.data!.docs;
+
+                          double sumOne = 0.0;
+                          for (int i = 0; i < ds.length; i++)
+                            sumOne += (ds[i]['amount']).toDouble();
+
+                          return ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                elevation: 15.0,
+                              ),
+                              onPressed: () {
+                                if (amountController.text != null &&
+                                    categoryController.text != null) {
+                                  if ((sum -
+                                          (widget.income.amount -
+                                              int.parse(
+                                                  amountController.text))) <
+                                      (totRemain + sumOne)) {
+                                    print((sum -
+                                        (widget.income.amount -
+                                            int.parse(amountController.text))));
+                                    showTopSnackBar(
+                                      context,
+                                      const CustomSnackBar.error(
+                                        message: "Income cannot be reduced",
+                                      ),
+                                    );
+                                  } else {
+                                    DataRepository().updateIncome(
+                                        widget.income.autoID.toString(),
+                                        Income(int.parse(amountController.text),
+                                            date: DateTime.now(),
+                                            category: result.toString(),
+                                            income: true,
+                                            catName: catName));
+                                    Navigator.popAndPushNamed(context, '/home');
+                                  }
+                                }
+                              },
+                              child: const Text(
+                                'Save',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.white),
+                              ));
+                        });
+
+                    //
+                  }),
             )
           ],
         ),

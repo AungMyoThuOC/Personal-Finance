@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:personal_financial/models/saving.dart';
 import 'package:personal_financial/data_repository.dart';
+import 'package:personal_financial/views/edit_outcome.dart';
 import 'dart:math';
 import 'package:pull_down_button/pull_down_button.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -147,17 +148,18 @@ class _HomeHistoryState extends State<HomeHistory> {
                           endActionPane: ActionPane(
                             motion: const ScrollMotion(),
                             dismissible: DismissiblePane(onDismissed: () {
-                              if (widget.income.income == true) {
-                                if (sum == 0 && totRemain == 0) {
-                                  DataRepository().deleteIncome(
-                                      widget.income.autoID.toString());
-                                } else {
+                              if (income == true) {
+                                if ((sumOne - widget.income.amount) <
+                                    (sum + totRemain)) {
                                   showTopSnackBar(
                                     context,
                                     const CustomSnackBar.error(
                                       message: "Your can't delete",
                                     ),
                                   );
+                                } else {
+                                  DataRepository().deleteIncome(
+                                      widget.income.autoID.toString());
                                 }
                               } else {
                                 DataRepository().deleteIncome(
@@ -167,8 +169,9 @@ class _HomeHistoryState extends State<HomeHistory> {
                             children: [
                               SlidableAction(
                                 onPressed: (context) {
-                                  if (sum == 0 && totRemain == 0) {
-                                    if (income == false) {
+                                  if (income == true) {
+                                    if ((sumOne - widget.income.amount) <
+                                        (sum + totRemain)) {
                                       showTopSnackBar(
                                         context,
                                         const CustomSnackBar.error(
@@ -180,12 +183,8 @@ class _HomeHistoryState extends State<HomeHistory> {
                                           widget.income.autoID.toString());
                                     }
                                   } else {
-                                    showTopSnackBar(
-                                      context,
-                                      const CustomSnackBar.error(
-                                        message: "Your can't delete",
-                                      ),
-                                    );
+                                    DataRepository().deleteIncome(
+                                        widget.income.autoID.toString());
                                   }
                                 },
                                 backgroundColor: Color(0xFFFE4A49),
@@ -198,21 +197,39 @@ class _HomeHistoryState extends State<HomeHistory> {
                           startActionPane: ActionPane(
                             motion: ScrollMotion(),
                             dismissible: DismissiblePane(onDismissed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => EditIncome(
-                                        income: widget.income,
-                                        onSubmit: (String value) {},
-                                      )));
+                              if (income == true) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => EditIncome(
+                                          income: widget.income,
+                                          onSubmit: (String value) {},
+                                        )));
+                              } else {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => EditOutcome(
+                                          income: widget.income,
+                                          onSubmit: (String value) {},
+                                        )));
+                              }
                             }),
                             children: [
                               SlidableAction(
                                 flex: 2,
                                 onPressed: (mm) {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => EditIncome(
-                                            income: widget.income,
-                                            onSubmit: (String value) {},
-                                          )));
+                                  if (income == true) {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (context) => EditIncome(
+                                                  income: widget.income,
+                                                  onSubmit: (String value) {},
+                                                )));
+                                  } else {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (context) => EditOutcome(
+                                                  income: widget.income,
+                                                  onSubmit: (String value) {},
+                                                )));
+                                  }
                                 },
                                 backgroundColor: Color(0xFF7BC043),
                                 foregroundColor: Colors.white,
