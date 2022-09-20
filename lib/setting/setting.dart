@@ -81,6 +81,7 @@ class _SettingPageState extends State<SettingPage> {
               TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/security');
+
                     Navigator.pushNamed(context, '/security');
                   },
                   child: Row(

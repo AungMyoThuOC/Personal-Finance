@@ -169,6 +169,7 @@ class _AddIncomeState extends State<AddOutcome> {
                               decoration: InputDecoration(
                                 hintText: "Add Name",
                                 hintStyle: const TextStyle(color: Colors.grey),
+                                errorText: _errorText,
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: const BorderSide(

@@ -417,18 +417,7 @@ class _AddIncomeState extends State<AddIncome> {
                                                                         autoID);
                                                               }
                                                             }
-                                                          }
-
-                                                    // deleteClick: (sum == [])
-                                                    //     ? (autoID) {
-                                                    //         DataRepository()
-                                                    //             .deleteCategory(
-                                                    //                 autoID);
-                                                    //       }
-                                                    //     : (autoID) {
-
-                                                    //       },
-                                                    );
+                                                          });
                                               }),
                                         )
                                         .toList());

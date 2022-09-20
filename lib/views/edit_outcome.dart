@@ -173,6 +173,7 @@ class _AddIncomeState extends State<EditIncome> {
                               decoration: InputDecoration(
                                 hintText: "Add Name",
                                 hintStyle: const TextStyle(color: Colors.grey),
+                                errorText: _errorText,
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: const BorderSide(
@@ -230,10 +231,16 @@ class _AddIncomeState extends State<EditIncome> {
                         height: 30,
                       ),
                       InkWell(
-                        onTap: () {
-                          add();
-                          Navigator.pop(context);
-                        },
+                        onTap: (categoryController.text.isEmpty)
+                            ? () {
+                                setState() {
+                                  submmitted = true;
+                                }
+                              }
+                            : () {
+                                add();
+                                Navigator.pop(context);
+                              },
                         child: Container(
                           padding:
                               const EdgeInsets.only(top: 15.0, bottom: 15.0),
