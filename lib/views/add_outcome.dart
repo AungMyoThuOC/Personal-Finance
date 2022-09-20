@@ -83,14 +83,10 @@ class _AddIncomeState extends State<AddOutcome> {
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         FirebaseFirestore.instance
-            .collection('User')
-            .doc('${FirebaseAuth.instance.currentUser!.email}')
-            .collection('Saving')
-            .doc(doc.id)
-            .collection("Remaining")
+            .collectionGroup('Remaining')
             .get()
-            .then((QuerySnapshot<Map> querySnapshot) {
-          querySnapshot.docs.forEach((result) {
+            .then((value) {
+          value.docs.forEach((result) {
             sumRemain = sumRemain + result.data()['amount'];
             print(sumRemain);
           });
@@ -425,7 +421,7 @@ class _AddIncomeState extends State<AddOutcome> {
                                                               const CustomSnackBar
                                                                   .error(
                                                                 message:
-                                                                    "This category used in Income",
+                                                                    "This category used in Outcome",
                                                               ),
                                                             );
                                                           })
@@ -538,7 +534,7 @@ class _AddIncomeState extends State<AddOutcome> {
                                                           );
                                                         }
                                                         if (catName == '') {
-                                                          catName = "Category";
+                                                          catName = "gifts";
                                                         } else {
                                                           DataRepository()
                                                               .addIncome(Income(
