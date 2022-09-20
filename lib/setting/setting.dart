@@ -51,6 +51,19 @@ class _SettingPageState extends State<SettingPage> {
     });
   }
 
+  Future<void> deleteCategory() async {
+    await FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Category')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        doc.reference.delete();
+      });
+    });
+  }
+
   Future<void> getCollectionData() async {
     await FirebaseFirestore.instance
         .collection('User')
@@ -198,6 +211,7 @@ class _SettingPageState extends State<SettingPage> {
                                                     deleteIn();
                                                     deleteOut();
                                                     deleteSaving();
+                                                    deleteCategory();
                                                     getCollectionData();
                                                     Navigator
                                                         .pushReplacementNamed(
