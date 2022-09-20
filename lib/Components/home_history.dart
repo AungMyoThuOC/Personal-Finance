@@ -65,6 +65,41 @@ class _HomeHistoryState extends State<HomeHistory> {
     Icons.monetization_on,
     Icons.ac_unit_sharp,
   ];
+  double sumRemain = 0;
+  double totRemain = 0;
+  Future<void> getCollectionData() async {
+    await FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Saving')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        FirebaseFirestore.instance
+            .collection('User')
+            .doc('${FirebaseAuth.instance.currentUser!.email}')
+            .collection('Saving')
+            .doc(doc.id)
+            .collection("Remaining")
+            .get()
+            .then((QuerySnapshot<Map> querySnapshot) {
+          querySnapshot.docs.forEach((result) {
+            sumRemain = sumRemain + result.data()['amount'];
+            print(sumRemain);
+          });
+          setState(() {
+            totRemain = sumRemain;
+          });
+        });
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    getCollectionData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +112,7 @@ class _HomeHistoryState extends State<HomeHistory> {
           var ds = snapshot.data!.docs;
 
           double sumOne = 0.0;
+          bool income = widget.income.income;
           for (int i = 0; i < ds.length; i++)
             sumOne += (ds[i]['amount']).toDouble();
 
@@ -102,206 +138,193 @@ class _HomeHistoryState extends State<HomeHistory> {
                       double sumTwo = 0.0;
                       for (int i = 0; i < ds.length; i++)
                         sumTwo += (ds[i]['amount']).toDouble();
-                      return StreamBuilder<QuerySnapshot>(
-                          stream: DataRepository().getmain(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                            }
-                            var ds = snapshot.data!.docs;
-
-                            double totRemain = 0.0;
-                            for (int i = 0; i < ds.length; i++)
-                              totRemain += (ds[i]['amount']).toDouble();
-                            print(sum);
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 10,
-                              ),
-                              child: Slidable(
-                                key: Key(widget.income.autoID.toString()),
-                                endActionPane: ActionPane(
-                                  motion: const ScrollMotion(),
-                                  dismissible: DismissiblePane(onDismissed: () {
-                                    if (sum == 0 && totRemain == 0) {
-                                      DataRepository().deleteIncome(
-                                          widget.income.autoID.toString());
-                                    } else {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                        ),
+                        child: Slidable(
+                          key: Key(widget.income.autoID.toString()),
+                          endActionPane: ActionPane(
+                            motion: const ScrollMotion(),
+                            dismissible: DismissiblePane(onDismissed: () {
+                              if (widget.income.income == true) {
+                                if (sum == 0 && totRemain == 0) {
+                                  DataRepository().deleteIncome(
+                                      widget.income.autoID.toString());
+                                } else {
+                                  showTopSnackBar(
+                                    context,
+                                    const CustomSnackBar.error(
+                                      message: "Your can't delete",
+                                    ),
+                                  );
+                                }
+                              } else {
+                                DataRepository().deleteIncome(
+                                    widget.income.autoID.toString());
+                              }
+                            }),
+                            children: [
+                              SlidableAction(
+                                onPressed: (context) {
+                                  if (sum == 0 && totRemain == 0) {
+                                    if (income == false) {
                                       showTopSnackBar(
                                         context,
                                         const CustomSnackBar.error(
                                           message: "Your can't delete",
                                         ),
                                       );
+                                    } else {
+                                      DataRepository().deleteIncome(
+                                          widget.income.autoID.toString());
                                     }
-                                  }),
-                                  children: [
-                                    SlidableAction(
-                                      onPressed: (context) {
-                                        if (sum == 0 && totRemain == 0) {
-                                          DataRepository().deleteIncome(
-                                              widget.income.autoID.toString());
-                                        } else {
-                                          showTopSnackBar(
-                                            context,
-                                            const CustomSnackBar.error(
-                                              message: "You can't delete",
-                                            ),
-                                          );
-                                        }
-                                      },
-                                      backgroundColor: Color(0xFFFE4A49),
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.delete,
-                                      label: 'Delete',
-                                    ),
-                                  ],
-                                ),
-                                startActionPane: ActionPane(
-                                  motion: ScrollMotion(),
-                                  dismissible: DismissiblePane(onDismissed: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                            builder: (context) => EditIncome(
-                                                  income: widget.income, onSubmit: (String value) {  },
-                                                )));
-                                  }),
-                                  children: [
-                                    SlidableAction(
-                                      flex: 2,
-                                      onPressed: (mm) {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    EditIncome(
-                                                      income: widget.income, 
-                                                      onSubmit: (String value) {  },
-                                                    )));
-                                      },
-                                      backgroundColor: Color(0xFF7BC043),
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.edit,
-                                      label: 'Edit',
-                                    ),
-                                  ],
-                                ),
-                                child: ListTile(
-                                  title: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.blueGrey,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          offset: const Offset(0, 3),
-                                          blurRadius: 2,
-                                          color: Colors.black.withOpacity(0.2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 20),
-                                      child: Row(
+                                  } else {
+                                    showTopSnackBar(
+                                      context,
+                                      const CustomSnackBar.error(
+                                        message: "Your can't delete",
+                                      ),
+                                    );
+                                  }
+                                },
+                                backgroundColor: Color(0xFFFE4A49),
+                                foregroundColor: Colors.white,
+                                icon: Icons.delete,
+                                label: 'Delete',
+                              ),
+                            ],
+                          ),
+                          startActionPane: ActionPane(
+                            motion: ScrollMotion(),
+                            dismissible: DismissiblePane(onDismissed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => EditIncome(
+                                        income: widget.income,
+                                        onSubmit: (String value) {},
+                                      )));
+                            }),
+                            children: [
+                              SlidableAction(
+                                flex: 2,
+                                onPressed: (mm) {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => EditIncome(
+                                            income: widget.income,
+                                            onSubmit: (String value) {},
+                                          )));
+                                },
+                                backgroundColor: Color(0xFF7BC043),
+                                foregroundColor: Colors.white,
+                                icon: Icons.edit,
+                                label: 'Edit',
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
+                            title: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.blueGrey,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    offset: const Offset(0, 3),
+                                    blurRadius: 2,
+                                    color: Colors.black.withOpacity(0.2),
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 20),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            navBarItem[int.parse(
+                                                widget.income.category)],
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            "${widget.income.catName}",
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16),
+                                          ),
+                                        ],
+                                      ),
+                                      Container(
+                                        width: 200,
+                                        child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Row(
-                                              children: [
-                                                Icon(
-                                                  navBarItem[int.parse(
-                                                      widget.income.category)],
-                                                  color: Colors.white,
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Text(
-                                                  "${widget.income.catName}",
-                                                  style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 16),
-                                                ),
-                                              ],
-                                            ),
-                                            Container(
-                                              width: 200,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  (widget.income.income == true)
-                                                      ? Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors.amber,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                          ),
-                                                          child: const Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    5.0),
-                                                            child: Text(
-                                                              'Income',
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontSize: 14),
-                                                            ),
-                                                          ),
-                                                        )
-                                                      : Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors.red,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                          ),
-                                                          child: const Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    5.0),
-                                                            child: Text(
-                                                              'Outcome',
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 14),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        right: 22),
-                                                    child: Text(
-                                                      "${widget.income.amount}",
-                                                      style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 16),
+                                            (widget.income.income == true)
+                                                ? Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.amber,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: const Padding(
+                                                      padding:
+                                                          EdgeInsets.all(5.0),
+                                                      child: Text(
+                                                        'Income',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 14),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.red,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: const Padding(
+                                                      padding:
+                                                          EdgeInsets.all(5.0),
+                                                      child: Text(
+                                                        'Outcome',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 14),
+                                                      ),
                                                     ),
                                                   ),
-                                                ],
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(right: 22),
+                                              child: Text(
+                                                "${widget.income.amount}",
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16),
                                               ),
-                                            )
-                                          ]),
-                                    ),
-                                  ),
-                                ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    ]),
                               ),
-                            );
-                          });
+                            ),
+                          ),
+                        ),
+                      );
                     });
               });
         });

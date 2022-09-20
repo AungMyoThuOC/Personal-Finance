@@ -20,7 +20,8 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 // ignore: must_be_immutable
 class SavingDetails extends StatefulWidget {
-  SavingDetails({Key? key, required this.saving, required this.onSubmit}) : super(key: key);
+  SavingDetails({Key? key, required this.saving, required this.onSubmit})
+      : super(key: key);
   Saving? saving;
   final ValueChanged<String> onSubmit;
   @override
@@ -188,7 +189,10 @@ class _SavingDetailsState extends State<SavingDetails> {
                                                     .toDouble();
                                               return StreamBuilder<
                                                       QuerySnapshot>(
-                                                  stream: repository.getmain(),
+                                                  stream:
+                                                      repository.getRemaining(
+                                                          widget.saving!.autoID
+                                                              .toString()),
                                                   builder: (context, snapshot) {
                                                     if (snapshot
                                                             .connectionState ==
@@ -352,7 +356,8 @@ class _SavingDetailsState extends State<SavingDetails> {
                     for (int i = 0; i < ds.length; i++)
                       sumTwo += (ds[i]['amount']).toDouble();
                     return StreamBuilder<QuerySnapshot>(
-                        stream: repository.getmain(),
+                        stream: repository
+                            .getRemaining(widget.saving!.autoID.toString()),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {

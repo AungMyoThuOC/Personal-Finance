@@ -15,6 +15,7 @@ import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/tap_bounce_container.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:animate_icons/animate_icons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class EditIncome extends StatefulWidget {
   EditIncome({Key? key, required this.income, required this.onSubmit})
@@ -69,12 +70,38 @@ class _AddIncomeState extends State<EditIncome> {
     Icons.ac_unit_sharp,
   ];
   bool main = false;
+  double sumRemain = 0;
+  double totRemain = 0;
 
   List<dynamic> list = [];
   TabController? controller;
   void add() {
     DataRepository().addCategory(
         Category(name: categoryController.text, icon: indexOne, income: false));
+  }
+
+  Future<void> getCollectionData() async {
+    await FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Saving')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        FirebaseFirestore.instance
+            .collectionGroup('Remaining')
+            .get()
+            .then((value) {
+          value.docs.forEach((result) {
+            sumRemain = sumRemain + result.data()['amount'];
+            print(sumRemain);
+          });
+          setState(() {
+            totRemain = sumRemain;
+          });
+        });
+      });
+    });
   }
 
   // var text = '';
@@ -351,7 +378,8 @@ class _AddIncomeState extends State<EditIncome> {
                                             });
                                             return true;
                                           },
-                                          duration: const Duration(milliseconds: 500),
+                                          duration:
+                                              const Duration(milliseconds: 500),
                                           clockwise: false,
                                         ),
                                         CircleAvatar(
@@ -489,76 +517,57 @@ class _AddIncomeState extends State<EditIncome> {
                                 var ds = snapshot.data!.docs;
 
                                 double sumTwo = 0.0;
+                                List autoID = [];
                                 for (int i = 0; i < ds.length; i++)
                                   sumTwo += (ds[i]['amount']).toDouble();
-                                return StreamBuilder<QuerySnapshot>(
-                                    stream: DataRepository().getmain(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const CircularProgressIndicator();
-                                      }
-                                      var ds = snapshot.data!.docs;
 
-                                      double totRemain = 0.0;
-                                      for (int i = 0; i < ds.length; i++)
-                                        totRemain +=
-                                            (ds[i]['amount']).toDouble();
-                                      print(sum);
-                                      return ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(25),
-                                            ),
-                                            elevation: 15.0,
-                                          ),
-                                          onPressed: (sumOne == 0)
-                                              ? () {
-                                                  showTopSnackBar(
-                                                    context,
-                                                    CustomSnackBar.error(
-                                                      message:
-                                                          "Your income left  ${sumOne - (sum + totRemain)}",
-                                                    ),
-                                                  );
-                                                }
-                                              : () {
-                                                  if (int.parse(amountController
-                                                          .text) >
-                                                      (sumOne -
-                                                          (sum + totRemain))) {
-                                                    showTopSnackBar(
-                                                      context,
-                                                      CustomSnackBar.error(
-                                                        message:
-                                                            "Your income left  ${sumOne - (sum + totRemain)}",
-                                                      ),
-                                                    );
-                                                  } else {
-                                                    DataRepository().addIncome(
-                                                        Income(
-                                                            int.parse(
-                                                                amountController
-                                                                    .text),
-                                                            date:
-                                                                DateTime.now(),
-                                                            category: state
-                                                                .toString(),
-                                                            income: false,
-                                                            catName: catName));
-                                                    Navigator.popAndPushNamed(
-                                                        context, '/home');
-                                                  }
-                                                },
-                                          child: const Text(
-                                            'Save',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                                color: Colors.white),
-                                          ));
-                                    });
+                                return ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(25),
+                                      ),
+                                      elevation: 15.0,
+                                    ),
+                                    onPressed: (sumOne == 0)
+                                        ? () {
+                                            showTopSnackBar(
+                                              context,
+                                              CustomSnackBar.error(
+                                                message:
+                                                    "Your income left  ${sumOne - (sum + totRemain)}",
+                                              ),
+                                            );
+                                          }
+                                        : () {
+                                            if (int.parse(
+                                                    amountController.text) >
+                                                (sumOne - (sum + totRemain))) {
+                                              showTopSnackBar(
+                                                context,
+                                                CustomSnackBar.error(
+                                                  message:
+                                                      "Your income left  ${sumOne - (sum + totRemain)}",
+                                                ),
+                                              );
+                                            } else {
+                                              DataRepository().addIncome(Income(
+                                                  int.parse(
+                                                      amountController.text),
+                                                  date: DateTime.now(),
+                                                  category: state.toString(),
+                                                  income: false,
+                                                  catName: catName));
+                                              Navigator.popAndPushNamed(
+                                                  context, '/home');
+                                            }
+                                          },
+                                    child: const Text(
+                                      'Save',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: Colors.white),
+                                    ));
                               });
                         });
                   }),

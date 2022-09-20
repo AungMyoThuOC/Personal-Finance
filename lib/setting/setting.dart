@@ -80,11 +80,8 @@ class _SettingPageState extends State<SettingPage> {
               ),
               TextButton(
                   onPressed: () {
-<<<<<<< HEAD
-                     Navigator.pushNamed(context, '/security');
-=======
                     Navigator.pushNamed(context, '/security');
->>>>>>> c90671f9305f500ff32a2abc3f85aa1d6814a607
+                    Navigator.pushNamed(context, '/security');
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,

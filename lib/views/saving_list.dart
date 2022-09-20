@@ -109,7 +109,8 @@ class _SavingListState extends State<SavingList> {
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => SavingDetails(
-                            saving: widget.saving, onSubmit: (String value) {  },
+                            saving: widget.saving,
+                            onSubmit: (String value) {},
                           )));
                 },
                 child: Column(
@@ -305,7 +306,10 @@ class _SavingListState extends State<SavingList> {
                                                               return StreamBuilder<
                                                                       QuerySnapshot>(
                                                                   stream: repository
-                                                                      .getmain(),
+                                                                      .getRemaining(widget
+                                                                          .saving
+                                                                          .autoID
+                                                                          .toString()),
                                                                   builder: (context,
                                                                       snapshot) {
                                                                     if (snapshot

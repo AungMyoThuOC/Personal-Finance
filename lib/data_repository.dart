@@ -72,7 +72,11 @@ class DataRepository {
         .doc(id)
         .collection("Remaining")
         .doc()
-        .set({'amount': remaining.amount, 'date': remaining.date});
+        .set({
+      'amount': remaining.amount,
+      'date': remaining.date,
+      'uid': FirebaseAuth.instance.currentUser!.uid
+    });
   }
 
   Future updateSaving(String id, Saving saving) async {
@@ -132,15 +136,6 @@ class DataRepository {
         .snapshots();
   }
 
-  Stream<QuerySnapshot> getRemain() {
-    return ref
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
-        .collection('Saving')
-        .doc()
-        .collection("Remaining")
-        .snapshots();
-  }
-
   Stream<QuerySnapshot> getIn() {
     return ref
         .doc('${FirebaseAuth.instance.currentUser!.email}')
@@ -187,10 +182,6 @@ class DataRepository {
         .doc('${FirebaseAuth.instance.currentUser!.email}')
         .collection('Saving')
         .snapshots();
-  }
-
-  Stream<QuerySnapshot> getmain() {
-    return FirebaseFirestore.instance.collectionGroup('Remaining').snapshots();
   }
 
   Future deleteRemaining(String id, String remainID) async {

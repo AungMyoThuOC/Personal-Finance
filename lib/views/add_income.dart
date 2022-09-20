@@ -69,6 +69,8 @@ class _AddIncomeState extends State<AddIncome> {
     Icons.monetization_on,
     Icons.ac_unit_sharp,
   ];
+  String resultCat = '';
+  int nameCat = 0;
 
   List<dynamic> list = [];
   TabController? controller;
@@ -356,7 +358,7 @@ class _AddIncomeState extends State<AddIncome> {
                                     children: snapshot.data!.docs
                                         .map(
                                           (e) => StreamBuilder<QuerySnapshot>(
-                                              stream: DataRepository().getOut(),
+                                              stream: DataRepository().getIn(),
                                               builder: (context, snapshot) {
                                                 if (snapshot.connectionState ==
                                                     ConnectionState.waiting) {
@@ -371,32 +373,62 @@ class _AddIncomeState extends State<AddIncome> {
                                                   sum.add(ds[i]['catName']);
 
                                                 return MyCategory(
-                                                  delete: checkDelete,
-                                                  onClicked: (state, name) {
-                                                    setState(() {
-                                                      result = state;
-                                                      catName = name;
-                                                    });
-                                                  },
-                                                  category:
-                                                      Category.fromSnapshot(e),
-                                                  deleteClick: (sum == [])
-                                                      ? (autoID) {
-                                                          DataRepository()
-                                                              .deleteCategory(
-                                                                  autoID);
-                                                        }
-                                                      : (autoID) {
-                                                          showTopSnackBar(
-                                                            context,
-                                                            const CustomSnackBar
-                                                                .error(
-                                                              message:
-                                                                  "This category used in Income",
-                                                            ),
-                                                          );
-                                                        },
-                                                );
+                                                    delete: checkDelete,
+                                                    onClicked: (state, name) {
+                                                      setState(() {
+                                                        result = state;
+                                                        catName = name;
+                                                      });
+                                                    },
+                                                    category:
+                                                        Category.fromSnapshot(
+                                                            e),
+                                                    deleteClick: (sum == [])
+                                                        ? ((autoID, name) {
+                                                            showTopSnackBar(
+                                                              context,
+                                                              const CustomSnackBar
+                                                                  .error(
+                                                                message:
+                                                                    "This category used in Income",
+                                                              ),
+                                                            );
+                                                          })
+                                                        : (autoID, name) {
+                                                            setState(() {
+                                                              resultCat = name;
+                                                            });
+                                                            for (int i = 0;
+                                                                i < sum.length;
+                                                                i++) {
+                                                              if (resultCat ==
+                                                                  sum[i]) {
+                                                                showTopSnackBar(
+                                                                  context,
+                                                                  const CustomSnackBar
+                                                                      .error(
+                                                                    message:
+                                                                        "This category used in Income",
+                                                                  ),
+                                                                );
+                                                              } else {
+                                                                DataRepository()
+                                                                    .deleteCategory(
+                                                                        autoID);
+                                                              }
+                                                            }
+                                                          }
+
+                                                    // deleteClick: (sum == [])
+                                                    //     ? (autoID) {
+                                                    //         DataRepository()
+                                                    //             .deleteCategory(
+                                                    //                 autoID);
+                                                    //       }
+                                                    //     : (autoID) {
+
+                                                    //       },
+                                                    );
                                               }),
                                         )
                                         .toList());
@@ -520,7 +552,8 @@ class _MyCategoryState extends State<MyCategory> {
                           widget.category.icon, widget.category.name);
                     }
                   : () {
-                      widget.deleteClick(widget.category.autoID);
+                      widget.deleteClick(
+                          widget.category.autoID, widget.category.name);
                     },
               icon: (widget.delete == false)
                   ? Icon(navBarItem[widget.category.icon])

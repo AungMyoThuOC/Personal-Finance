@@ -17,9 +17,39 @@ class PieChart extends StatefulWidget {
 
 class _PieChartState extends State<PieChart> {
   final DataRepository repository = DataRepository();
+  double sumRemain = 0;
+  double totRemain = 0;
+  Future<void> getCollectionData() async {
+    await FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Saving')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        FirebaseFirestore.instance
+            .collection('User')
+            .doc('${FirebaseAuth.instance.currentUser!.email}')
+            .collection('Saving')
+            .doc(doc.id)
+            .collection("Remaining")
+            .get()
+            .then((QuerySnapshot<Map> querySnapshot) {
+          querySnapshot.docs.forEach((result) {
+            sumRemain = sumRemain + result.data()['amount'];
+            print(sumRemain);
+          });
+          setState(() {
+            totRemain = sumRemain;
+          });
+        });
+      });
+    });
+  }
 
   @override
   void initState() {
+    getCollectionData();
     super.initState();
   }
 
@@ -56,74 +86,66 @@ class _PieChartState extends State<PieChart> {
                       var ds = snapshot.data!.docs;
 
                       double sumTwo = 0.0;
+                      List autoID = [];
+                      String id = '';
+                      snapshot.data!.docs.forEach((elements) {
+                        autoID.add(elements.id);
+
+                        for (int i = 0; i < autoID.length; i++) {
+                          id = autoID[i];
+                        }
+                      });
                       for (int i = 0; i < ds.length; i++)
                         sumTwo += (ds[i]['amount']).toDouble();
-                      return StreamBuilder<QuerySnapshot>(
-                          stream: repository.getmain(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                            }
-                            var ds = snapshot.data!.docs;
-
-                            double totalSave = 0.0;
-                            for (int i = 0; i < ds.length; i++)
-                              totalSave += (ds[i]['amount']).toDouble();
-
-                            return Container(
-                                child: SfCircularChart(
-                                    legend: Legend(isVisible: true),
-                                    series: <CircularSeries>[
-                                  PieSeries<ChartData, String>(
-                                    legendIconType: LegendIconType.rectangle,
-                                    dataLabelSettings: const DataLabelSettings(
-                                      isVisible: true,
-                                    ),
-                                    dataSource: [
-                                      ChartData(
-                                          'Income',
-                                          (total == 0)
-                                              ? 1
-                                              : (totalSave == 0)
-                                                  ? (((total - totalOut) *
-                                                          100) /
-                                                      total)
-                                                  : (((total -
-                                                                  (totalOut +
-                                                                      totalSave)) *
-                                                              100) /
-                                                          total) /
-                                                      10,
-                                          '${(total == 0) ? 0 : (totalSave == 0) ? (((total - totalOut) * 100) / total).toStringAsFixed(1) : (((total - (totalOut + totalSave)) * 100) / total).toStringAsFixed(1)}%'),
-                                      ChartData(
-                                          'Outcome',
-                                          (total == 0)
-                                              ? 1
-                                              : (((totalOut == 0)
-                                                      ? 1
-                                                      : ((totalOut / total) *
-                                                          100))) /
-                                                  10,
-                                          '${((total == 0) ? 0 : (totalOut == 0 ? 0 : ((totalOut / total) * 100)).toStringAsFixed(1))}%'),
-                                      ChartData(
-                                          'Saving',
-                                          (total == 0)
-                                              ? 1
-                                              : (((totalSave == 0)
-                                                      ? 0
-                                                      : ((totalSave / total) *
-                                                          100))) /
-                                                  10,
-                                          '${((total == 0) ? 0 : (totalSave == 0 ? 0 : ((totalSave / total) * 100)).toStringAsFixed(1))}%'),
-                                    ],
-                                    xValueMapper: (ChartData data, _) => data.x,
-                                    yValueMapper: (ChartData data, _) => data.y,
-                                    dataLabelMapper: (ChartData data, _) =>
-                                        data.size,
-                                  ),
-                                ]));
-                          });
+                      return Container(
+                          child: SfCircularChart(
+                              legend: Legend(isVisible: true),
+                              series: <CircularSeries>[
+                            PieSeries<ChartData, String>(
+                              legendIconType: LegendIconType.rectangle,
+                              dataLabelSettings: const DataLabelSettings(
+                                isVisible: true,
+                              ),
+                              dataSource: [
+                                ChartData(
+                                    'Income',
+                                    (total == 0)
+                                        ? 1
+                                        : (totRemain == 0)
+                                            ? (((total - totalOut) * 100) /
+                                                total)
+                                            : (((total -
+                                                            (totalOut +
+                                                                totRemain)) *
+                                                        100) /
+                                                    total) /
+                                                10,
+                                    '${(total == 0) ? 0 : (totRemain == 0) ? (((total - totalOut) * 100) / total).toStringAsFixed(1) : (((total - (totalOut + totRemain)) * 100) / total).toStringAsFixed(1)}%'),
+                                ChartData(
+                                    'Outcome',
+                                    (total == 0)
+                                        ? 1
+                                        : (((totalOut == 0)
+                                                ? 1
+                                                : ((totalOut / total) * 100))) /
+                                            10,
+                                    '${((total == 0) ? 0 : (totalOut == 0 ? 0 : ((totalOut / total) * 100)).toStringAsFixed(1))}%'),
+                                ChartData(
+                                    'Saving',
+                                    (total == 0)
+                                        ? 1
+                                        : (((totRemain == 0)
+                                                ? 0
+                                                : ((totRemain / total) *
+                                                    100))) /
+                                            10,
+                                    '${((total == 0) ? 0 : (totRemain == 0 ? 0 : ((totRemain / total) * 100)).toStringAsFixed(1))}%'),
+                              ],
+                              xValueMapper: (ChartData data, _) => data.x,
+                              yValueMapper: (ChartData data, _) => data.y,
+                              dataLabelMapper: (ChartData data, _) => data.size,
+                            ),
+                          ]));
                     });
               });
         });
