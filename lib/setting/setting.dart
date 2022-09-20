@@ -12,6 +12,69 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
+  Future<void> deleteIn() async {
+    await FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Income')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        doc.reference.delete();
+      });
+    });
+  }
+
+  Future<void> deleteOut() async {
+    await FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Outcome')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        doc.reference.delete();
+      });
+    });
+  }
+
+  Future<void> deleteSaving() async {
+    await FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Saving')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        doc.reference.delete();
+      });
+    });
+  }
+
+  Future<void> getCollectionData() async {
+    await FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Saving')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        FirebaseFirestore.instance
+            .collection('User')
+            .doc('${FirebaseAuth.instance.currentUser!.email}')
+            .collection('Saving')
+            .doc(doc.id)
+            .collection("Remaining")
+            .get()
+            .then((QuerySnapshot<Map> querySnapshot) {
+          querySnapshot.docs.forEach((result) {
+            result.reference.delete();
+          });
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,6 +195,10 @@ class _SettingPageState extends State<SettingPage> {
                                             children: [
                                               ElevatedButton(
                                                   onPressed: () {
+                                                    deleteIn();
+                                                    deleteOut();
+                                                    deleteSaving();
+                                                    getCollectionData();
                                                     Navigator
                                                         .pushReplacementNamed(
                                                             context, '/home');
