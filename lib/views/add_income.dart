@@ -79,8 +79,6 @@ class _AddIncomeState extends State<AddIncome> {
         Category(name: categoryController.text, icon: indexOne, income: true));
   }
 
-  // var text = '';
-
   bool submitted = false;
 
   void submit() {
@@ -367,6 +365,7 @@ class _AddIncomeState extends State<AddIncome> {
                                                 var ds = snapshot.data!.docs;
 
                                                 List sum = [];
+
                                                 for (int i = 0;
                                                     i < ds.length;
                                                     i++)

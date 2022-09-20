@@ -111,6 +111,8 @@ class _AddIncomeState extends State<AddOutcome> {
     return null;
   }
 
+  String resultCat = '';
+
   Future<void> getCollectionData() async {
     await FirebaseFirestore.instance
         .collection('User')
@@ -399,32 +401,51 @@ class _AddIncomeState extends State<AddOutcome> {
                                                   sum.add(ds[i]['catName']);
 
                                                 return MyCategory(
-                                                  delete: checkDelete,
-                                                  onClicked: (state, name) {
-                                                    setState(() {
-                                                      result = state;
-                                                      catName = name;
-                                                    });
-                                                  },
-                                                  category:
-                                                      Category.fromSnapshot(e),
-                                                  deleteClick: (sum == [])
-                                                      ? (autoID) {
-                                                          DataRepository()
-                                                              .deleteCategory(
-                                                                  autoID);
-                                                        }
-                                                      : (autoID) {
-                                                          showTopSnackBar(
-                                                            context,
-                                                            const CustomSnackBar
-                                                                .error(
-                                                              message:
-                                                                  "This category used in Outcome",
-                                                            ),
-                                                          );
-                                                        },
-                                                );
+                                                    delete: checkDelete,
+                                                    onClicked: (state, name) {
+                                                      setState(() {
+                                                        result = state;
+                                                        catName = name;
+                                                      });
+                                                    },
+                                                    category:
+                                                        Category.fromSnapshot(
+                                                            e),
+                                                    deleteClick: (sum == [])
+                                                        ? ((autoID, name) {
+                                                            showTopSnackBar(
+                                                              context,
+                                                              const CustomSnackBar
+                                                                  .error(
+                                                                message:
+                                                                    "This category used in Income",
+                                                              ),
+                                                            );
+                                                          })
+                                                        : (autoID, name) {
+                                                            setState(() {
+                                                              resultCat = name;
+                                                            });
+                                                            for (int i = 0;
+                                                                i < sum.length;
+                                                                i++) {
+                                                              if (resultCat ==
+                                                                  sum[i]) {
+                                                                showTopSnackBar(
+                                                                  context,
+                                                                  const CustomSnackBar
+                                                                      .error(
+                                                                    message:
+                                                                        "This category used in Income",
+                                                                  ),
+                                                                );
+                                                              } else {
+                                                                DataRepository()
+                                                                    .deleteCategory(
+                                                                        autoID);
+                                                              }
+                                                            }
+                                                          });
                                               }),
                                         )
                                         .toList());
@@ -617,7 +638,8 @@ class _MyCategoryState extends State<MyCategory> {
                           widget.category.icon, widget.category.name);
                     }
                   : () {
-                      widget.deleteClick(widget.category.autoID);
+                      widget.deleteClick(
+                          widget.category.autoID, widget.category.name);
                     },
               icon: (widget.delete == false)
                   ? Icon(navBarItem[widget.category.icon])
