@@ -211,7 +211,9 @@ class _SettingPageState extends State<SettingPage> {
                                                     deleteIn();
                                                     deleteOut();
                                                     deleteSaving();
+
                                                     deleteCategory();
+
                                                     getCollectionData();
                                                     Navigator
                                                         .pushReplacementNamed(
