@@ -563,11 +563,11 @@ class _SavingDetailsState extends State<SavingDetails> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: 25.0),
+                            padding: const EdgeInsets.symmetric(vertical: 25.0),
                             child: Text(
                               '${widget.saving!.target}',
                               textAlign: TextAlign.end,
-                              style: TextStyle(fontSize: 16),
+                              style: const TextStyle(fontSize: 16),
                             ),
                           ),
                         ]),
@@ -599,7 +599,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: 25.0),
+                            padding: const EdgeInsets.symmetric(vertical: 25.0),
                             child: StreamBuilder<QuerySnapshot>(
                                 stream: repository.getRemaining(
                                     widget.saving!.autoID.toString()),

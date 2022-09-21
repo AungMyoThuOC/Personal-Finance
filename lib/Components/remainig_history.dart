@@ -7,7 +7,6 @@ import '/data_repository.dart';
 import 'package:personal_financial/models/remaning_saving.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-// ignore: must_be_immutable
 class HistRemain extends StatefulWidget {
   HistRemain({Key? key, required this.remaining, required this.autoID})
       : super(key: key);
@@ -45,7 +44,7 @@ class _RemainingState extends State<HistRemain> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(right: 22),
+                    padding: const EdgeInsets.only(right: 22),
                     child: Text(
                       "${widget.remaining.amount}",
                       style: const TextStyle(color: Colors.white, fontSize: 16),

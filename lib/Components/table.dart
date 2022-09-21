@@ -139,7 +139,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
                 double sum = 0.0;
                 for (int i = 0; i < ds.length; i++)
                   sum += (ds[i]['amount']).toDouble();
-                return Text('');
+                return const Text('');
               }),
         ),
         Table(defaultColumnWidth: const FixedColumnWidth(130.0), children: [
@@ -201,7 +201,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
                   stream: repository.getOut(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
+                      return CircularProgressIndicator();
                     }
                     var ds = snapshot.data!.docs;
                     double sum = 0.0;

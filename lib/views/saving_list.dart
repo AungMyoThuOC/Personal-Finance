@@ -85,7 +85,7 @@ class _SavingListState extends State<SavingList> {
                 double sum = 0.0;
                 for (int i = 0; i < ds.length; i++)
                   sum += (ds[i]['amount']).toDouble();
-                return Text('');
+                return const Text('');
               }),
         ),
         const SizedBox(
@@ -155,7 +155,7 @@ class _SavingListState extends State<SavingList> {
                                     sum += (ds[i]['amount']).toDouble();
                                   return Text(
                                     '${sum}/${widget.saving.amount}',
-                                    style: TextStyle(color: Colors.black),
+                                    style: const TextStyle(color: Colors.black),
                                   );
                                 }),
                           ),

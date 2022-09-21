@@ -58,7 +58,7 @@ class _PieChartState extends State<PieChart> {
         stream: repository.getIn(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return CircularProgressIndicator();
           }
           var ds = snapshot.data!.docs;
 
