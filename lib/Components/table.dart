@@ -133,7 +133,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
               stream: repository.getIncome(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 }
                 var ds = snapshot.data!.docs;
                 double sum = 0.0;
@@ -154,12 +154,12 @@ class _TableInOutComeState extends State<TableInOutCome> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.0),
+              padding: const EdgeInsets.symmetric(vertical: 15.0),
               child: StreamBuilder<QuerySnapshot>(
                   stream: repository.getIn(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     }
                     var ds = snapshot.data!.docs;
                     double sum = 0.0;
@@ -181,7 +181,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
               ),
             ),
             Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0),
+                padding: const EdgeInsets.symmetric(vertical: 15.0),
                 child: Text(
                   '${totRemain}',
                   textAlign: TextAlign.end,
@@ -196,12 +196,12 @@ class _TableInOutComeState extends State<TableInOutCome> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.0),
+              padding: const EdgeInsets.symmetric(vertical: 15.0),
               child: StreamBuilder<QuerySnapshot>(
                   stream: repository.getOut(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     }
                     var ds = snapshot.data!.docs;
                     double sum = 0.0;

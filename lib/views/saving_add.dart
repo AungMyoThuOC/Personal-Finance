@@ -13,7 +13,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SavingAdd extends StatefulWidget {
-  SavingAdd({Key? key, required this.onSubmit}) : super(key: key);
+  const SavingAdd({Key? key, required this.onSubmit}) : super(key: key);
 
   final ValueChanged<String> onSubmit;
 
@@ -29,7 +29,7 @@ class _SavingAddState extends State<SavingAdd> {
   TextEditingController savingController = TextEditingController();
   TextEditingController sliderController = TextEditingController();
 
-  var text = '';
+  // var text = '';
 
   bool _submitted = false;
 
@@ -95,14 +95,24 @@ class _SavingAddState extends State<SavingAdd> {
                         size: 60,
                         color: Colors.pink,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Column(
                         children: [
-                          const SizedBox(
-                            height: 20,
+                          Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: const [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 30),
+                                  child: Text(
+                                    "Target",
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          SizedBox(
-                            width: 320,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 30),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               autovalidateMode: _submitted
@@ -111,8 +121,9 @@ class _SavingAddState extends State<SavingAdd> {
                               controller: savingController,
                               style: const TextStyle(color: Colors.black),
                               decoration: InputDecoration(
-                                hintText: "Target",
-                                hintStyle: const TextStyle(color: Colors.grey),
+                                // hintText: "Target",
+                                // hintStyle:
+                                //     const TextStyle(color: Colors.grey),
                                 errorText: _errorText,
                               ),
                               onChanged: (text) => setState(() => text),

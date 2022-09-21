@@ -9,7 +9,7 @@ import 'package:personal_financial/data_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class PieChart extends StatefulWidget {
-  PieChart({Key? key}) : super(key: key);
+  const PieChart({Key? key}) : super(key: key);
 
   @override
   State<PieChart> createState() => _PieChartState();
@@ -58,7 +58,7 @@ class _PieChartState extends State<PieChart> {
         stream: repository.getIn(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
           var ds = snapshot.data!.docs;
 
@@ -70,7 +70,7 @@ class _PieChartState extends State<PieChart> {
               stream: repository.getOut(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 }
                 var ds = snapshot.data!.docs;
 
@@ -81,7 +81,7 @@ class _PieChartState extends State<PieChart> {
                     stream: repository.getMain(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
+                        return const CircularProgressIndicator();
                       }
                       var ds = snapshot.data!.docs;
 

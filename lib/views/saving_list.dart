@@ -1,22 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+// import 'package:flutter/src/foundation/key.dart';
+// import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:personal_financial/models/saving.dart';
 import 'package:personal_financial/data_repository.dart';
 import 'saving_details.dart';
-import 'dart:math';
+// import 'dart:math';
 import 'package:pull_down_button/pull_down_button.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+// import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:top_modal_sheet/top_modal_sheet.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/safe_area_values.dart';
-import 'package:top_snackbar_flutter/tap_bounce_container.dart';
+// import 'package:top_snackbar_flutter/safe_area_values.dart';
+// import 'package:top_snackbar_flutter/tap_bounce_container.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class SavingList extends StatefulWidget {
@@ -79,7 +79,7 @@ class _SavingListState extends State<SavingList> {
               stream: repository.getIncome(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 }
                 var ds = snapshot.data!.docs;
                 double sum = 0.0;
@@ -180,7 +180,7 @@ class _SavingListState extends State<SavingList> {
                                                     MainAxisAlignment
                                                         .spaceAround,
                                                 children: [
-                                                  Row(
+                                                  Column(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
                                                             .spaceEvenly,
@@ -193,8 +193,14 @@ class _SavingListState extends State<SavingList> {
                                                         color: Colors.pink,
                                                         size: 30,
                                                       ),
-                                                      SizedBox(
-                                                        width: 300,
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 30),
                                                         child: TextField(
                                                           controller:
                                                               savingController,
@@ -202,39 +208,39 @@ class _SavingListState extends State<SavingList> {
                                                               const TextStyle(
                                                                   color: Colors
                                                                       .black),
-                                                          decoration:
-                                                              InputDecoration(
-                                                            enabledBorder:
-                                                                OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              borderSide: const BorderSide(
-                                                                  width: 1,
-                                                                  color: Color
-                                                                      .fromARGB(
-                                                                          255,
-                                                                          224,
-                                                                          224,
-                                                                          224)),
-                                                            ),
-                                                            focusedBorder:
-                                                                OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              borderSide: const BorderSide(
-                                                                  width: 1,
-                                                                  color: Color
-                                                                      .fromARGB(
-                                                                          255,
-                                                                          177,
-                                                                          177,
-                                                                          177)),
-                                                            ),
-                                                          ),
+                                                          // decoration:
+                                                          //     InputDecoration(
+                                                          //   enabledBorder:
+                                                          //       OutlineInputBorder(
+                                                          //     borderRadius:
+                                                          //         BorderRadius
+                                                          //             .circular(
+                                                          //                 10),
+                                                          //     borderSide: const BorderSide(
+                                                          //         width: 1,
+                                                          //         color: Color
+                                                          //             .fromARGB(
+                                                          //                 255,
+                                                          //                 224,
+                                                          //                 224,
+                                                          //                 224)),
+                                                          //   ),
+                                                            // focusedBorder:
+                                                            //     OutlineInputBorder(
+                                                            //   borderRadius:
+                                                            //       BorderRadius
+                                                            //           .circular(
+                                                            //               10),
+                                                            //   borderSide: const BorderSide(
+                                                            //       width: 1,
+                                                            //       color: Color
+                                                            //           .fromARGB(
+                                                            //               255,
+                                                            //               177,
+                                                            //               177,
+                                                            //               177)),
+                                                            // ),
+                                                          // ),
                                                         ),
                                                       ),
                                                     ],
@@ -289,7 +295,7 @@ class _SavingListState extends State<SavingList> {
                                                                       .connectionState ==
                                                                   ConnectionState
                                                                       .waiting) {
-                                                                return CircularProgressIndicator();
+                                                                return const CircularProgressIndicator();
                                                               }
                                                               var ds = snapshot
                                                                   .data!.docs;

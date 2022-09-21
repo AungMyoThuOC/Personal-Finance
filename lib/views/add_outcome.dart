@@ -490,7 +490,7 @@ class _AddIncomeState extends State<AddOutcome> {
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==
                                                 ConnectionState.waiting) {
-                                              return CircularProgressIndicator();
+                                              return const CircularProgressIndicator();
                                             }
                                             var ds = snapshot.data!.docs;
 

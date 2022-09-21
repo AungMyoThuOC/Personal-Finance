@@ -7,6 +7,7 @@ import '/data_repository.dart';
 import 'package:personal_financial/models/remaning_saving.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+// ignore: must_be_immutable
 class HistRemain extends StatefulWidget {
   HistRemain({Key? key, required this.remaining, required this.autoID})
       : super(key: key);

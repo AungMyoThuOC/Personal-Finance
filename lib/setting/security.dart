@@ -4,7 +4,7 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 
 class SecurityPage extends StatefulWidget {
-  SecurityPage({Key? key}) : super(key: key);
+  const SecurityPage({Key? key}) : super(key: key);
 
   @override
   State<SecurityPage> createState() => _SecurityPageState();
