@@ -65,6 +65,32 @@ class _SavingDetailsState extends State<SavingDetails> {
     }
   }
 
+  double sumRemain = 0;
+  double totRemainOne = 0;
+  Future<void> getCollectionData() async {
+    await FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Saving')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        FirebaseFirestore.instance
+            .collectionGroup('Remaining')
+            .get()
+            .then((value) {
+          value.docs.forEach((result) {
+            sumRemain = sumRemain + result.data()['amount'];
+            print(sumRemain);
+          });
+          setState(() {
+            totRemainOne = sumRemain;
+          });
+        });
+      });
+    });
+  }
+
   @override
   void dispose() {
     amountController.dispose();
@@ -82,6 +108,7 @@ class _SavingDetailsState extends State<SavingDetails> {
 
   @override
   void initState() {
+    getCollectionData();
     super.initState();
   }
 
@@ -218,13 +245,13 @@ class _SavingDetailsState extends State<SavingDetails> {
                                                                     .text) >
                                                             (sumOne -
                                                                 (sum +
-                                                                    totRemain))) {
+                                                                    totRemainOne))) {
                                                           showTopSnackBar(
                                                             context,
                                                             CustomSnackBar
                                                                 .error(
                                                               message:
-                                                                  "Your income left  ${sumOne - (sum + totRemain)}",
+                                                                  "Your income left  ${sumOne - (sum + totRemainOne)}",
                                                             ),
                                                           );
                                                         } else {
