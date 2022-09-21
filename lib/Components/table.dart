@@ -201,7 +201,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
                   stream: repository.getOut(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     }
                     var ds = snapshot.data!.docs;
                     double sum = 0.0;

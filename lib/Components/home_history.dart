@@ -121,7 +121,7 @@ class _HomeHistoryState extends State<HomeHistory> {
               stream: DataRepository().getOut(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 }
                 var ds = snapshot.data!.docs;
 
@@ -132,7 +132,7 @@ class _HomeHistoryState extends State<HomeHistory> {
                     stream: DataRepository().getMain(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
+                        return const CircularProgressIndicator();
                       }
                       var ds = snapshot.data!.docs;
 
@@ -231,7 +231,7 @@ class _HomeHistoryState extends State<HomeHistory> {
                                                 )));
                                   }
                                 },
-                                backgroundColor: Color(0xFF7BC043),
+                                backgroundColor: const Color(0xFF7BC043),
                                 foregroundColor: Colors.white,
                                 icon: Icons.edit,
                                 label: 'Edit',
@@ -252,7 +252,7 @@ class _HomeHistoryState extends State<HomeHistory> {
                                 ],
                               ),
                               child: Padding(
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 20),
                                 child: Row(
                                     mainAxisAlignment:
@@ -325,7 +325,7 @@ class _HomeHistoryState extends State<HomeHistory> {
                                                   ),
                                             Padding(
                                               padding:
-                                                  EdgeInsets.only(right: 22),
+                                                  const EdgeInsets.only(right: 22),
                                               child: Text(
                                                 "${widget.income.amount}",
                                                 style: const TextStyle(
