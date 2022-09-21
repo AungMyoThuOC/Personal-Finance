@@ -414,8 +414,21 @@ class _AddIncomeState extends State<AddOutcome> {
                                                     category:
                                                         Category.fromSnapshot(
                                                             e),
-                                                    deleteClick: (sum == [])
-                                                        ? ((autoID, name) {
+                                                    deleteClick:
+                                                        (autoID, name) {
+                                                      if (sum.isEmpty) {
+                                                        DataRepository()
+                                                            .deleteCategory(
+                                                                autoID);
+                                                      } else {
+                                                        for (int i = 0;
+                                                            i < sum.length;
+                                                            i++) {
+                                                          setState(() {
+                                                            resultCat = name;
+                                                          });
+                                                          if (resultCat ==
+                                                              sum[i]) {
                                                             showTopSnackBar(
                                                               context,
                                                               const CustomSnackBar
@@ -424,31 +437,14 @@ class _AddIncomeState extends State<AddOutcome> {
                                                                     "This category used in Outcome",
                                                               ),
                                                             );
-                                                          })
-                                                        : (autoID, name) {
-                                                            setState(() {
-                                                              resultCat = name;
-                                                            });
-                                                            for (int i = 0;
-                                                                i < sum.length;
-                                                                i++) {
-                                                              if (resultCat ==
-                                                                  sum[i]) {
-                                                                showTopSnackBar(
-                                                                  context,
-                                                                  const CustomSnackBar
-                                                                      .error(
-                                                                    message:
-                                                                        "This category used in Income",
-                                                                  ),
-                                                                );
-                                                              } else {
-                                                                DataRepository()
-                                                                    .deleteCategory(
-                                                                        autoID);
-                                                              }
-                                                            }
-                                                          });
+                                                          } else {
+                                                            DataRepository()
+                                                                .deleteCategory(
+                                                                    autoID);
+                                                          }
+                                                        }
+                                                      }
+                                                    });
                                               }),
                                         )
                                         .toList());
@@ -532,22 +528,21 @@ class _AddIncomeState extends State<AddOutcome> {
                                                                   "Your income left  ${sumOne - (sum + totRemain)}",
                                                             ),
                                                           );
-                                                        }
-                                                        if (catName == '') {
-                                                          catName = "gifts";
                                                         } else {
-                                                          DataRepository()
-                                                              .addIncome(Income(
-                                                                  int.parse(
-                                                                      amountController
-                                                                          .text),
-                                                                  date: DateTime
-                                                                      .now(),
-                                                                  category: result
-                                                                      .toString(),
-                                                                  income: false,
-                                                                  catName:
-                                                                      catName));
+                                                          DataRepository().addIncome(Income(
+                                                              int.parse(
+                                                                  amountController
+                                                                      .text),
+                                                              date: DateTime
+                                                                  .now(),
+                                                              category: result
+                                                                  .toString(),
+                                                              income: false,
+                                                              catName: (catName ==
+                                                                      '')
+                                                                  ? catName =
+                                                                      'category'
+                                                                  : catName));
                                                           Navigator
                                                               .popAndPushNamed(
                                                                   context,

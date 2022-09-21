@@ -58,7 +58,10 @@ class _PieChartState extends State<PieChart> {
         stream: repository.getIn(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return Container(
+                width: 20,
+                height: 20,
+                child: Center(child: CircularProgressIndicator()));
           }
           var ds = snapshot.data!.docs;
 
@@ -70,7 +73,10 @@ class _PieChartState extends State<PieChart> {
               stream: repository.getOut(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return Container(
+                      width: 20,
+                      height: 20,
+                      child: Center(child: CircularProgressIndicator()));
                 }
                 var ds = snapshot.data!.docs;
 
@@ -81,7 +87,10 @@ class _PieChartState extends State<PieChart> {
                     stream: repository.getMain(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
+                        return Container(
+                            width: 20,
+                            height: 20,
+                            child: Center(child: CircularProgressIndicator()));
                       }
                       var ds = snapshot.data!.docs;
 

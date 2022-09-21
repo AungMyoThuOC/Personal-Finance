@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:slide_to_confirm/slide_to_confirm.dart';
 
 class SecurityPage extends StatefulWidget {
   SecurityPage({Key? key}) : super(key: key);
@@ -241,8 +242,7 @@ class _SecurityPageState extends State<SecurityPage> {
                                   // ignore: use_build_context_synchronously
 
                                   // ignore: use_build_context_synchronously
-                                  Navigator.pushReplacementNamed(
-                                      context, '/setting');
+                                  Navigator.popAndPushNamed(context, '/home');
                                 }
                               } on FirebaseException catch (e) {
                                 if (e.code == "password don't match") {

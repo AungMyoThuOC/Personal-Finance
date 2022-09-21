@@ -125,7 +125,7 @@ class _SavingListState extends State<SavingList> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Icon(
-                                Icons.android,
+                                Icons.attach_money_outlined,
                                 size: 45,
                                 color: Colors.blueAccent,
                               ),
@@ -147,7 +147,12 @@ class _SavingListState extends State<SavingList> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return const CircularProgressIndicator();
+                                    return Container(
+                                        width: 15,
+                                        height: 15,
+                                        child: const Center(
+                                            child:
+                                                CircularProgressIndicator()));
                                   }
                                   var ds = snapshot.data!.docs;
                                   double sum = 0.0;
@@ -289,7 +294,12 @@ class _SavingListState extends State<SavingList> {
                                                                       .connectionState ==
                                                                   ConnectionState
                                                                       .waiting) {
-                                                                return CircularProgressIndicator();
+                                                                return Container(
+                                                                    width: 5,
+                                                                    height: 5,
+                                                                    child: Center(
+                                                                        child:
+                                                                            CircularProgressIndicator()));
                                                               }
                                                               var ds = snapshot
                                                                   .data!.docs;
@@ -316,7 +326,13 @@ class _SavingListState extends State<SavingList> {
                                                                             .connectionState ==
                                                                         ConnectionState
                                                                             .waiting) {
-                                                                      return const CircularProgressIndicator();
+                                                                      return Container(
+                                                                          width:
+                                                                              5,
+                                                                          height:
+                                                                              5,
+                                                                          child:
+                                                                              Center(child: CircularProgressIndicator()));
                                                                     }
                                                                     var ds =
                                                                         snapshot
@@ -433,7 +449,12 @@ class _SavingListState extends State<SavingList> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
+                                      return Container(
+                                          width: 10,
+                                          height: 10,
+                                          child: Center(
+                                              child:
+                                                  CircularProgressIndicator()));
                                     }
                                     var ds = snapshot.data!.docs;
 
@@ -450,7 +471,6 @@ class _SavingListState extends State<SavingList> {
                               progressColor: Colors.greenAccent,
                             );
                           }),
-                      //
                     ),
                   ],
                 ),

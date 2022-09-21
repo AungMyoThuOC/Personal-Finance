@@ -284,9 +284,15 @@ class _SavingDetailsState extends State<SavingDetails> {
                                                                 ),
                                                               );
                                                             } else {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
+                                                              Navigator.of(context).pop(
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          SavingDetails(
+                                                                            saving:
+                                                                                widget.saving,
+                                                                            onSubmit:
+                                                                                (String value) {},
+                                                                          )));
                                                               DataRepository()
                                                                   .updateRemaining(
                                                                       widget

@@ -383,8 +383,21 @@ class _AddIncomeState extends State<AddIncome> {
                                                     category:
                                                         Category.fromSnapshot(
                                                             e),
-                                                    deleteClick: (sum == [])
-                                                        ? ((autoID, name) {
+                                                    deleteClick:
+                                                        (autoID, name) {
+                                                      if (sum.isEmpty) {
+                                                        DataRepository()
+                                                            .deleteCategory(
+                                                                autoID);
+                                                      } else {
+                                                        for (int i = 0;
+                                                            i < sum.length;
+                                                            i++) {
+                                                          setState(() {
+                                                            resultCat = name;
+                                                          });
+                                                          if (resultCat ==
+                                                              sum[i]) {
                                                             showTopSnackBar(
                                                               context,
                                                               const CustomSnackBar
@@ -393,27 +406,14 @@ class _AddIncomeState extends State<AddIncome> {
                                                                     "This category used in Income",
                                                               ),
                                                             );
-                                                          })
-                                                        : (autoID, name) {
-                                                            setState(() {
-                                                              resultCat = name;
-                                                            });
-                                                            for (int i = 0;
-                                                                i < sum.length;
-                                                                i++) {
-                                                              if (resultCat ==
-                                                                  sum[i]) {
-                                                                showTopSnackBar(
-                                                                  context,
-                                                                  const CustomSnackBar
-                                                                      .error(
-                                                                    message:
-                                                                        "This category used in Income",
-                                                                  ),
-                                                                );
-                                                              }
-                                                            }
-                                                          });
+                                                          } else {
+                                                            DataRepository()
+                                                                .deleteCategory(
+                                                                    autoID);
+                                                          }
+                                                        }
+                                                      }
+                                                    });
                                               }),
                                         )
                                         .toList());

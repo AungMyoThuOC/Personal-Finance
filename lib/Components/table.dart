@@ -127,21 +127,6 @@ class _TableInOutComeState extends State<TableInOutCome> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          height: 1,
-          child: StreamBuilder<QuerySnapshot>(
-              stream: repository.getIncome(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                }
-                var ds = snapshot.data!.docs;
-                double sum = 0.0;
-                for (int i = 0; i < ds.length; i++)
-                  sum += (ds[i]['amount']).toDouble();
-                return Text('');
-              }),
-        ),
         Table(defaultColumnWidth: const FixedColumnWidth(130.0), children: [
           TableRow(children: [
             const Padding(
@@ -159,8 +144,15 @@ class _TableInOutComeState extends State<TableInOutCome> {
                   stream: repository.getIn(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return Align(
+                        alignment: Alignment.bottomRight,
+                        child: Container(
+                            width: 10,
+                            height: 10,
+                            child: Center(child: CircularProgressIndicator())),
+                      );
                     }
+
                     var ds = snapshot.data!.docs;
                     double sum = 0.0;
                     for (int i = 0; i < ds.length; i++)
@@ -201,7 +193,13 @@ class _TableInOutComeState extends State<TableInOutCome> {
                   stream: repository.getOut(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return Align(
+                        alignment: Alignment.bottomRight,
+                        child: Container(
+                            width: 10,
+                            height: 10,
+                            child: Center(child: CircularProgressIndicator())),
+                      );
                     }
                     var ds = snapshot.data!.docs;
                     double sum = 0.0;

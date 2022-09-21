@@ -32,6 +32,7 @@ class _MyHomePageState extends State<MyHomePage>
     'Income',
     'Outcome',
   ];
+  int _contentAmount = 0;
 
   String selectedValue = 'Income';
   final DataRepository repository = DataRepository();
@@ -194,7 +195,6 @@ class _MyHomePageState extends State<MyHomePage>
                   child: ViewSaving(),
                 )
               ]),
-          persistentContentHeight: MediaQuery.of(context).size.height * 0.25,
           persistentHeader: (bottomNavigator == true)
               ? Container(
                   decoration: BoxDecoration(
@@ -246,28 +246,36 @@ class _MyHomePageState extends State<MyHomePage>
                   ),
                 )
               : null,
+          persistentContentHeight: 10,
           expandableContent: (bottomNavigator == true)
-              ? Container(
-                  height: 500,
-                  color: Colors.white,
-                  child: Container(
-                    child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 10),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
-                          child: StreamBuilder<QuerySnapshot>(
-                              stream: repository.getAddStream(),
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData)
-                                  return LinearProgressIndicator();
-
-                                return _buildList(
-                                    context, snapshot.data?.docs ?? []);
-                              }),
-                        )),
-                  ),
-                )
+              ? StreamBuilder<QuerySnapshot>(
+                  stream: repository.getAddStream(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData) {
+                      return LinearProgressIndicator();
+                    }
+                    return Container(
+                      color: Colors.white,
+                      constraints: BoxConstraints(maxHeight: 500),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Flexible(
+                            child: ListView(
+                              addAutomaticKeepAlives: true,
+                              physics: const BouncingScrollPhysics(
+                                  parent: AlwaysScrollableScrollPhysics()),
+                              shrinkWrap: true,
+                              children: snapshot.data!.docs
+                                  .map((data) => HomeHistory(
+                                      income: Income.fromSnapshot(data)))
+                                  .toList(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  })
               : Container(),
         ),
       ),
@@ -280,26 +288,4 @@ class ChartData {
   final double y;
   final String size;
   ChartData(this.x, this.y, this.size);
-}
-
-Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
-  return Column(
-    children: [
-      Expanded(
-        child: ListView(
-          addAutomaticKeepAlives: true,
-          physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics()),
-          shrinkWrap: true,
-          children:
-              snapshot.map((data) => _buildListItem(context, data)).toList(),
-        ),
-      ),
-    ],
-  );
-}
-
-Widget _buildListItem(BuildContext context, DocumentSnapshot snapshot) {
-  final income = Income.fromSnapshot(snapshot);
-  return HomeHistory(income: income);
 }
