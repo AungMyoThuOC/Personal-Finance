@@ -1,23 +1,23 @@
 import 'package:flutter/services.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+// import 'package:flutter/src/foundation/key.dart';
+// import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
-import 'package:personal_financial/firebase_options.dart';
+// import 'package:personal_financial/firebase_options.dart';
 import 'package:personal_financial/data_repository.dart';
 import 'package:personal_financial/models/category.dart';
 import 'package:personal_financial/models/income.dart';
 import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:animate_icons/animate_icons.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class EditIncome extends StatefulWidget {
-  EditIncome({Key? key, required this.income, required this.onSubmit})
+  const EditIncome({Key? key, required this.income, required this.onSubmit})
       : super(key: key);
   final Income income;
   final ValueChanged<String> onSubmit;
@@ -191,6 +191,7 @@ class _AddIncomeState extends State<EditIncome> {
                                           Color.fromARGB(255, 177, 177, 177)),
                                 ),
                               ),
+                              onChanged: (text) => setState(() => text),
                             ),
                           ),
                         ],

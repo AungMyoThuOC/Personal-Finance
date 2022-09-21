@@ -139,7 +139,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.0),
+              padding: const EdgeInsets.symmetric(vertical: 15.0),
               child: StreamBuilder<QuerySnapshot>(
                   stream: repository.getIn(),
                   builder: (context, snapshot) {
@@ -173,7 +173,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
               ),
             ),
             Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0),
+                padding: const EdgeInsets.symmetric(vertical: 15.0),
                 child: Text(
                   '${totRemain}',
                   textAlign: TextAlign.end,
@@ -188,7 +188,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.0),
+              padding: const EdgeInsets.symmetric(vertical: 15.0),
               child: StreamBuilder<QuerySnapshot>(
                   stream: repository.getOut(),
                   builder: (context, snapshot) {

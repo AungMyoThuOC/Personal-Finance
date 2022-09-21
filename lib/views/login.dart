@@ -1,7 +1,7 @@
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:form_field_validator/form_field_validator.dart';
+// import 'package:form_field_validator/form_field_validator.dart';
 import 'package:personal_financial/views/reset.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -128,8 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                                   validator: (email) {
                                     if (email == null || email.isEmpty) {
                                       return "Email can't be blank";
-                                    } else if (email == Characters) {
-                                      return "Please enater your validat email";
+                                      // ignore: unrelated_type_equality_checks
                                     } else {
                                       return null;
                                     }
@@ -320,6 +319,7 @@ class _LoginPageState extends State<LoginPage> {
                                                     duration: const Duration(
                                                         seconds: 2)));
                                           } catch (e) {
+                                            // ignore: use_build_context_synchronously
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(SnackBar(
                                                     content: Container(

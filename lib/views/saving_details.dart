@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+// import 'package:flutter/src/foundation/key.dart';
+// import 'package:flutter/src/widgets/framework.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:animate_icons/animate_icons.dart';
-import 'package:personal_financial/Components/home_history.dart';
+// import 'package:personal_financial/Components/home_history.dart';
 import 'package:personal_financial/data_repository.dart';
 import 'package:personal_financial/models/remaning_saving.dart';
 import 'package:personal_financial/models/saving.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:personal_financial/Components/remainig_history.dart';
-import 'package:personal_financial/firebase_options.dart';
+// import 'package:personal_financial/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/safe_area_values.dart';
-import 'package:top_snackbar_flutter/tap_bounce_container.dart';
+// import 'package:top_snackbar_flutter/safe_area_values.dart';
+// import 'package:top_snackbar_flutter/tap_bounce_container.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 // ignore: must_be_immutable
@@ -569,11 +569,11 @@ class _SavingDetailsState extends State<SavingDetails> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: 25.0),
+                            padding: const EdgeInsets.symmetric(vertical: 25.0),
                             child: Text(
                               '${widget.saving!.target}',
                               textAlign: TextAlign.end,
-                              style: TextStyle(fontSize: 16),
+                              style: const TextStyle(fontSize: 16),
                             ),
                           ),
                         ]),
@@ -605,7 +605,7 @@ class _SavingDetailsState extends State<SavingDetails> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: 25.0),
+                            padding: const EdgeInsets.symmetric(vertical: 25.0),
                             child: StreamBuilder<QuerySnapshot>(
                                 stream: repository.getRemaining(
                                     widget.saving!.autoID.toString()),

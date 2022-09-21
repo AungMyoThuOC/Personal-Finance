@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:personal_financial/views/verify.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'login.dart';
+// import 'login.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -55,7 +55,7 @@ class _RegisterPageState extends State<RegisterPage> {
       body: BlurryModalProgressHUD(
         inAsyncCall: isLoading,
         blurEffectIntensity: 4,
-        progressIndicator: SpinKitFadingCircle(
+        progressIndicator: const SpinKitFadingCircle(
           color: Colors.blue,
           size: 90.0,
         ),
@@ -72,7 +72,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   width: double.infinity,
                   height: double.infinity,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       gradient:
                           LinearGradient(colors: [Colors.white, Colors.white])),
                   child: Padding(
@@ -91,17 +91,17 @@ class _RegisterPageState extends State<RegisterPage> {
                           )
                         ],
                         borderRadius: BorderRadius.circular(30).copyWith(
-                            topRight: Radius.circular(20),
-                            topLeft: Radius.circular(20)),
-                        gradient: LinearGradient(
+                            topRight: const Radius.circular(20),
+                            topLeft: const Radius.circular(20)),
+                        gradient: const LinearGradient(
                             colors: [Colors.white, Colors.white]),
                       ),
                       child: Container(
-                        margin: EdgeInsets.all(20),
+                        margin: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30)
-                              .copyWith(topRight: Radius.circular(0)),
-                          gradient: LinearGradient(
+                              .copyWith(topRight: const Radius.circular(0)),
+                          gradient: const LinearGradient(
                               colors: [Colors.white, Colors.white]),
                         ),
                         child: Column(
@@ -237,7 +237,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                           Navigator.of(context).pushReplacement(
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      VerifyScreen()));
+                                                      const VerifyScreen()));
                                         });
                                         // await FirebaseAuth.instance.currentUser!
                                         //     .updateDisplayName(userCont.text);

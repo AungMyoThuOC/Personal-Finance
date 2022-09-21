@@ -82,7 +82,7 @@ class _AddInOutState extends State<AddInOut>
         ),
       ),
       body: TabBarView(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         controller: controller,
         children: [
           AddIncome(

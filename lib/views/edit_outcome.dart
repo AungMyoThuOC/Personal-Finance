@@ -18,7 +18,7 @@ import 'package:animate_icons/animate_icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class EditOutcome extends StatefulWidget {
-  EditOutcome({Key? key, required this.income, required this.onSubmit})
+  const EditOutcome({Key? key, required this.income, required this.onSubmit})
       : super(key: key);
   final Income income;
   final ValueChanged<String> onSubmit;
@@ -484,7 +484,7 @@ class _AddIncomeState extends State<EditOutcome> {
                                                                     const CustomSnackBar
                                                                         .error(
                                                                       message:
-                                                                          "This category used in Income",
+                                                                          "This category used in Outcome",
                                                                     ),
                                                                   );
                                                                 } else {

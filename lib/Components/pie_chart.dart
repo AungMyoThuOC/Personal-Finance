@@ -9,7 +9,7 @@ import 'package:personal_financial/data_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class PieChart extends StatefulWidget {
-  PieChart({Key? key}) : super(key: key);
+  const PieChart({Key? key}) : super(key: key);
 
   @override
   State<PieChart> createState() => _PieChartState();

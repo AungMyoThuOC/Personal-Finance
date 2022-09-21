@@ -3,6 +3,7 @@ import 'package:personal_financial/data_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:personal_financial/homepage.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 
 class SettingPage extends StatefulWidget {
@@ -204,8 +205,10 @@ class _SettingPageState extends State<SettingPage> {
                                             child: ConfirmationSlider(
                                           height: 50,
                                           onConfirmation: () {
-                                            Navigator.popAndPushNamed(
-                                                context, '/home');
+                                            Navigator.of(context).pop(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        MyHomePage()));
                                             deleteIn();
                                             deleteOut();
                                             deleteSaving();

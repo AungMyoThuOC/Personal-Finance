@@ -5,7 +5,7 @@ import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 
 class SecurityPage extends StatefulWidget {
-  SecurityPage({Key? key}) : super(key: key);
+  const SecurityPage({Key? key}) : super(key: key);
 
   @override
   State<SecurityPage> createState() => _SecurityPageState();

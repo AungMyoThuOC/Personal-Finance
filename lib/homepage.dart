@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage>
       length: 2,
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(80.0),
+          preferredSize: const Size.fromHeight(80.0),
           child: AppBar(
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,
@@ -204,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage>
                           color: Colors.grey.withOpacity(0.5),
                           spreadRadius: 5,
                           blurRadius: 7,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                       borderRadius: const BorderRadius.only(

@@ -21,7 +21,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
     user = auth.currentUser!;
     user.sendEmailVerification();
 
-    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       checkEmailVerified();
     });
     super.initState();
@@ -30,7 +30,6 @@ class _VerifyScreenState extends State<VerifyScreen> {
   @override
   void dispose() {
     timer.cancel();
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -51,8 +50,9 @@ class _VerifyScreenState extends State<VerifyScreen> {
     await user.reload();
     if (user.emailVerified) {
       timer.cancel();
+      // ignore: use_build_context_synchronously
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => LoginPage()));
+          MaterialPageRoute(builder: (context) => const LoginPage()));
     }
   }
 }
