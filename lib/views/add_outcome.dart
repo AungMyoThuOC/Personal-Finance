@@ -541,10 +541,9 @@ class _AddIncomeState extends State<AddOutcome> {
                                                                   int.parse(
                                                                       amountController
                                                                           .text),
-                                                                  date:
-                                                                      DateTime
-                                                                          .now(),
-                                                                  category: state
+                                                                  date: DateTime
+                                                                      .now(),
+                                                                  category: result
                                                                       .toString(),
                                                                   income: false,
                                                                   catName:

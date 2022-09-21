@@ -157,8 +157,6 @@ class _SettingPageState extends State<SettingPage> {
               TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/security');
-
-                    Navigator.pushNamed(context, '/security');
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -215,9 +213,8 @@ class _SettingPageState extends State<SettingPage> {
                                                     deleteCategory();
 
                                                     getCollectionData();
-                                                    Navigator
-                                                        .pushReplacementNamed(
-                                                            context, '/home');
+                                                    Navigator.popAndPushNamed(
+                                                        context, '/home');
                                                   },
                                                   child: const Text(
                                                     "Reset",

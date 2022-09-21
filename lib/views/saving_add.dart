@@ -52,9 +52,7 @@ class _SavingAddState extends State<SavingAdd> {
     if (text.isEmpty) {
       return "Can't be empty";
     }
-    if (text.length > 8) {
-      return "Too long";
-    }
+
     return null;
   }
 

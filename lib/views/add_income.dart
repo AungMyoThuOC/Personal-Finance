@@ -445,7 +445,7 @@ class _AddIncomeState extends State<AddIncome> {
                                   DataRepository().addIncome(
                                     Income(int.parse(amountController.text),
                                         date: DateTime.now(),
-                                        category: state.toString(),
+                                        category: result.toString(),
                                         income: true,
                                         catName: catName),
                                   );
