@@ -246,7 +246,7 @@ class _SavingListState extends State<SavingList> {
                                                     ],
                                                   ),
                                                   const SizedBox(
-                                                    height: 10,
+                                                    height: 30,
                                                   ),
                                                   Container(
                                                     child: Row(
