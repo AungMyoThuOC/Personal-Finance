@@ -149,7 +149,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
                         child: Container(
                             width: 10,
                             height: 10,
-                            child: Center(child: CircularProgressIndicator())),
+                            child: const Center(child: CircularProgressIndicator())),
                       );
                     }
 
@@ -198,7 +198,7 @@ class _TableInOutComeState extends State<TableInOutCome> {
                         child: Container(
                             width: 10,
                             height: 10,
-                            child: Center(child: CircularProgressIndicator())),
+                            child: const Center(child: CircularProgressIndicator())),
                       );
                     }
                     var ds = snapshot.data!.docs;
