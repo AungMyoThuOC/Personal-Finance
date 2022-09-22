@@ -91,7 +91,7 @@ class _SavingAddState extends State<SavingAdd> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       const Icon(
-                        Icons.android,
+                        Icons.attach_money_outlined,
                         size: 60,
                         color: Colors.pink,
                       ),

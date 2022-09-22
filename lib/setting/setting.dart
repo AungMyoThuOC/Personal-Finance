@@ -3,6 +3,8 @@ import 'package:personal_financial/data_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:personal_financial/homepage.dart';
+import 'package:slide_to_confirm/slide_to_confirm.dart';
 
 import 'logout_dialog.dart';
 
@@ -195,7 +197,7 @@ class _SettingPageState extends State<SettingPage> {
                                       "Do you wanna delete all of your records?"),
                                   shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(
-                                          Radius.circular(32.0))),
+                                          Radius.circular(20.0))),
                                   content: Container(
                                       child: Column(
                                           mainAxisSize: MainAxisSize.min,
@@ -204,39 +206,20 @@ class _SettingPageState extends State<SettingPage> {
                                           height: 30,
                                         ),
                                         Container(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              ElevatedButton(
-                                                  onPressed: () {
-                                                    deleteIn();
-                                                    deleteOut();
-                                                    deleteSaving();
-
-                                                    deleteCategory();
-
-                                                    getCollectionData();
-                                                    Navigator.popAndPushNamed(
-                                                        context, '/home');
-                                                  },
-                                                  child: const Text(
-                                                    "Reset",
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  )),
-                                              ElevatedButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text(
-                                                    "Cancel",
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ))
-                                            ],
-                                          ),
-                                        ),
+                                            child: ConfirmationSlider(
+                                          height: 50,
+                                          onConfirmation: () {
+                                            Navigator.of(context).pop(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        MyHomePage()));
+                                            deleteIn();
+                                            deleteOut();
+                                            deleteSaving();
+                                            deleteCategory();
+                                            getCollectionData();
+                                          },
+                                        )),
                                         const SizedBox(
                                           height: 15,
                                         ),

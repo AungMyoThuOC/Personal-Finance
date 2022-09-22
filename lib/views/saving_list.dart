@@ -125,7 +125,7 @@ class _SavingListState extends State<SavingList> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Icon(
-                                Icons.android,
+                                Icons.attach_money_outlined,
                                 size: 45,
                                 color: Colors.blueAccent,
                               ),
@@ -147,7 +147,12 @@ class _SavingListState extends State<SavingList> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return const CircularProgressIndicator();
+                                    return Container(
+                                        width: 15,
+                                        height: 15,
+                                        child: const Center(
+                                            child:
+                                                CircularProgressIndicator()));
                                   }
                                   var ds = snapshot.data!.docs;
                                   double sum = 0.0;
@@ -189,7 +194,8 @@ class _SavingListState extends State<SavingList> {
                                                         height: 20,
                                                       ),
                                                       const Icon(
-                                                        Icons.android_rounded,
+                                                        Icons
+                                                            .attach_money_rounded,
                                                         color: Colors.pink,
                                                         size: 30,
                                                       ),
@@ -225,21 +231,21 @@ class _SavingListState extends State<SavingList> {
                                                           //                 224,
                                                           //                 224)),
                                                           //   ),
-                                                            // focusedBorder:
-                                                            //     OutlineInputBorder(
-                                                            //   borderRadius:
-                                                            //       BorderRadius
-                                                            //           .circular(
-                                                            //               10),
-                                                            //   borderSide: const BorderSide(
-                                                            //       width: 1,
-                                                            //       color: Color
-                                                            //           .fromARGB(
-                                                            //               255,
-                                                            //               177,
-                                                            //               177,
-                                                            //               177)),
-                                                            // ),
+                                                          // focusedBorder:
+                                                          //     OutlineInputBorder(
+                                                          //   borderRadius:
+                                                          //       BorderRadius
+                                                          //           .circular(
+                                                          //               10),
+                                                          //   borderSide: const BorderSide(
+                                                          //       width: 1,
+                                                          //       color: Color
+                                                          //           .fromARGB(
+                                                          //               255,
+                                                          //               177,
+                                                          //               177,
+                                                          //               177)),
+                                                          // ),
                                                           // ),
                                                         ),
                                                       ),
@@ -295,7 +301,12 @@ class _SavingListState extends State<SavingList> {
                                                                       .connectionState ==
                                                                   ConnectionState
                                                                       .waiting) {
-                                                                return const CircularProgressIndicator();
+                                                                return Container(
+                                                                    width: 5,
+                                                                    height: 5,
+                                                                    child: Center(
+                                                                        child:
+                                                                            CircularProgressIndicator()));
                                                               }
                                                               var ds = snapshot
                                                                   .data!.docs;
@@ -322,7 +333,13 @@ class _SavingListState extends State<SavingList> {
                                                                             .connectionState ==
                                                                         ConnectionState
                                                                             .waiting) {
-                                                                      return const CircularProgressIndicator();
+                                                                      return Container(
+                                                                          width:
+                                                                              5,
+                                                                          height:
+                                                                              5,
+                                                                          child:
+                                                                              Center(child: CircularProgressIndicator()));
                                                                     }
                                                                     var ds =
                                                                         snapshot
@@ -439,7 +456,12 @@ class _SavingListState extends State<SavingList> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
+                                      return Container(
+                                          width: 10,
+                                          height: 10,
+                                          child: Center(
+                                              child:
+                                                  CircularProgressIndicator()));
                                     }
                                     var ds = snapshot.data!.docs;
 
@@ -456,7 +478,6 @@ class _SavingListState extends State<SavingList> {
                               progressColor: Colors.greenAccent,
                             );
                           }),
-                      //
                     ),
                   ],
                 ),
