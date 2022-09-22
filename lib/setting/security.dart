@@ -1,11 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// import 'package:form_field_validator/form_field_validator.dart';
-// import 'package:get/get_connect/http/src/utils/utils.dart';
-// import 'package:slide_to_confirm/slide_to_confirm.dart';
+import 'package:form_field_validator/form_field_validator.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 
 class SecurityPage extends StatefulWidget {
-  const SecurityPage({Key? key}) : super(key: key);
+  SecurityPage({Key? key}) : super(key: key);
 
   @override
   State<SecurityPage> createState() => _SecurityPageState();
