@@ -108,7 +108,7 @@ class _HomeHistoryState extends State<HomeHistory> {
         stream: DataRepository().getIn(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
           var ds = snapshot.data!.docs;
 
@@ -187,7 +187,7 @@ class _HomeHistoryState extends State<HomeHistory> {
                                         widget.income.autoID.toString());
                                   }
                                 },
-                                backgroundColor: Color(0xFFFE4A49),
+                                backgroundColor: const Color(0xFFFE4A49),
                                 foregroundColor: Colors.white,
                                 icon: Icons.delete,
                                 label: 'Delete',
@@ -195,7 +195,7 @@ class _HomeHistoryState extends State<HomeHistory> {
                             ],
                           ),
                           startActionPane: ActionPane(
-                            motion: ScrollMotion(),
+                            motion: const ScrollMotion(),
                             dismissible: DismissiblePane(onDismissed: () {
                               if (income == true) {
                                 Navigator.of(context).push(MaterialPageRoute(

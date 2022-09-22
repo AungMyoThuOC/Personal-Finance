@@ -212,7 +212,7 @@ class _SettingPageState extends State<SettingPage> {
                                             Navigator.of(context).pop(
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        MyHomePage()));
+                                                        const MyHomePage()));
                                             deleteIn();
                                             deleteOut();
                                             deleteSaving();

@@ -61,7 +61,7 @@ class _PieChartState extends State<PieChart> {
             return Container(
                 width: 20,
                 height: 20,
-                child: Center(child: CircularProgressIndicator()));
+                child: const Center(child: CircularProgressIndicator()));
           }
           var ds = snapshot.data!.docs;
 
@@ -76,7 +76,7 @@ class _PieChartState extends State<PieChart> {
                   return Container(
                       width: 20,
                       height: 20,
-                      child: Center(child: CircularProgressIndicator()));
+                      child: const Center(child: CircularProgressIndicator()));
                 }
                 var ds = snapshot.data!.docs;
 
@@ -90,7 +90,7 @@ class _PieChartState extends State<PieChart> {
                         return Container(
                             width: 20,
                             height: 20,
-                            child: Center(child: CircularProgressIndicator()));
+                            child: const Center(child: CircularProgressIndicator()));
                       }
                       var ds = snapshot.data!.docs;
 

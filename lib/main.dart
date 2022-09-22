@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
               '/login': (context) => const LoginPage(),
               '/home': (context) => const MyHomePage(),
               '/setting': (context) => const SettingPage(),
-              '/security': (context) => SecurityPage(),
+              '/security': (context) => const SecurityPage(),
               '/color': (context) => const ColorPage(),
               '/saving_add': (context) => SavingAdd(
                     onSubmit: (String value) {},

@@ -167,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage>
                                                   .size
                                                   .width *
                                               0.8,
-                                          child: PieChart())),
+                                          child: const PieChart())),
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 10),
                                     child: Container(
@@ -256,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage>
                     }
                     return Container(
                       color: Colors.white,
-                      constraints: BoxConstraints(maxHeight: 500),
+                      constraints: const BoxConstraints(maxHeight: 500),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
