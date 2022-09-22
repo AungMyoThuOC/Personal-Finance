@@ -246,15 +246,14 @@ class _MyHomePageState extends State<MyHomePage>
                   ),
                 )
               : null,
-          persistentContentHeight: 10,
           expandableContent: (bottomNavigator == true)
               ? StreamBuilder<QuerySnapshot>(
                   stream: repository.getAddStream(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (!snapshot.hasData) {
                       return Container(
-                          width: 15,
-                          height: 15,
+                          width: 5,
+                          height: 5,
                           child:
                               const Center(child: CircularProgressIndicator()));
                     }

@@ -434,7 +434,7 @@ class _AddIncomeState extends State<AddIncome> {
                               ),
                               onPressed: () {
                                 if (catName == '') {
-                                  catName = "gifts";
+                                  catName = "profits";
                                 }
                                 if (amountController.text.isEmpty &&
                                     categoryController.text.isEmpty) {

@@ -6,8 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:personal_financial/homepage.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 
-import 'logout_dialog.dart';
-
 class SettingPage extends StatefulWidget {
   const SettingPage({Key? key}) : super(key: key);
 
@@ -60,6 +58,19 @@ class _SettingPageState extends State<SettingPage> {
         .collection('User')
         .doc('${FirebaseAuth.instance.currentUser!.email}')
         .collection('Category')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        doc.reference.delete();
+      });
+    });
+  }
+
+  Future<void> deleteAllRemain() async {
+    await FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('AllRemaining')
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
@@ -209,15 +220,14 @@ class _SettingPageState extends State<SettingPage> {
                                             child: ConfirmationSlider(
                                           height: 50,
                                           onConfirmation: () {
-                                            Navigator.of(context).pop(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const MyHomePage()));
+                                            Navigator.popAndPushNamed(
+                                                context, '/home');
                                             deleteIn();
                                             deleteOut();
                                             deleteSaving();
                                             deleteCategory();
                                             getCollectionData();
+                                            deleteAllRemain();
                                           },
                                         )),
                                         const SizedBox(
@@ -247,13 +257,7 @@ class _SettingPageState extends State<SettingPage> {
               ),
               TextButton(
                   onPressed: () async {
-                    final action = await AlertDialogs.yesCalcelDialog(
-                        context, "Logout", "Are you sure ?");
-                    if (action == DialogsAction.yes) {
-                      setState(() => tappedYes = true);
-                    } else {
-                      setState(() => tappedYes = false);
-                    }
+                    Navigator.of(context).pushReplacementNamed('/');
                     await FirebaseAuth.instance.signOut();
                   },
                   child: Row(

@@ -20,29 +20,6 @@ class HistRemain extends StatefulWidget {
 }
 
 class _RemainingState extends State<HistRemain> {
-  void deleteRemainAll() {
-    FirebaseFirestore.instance
-        .collection("User")
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
-        .collection('AllRemaining')
-        .where('date', isEqualTo: widget.remaining.date)
-        .get()
-        .then((QuerySnapshot snapshot) {
-      snapshot.docs.forEach((element) {
-        print(element.data());
-        FirebaseFirestore.instance
-            .collection("User")
-            .doc('${FirebaseAuth.instance.currentUser!.email}')
-            .collection('AllRemaining')
-            .doc(element.id)
-            .delete()
-            .then((value) {
-          print("Success!");
-        });
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -80,7 +57,26 @@ class _RemainingState extends State<HistRemain> {
             ),
             IconButton(
                 onPressed: () {
-                  deleteRemainAll();
+                  FirebaseFirestore.instance
+                      .collection("User")
+                      .doc('${FirebaseAuth.instance.currentUser!.email}')
+                      .collection('AllRemaining')
+                      .where('date', isEqualTo: widget.remaining.date)
+                      .get()
+                      .then((QuerySnapshot snapshot) {
+                    snapshot.docs.forEach((element) {
+                      print(element.data());
+                      FirebaseFirestore.instance
+                          .collection("User")
+                          .doc('${FirebaseAuth.instance.currentUser!.email}')
+                          .collection('AllRemaining')
+                          .doc(element.id)
+                          .delete()
+                          .then((value) {
+                        print("Success!");
+                      });
+                    });
+                  });
 
                   DataRepository().deleteRemaining(
                       widget.autoID, widget.remaining.remainID.toString());

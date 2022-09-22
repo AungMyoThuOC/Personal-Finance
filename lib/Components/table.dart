@@ -149,7 +149,8 @@ class _TableInOutComeState extends State<TableInOutCome> {
                         child: Container(
                             width: 10,
                             height: 10,
-                            child: const Center(child: CircularProgressIndicator())),
+                            child: const Center(
+                                child: CircularProgressIndicator())),
                       );
                     }
 
@@ -174,10 +175,29 @@ class _TableInOutComeState extends State<TableInOutCome> {
             ),
             Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
-                child: Text(
-                  '${totRemain}',
-                  textAlign: TextAlign.end,
-                ))
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: repository.getRemainAll(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                              width: 10,
+                              height: 10,
+                              child: const Center(
+                                  child: CircularProgressIndicator())),
+                        );
+                      }
+                      var ds = snapshot.data!.docs;
+                      double sum = 0.0;
+                      for (int i = 0; i < ds.length; i++)
+                        sum += (ds[i]['amount']).toDouble();
+
+                      return Text(
+                        '${sum}',
+                        textAlign: TextAlign.end,
+                      );
+                    }))
           ]),
           TableRow(children: [
             const Padding(
@@ -198,7 +218,8 @@ class _TableInOutComeState extends State<TableInOutCome> {
                         child: Container(
                             width: 10,
                             height: 10,
-                            child: const Center(child: CircularProgressIndicator())),
+                            child: const Center(
+                                child: CircularProgressIndicator())),
                       );
                     }
                     var ds = snapshot.data!.docs;

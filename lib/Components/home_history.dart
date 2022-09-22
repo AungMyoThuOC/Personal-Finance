@@ -108,7 +108,7 @@ class _HomeHistoryState extends State<HomeHistory> {
         stream: DataRepository().getIn(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return CircularProgressIndicator();
           }
           var ds = snapshot.data!.docs;
 
@@ -146,6 +146,12 @@ class _HomeHistoryState extends State<HomeHistory> {
                         child: Slidable(
                           key: Key(widget.income.autoID.toString()),
                           endActionPane: ActionPane(
+                            dragDismissible: (income == false)
+                                ? true
+                                : ((sumOne - widget.income.amount) <
+                                        (sum + totRemain))
+                                    ? false
+                                    : true,
                             motion: const ScrollMotion(),
                             dismissible: DismissiblePane(onDismissed: () {
                               if (income == true) {
@@ -187,7 +193,7 @@ class _HomeHistoryState extends State<HomeHistory> {
                                         widget.income.autoID.toString());
                                   }
                                 },
-                                backgroundColor: const Color(0xFFFE4A49),
+                                backgroundColor: Color(0xFFFE4A49),
                                 foregroundColor: Colors.white,
                                 icon: Icons.delete,
                                 label: 'Delete',
@@ -195,7 +201,7 @@ class _HomeHistoryState extends State<HomeHistory> {
                             ],
                           ),
                           startActionPane: ActionPane(
-                            motion: const ScrollMotion(),
+                            motion: ScrollMotion(),
                             dismissible: DismissiblePane(onDismissed: () {
                               if (income == true) {
                                 Navigator.of(context).push(MaterialPageRoute(
