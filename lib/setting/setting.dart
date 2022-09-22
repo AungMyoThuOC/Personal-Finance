@@ -4,6 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'logout_dialog.dart';
+
 class SettingPage extends StatefulWidget {
   const SettingPage({Key? key}) : super(key: key);
 
@@ -87,6 +89,8 @@ class _SettingPageState extends State<SettingPage> {
       });
     });
   }
+
+  bool tappedYes = false;
 
   @override
   Widget build(BuildContext context) {
@@ -248,6 +252,36 @@ class _SettingPageState extends State<SettingPage> {
                       ),
                       Text(
                         "Reset Data",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                  )),
+              const SizedBox(
+                height: 40,
+              ),
+              TextButton(
+                  onPressed: () async {
+                    final action = await AlertDialogs.yesCalcelDialog(
+                        context, "Logout", "Are you sure ?");
+                    if (action == DialogsAction.yes) {
+                      setState(() => tappedYes = true);
+                    } else {
+                      setState(() => tappedYes = false);
+                    }
+                    await FirebaseAuth.instance.signOut();
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: const [
+                      Icon(Icons.logout),
+                      SizedBox(
+                        width: 30,
+                      ),
+                      Text(
+                        "Logout",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
