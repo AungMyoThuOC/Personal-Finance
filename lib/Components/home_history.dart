@@ -324,8 +324,8 @@ class _HomeHistoryState extends State<HomeHistory> {
                                                     ),
                                                   ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.only(right: 22),
+                                              padding: const EdgeInsets.only(
+                                                  right: 22),
                                               child: Text(
                                                 "${widget.income.amount}",
                                                 style: const TextStyle(

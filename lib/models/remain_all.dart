@@ -5,37 +5,33 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:personal_financial/models/remaning_saving.dart';
 
-class Remaining {
+class AllRemain {
   int amount;
   String date;
-  String? remainID;
 
-  Remaining(
+  AllRemain(
     this.amount, {
     required this.date,
   });
 
-  factory Remaining.fromJson(Map<String, dynamic> json) =>
+  factory AllRemain.fromJson(Map<String, dynamic> json) =>
       _incomeFromJson(json);
 
-  factory Remaining.fromSnapshot(DocumentSnapshot snapshot) {
+  factory AllRemain.fromSnapshot(DocumentSnapshot snapshot) {
     final newSaving =
-        Remaining.fromJson(snapshot.data() as Map<String, dynamic>);
-    newSaving.remainID = snapshot.reference.id;
+        AllRemain.fromJson(snapshot.data() as Map<String, dynamic>);
+
     return newSaving;
   }
 
   Map<String, dynamic> toJson() => _incomeToJson(this);
 }
 
-Remaining _incomeFromJson(Map<String, dynamic> json) {
-  return Remaining(
-    json['amount'] as int,
-    date: (json['date'] as String),
-  );
+AllRemain _incomeFromJson(Map<String, dynamic> json) {
+  return AllRemain(json['amount'] as int, date: (json['date'] as String));
 }
 
-Map<String, dynamic> _incomeToJson(Remaining instance) => <String, dynamic>{
+Map<String, dynamic> _incomeToJson(AllRemain instance) => <String, dynamic>{
       'amount': instance.amount,
       'date': instance.date,
     };

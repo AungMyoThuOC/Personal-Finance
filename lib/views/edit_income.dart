@@ -99,10 +99,14 @@ class _AddIncomeState extends State<EditIncome> {
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         FirebaseFirestore.instance
-            .collectionGroup('Remaining')
+            .collection('User')
+            .doc('${FirebaseAuth.instance.currentUser!.email}')
+            .collection('Saving')
+            .doc(doc.id)
+            .collection("Remaining")
             .get()
-            .then((value) {
-          value.docs.forEach((result) {
+            .then((QuerySnapshot<Map> querySnapshot) {
+          querySnapshot.docs.forEach((result) {
             sumRemain = sumRemain + result.data()['amount'];
             print(sumRemain);
           });
@@ -542,9 +546,7 @@ class _AddIncomeState extends State<EditIncome> {
                                               int.parse(
                                                   amountController.text))) <
                                       (totRemain + sumOne)) {
-                                    print((sum -
-                                        (widget.income.amount -
-                                            int.parse(amountController.text))));
+                                    print((totRemain));
                                     showTopSnackBar(
                                       context,
                                       const CustomSnackBar.error(

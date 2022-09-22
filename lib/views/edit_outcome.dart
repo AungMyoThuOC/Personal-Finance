@@ -89,10 +89,14 @@ class _AddIncomeState extends State<EditOutcome> {
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         FirebaseFirestore.instance
-            .collectionGroup('Remaining')
+            .collection('User')
+            .doc('${FirebaseAuth.instance.currentUser!.email}')
+            .collection('Saving')
+            .doc(doc.id)
+            .collection("Remaining")
             .get()
-            .then((value) {
-          value.docs.forEach((result) {
+            .then((QuerySnapshot<Map> querySnapshot) {
+          querySnapshot.docs.forEach((result) {
             sumRemain = sumRemain + result.data()['amount'];
             print(sumRemain);
           });

@@ -6,6 +6,7 @@ import 'package:personal_financial/models/saving.dart';
 import '/data_repository.dart';
 import 'package:personal_financial/models/remaning_saving.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // ignore: must_be_immutable
 class HistRemain extends StatefulWidget {
@@ -19,6 +20,29 @@ class HistRemain extends StatefulWidget {
 }
 
 class _RemainingState extends State<HistRemain> {
+  void deleteRemainAll() {
+    FirebaseFirestore.instance
+        .collection("User")
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('AllRemaining')
+        .where('date', isEqualTo: widget.remaining.date)
+        .get()
+        .then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((element) {
+        print(element.data());
+        FirebaseFirestore.instance
+            .collection("User")
+            .doc('${FirebaseAuth.instance.currentUser!.email}')
+            .collection('AllRemaining')
+            .doc(element.id)
+            .delete()
+            .then((value) {
+          print("Success!");
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -56,6 +80,8 @@ class _RemainingState extends State<HistRemain> {
             ),
             IconButton(
                 onPressed: () {
+                  deleteRemainAll();
+
                   DataRepository().deleteRemaining(
                       widget.autoID, widget.remaining.remainID.toString());
                 },

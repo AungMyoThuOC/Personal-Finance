@@ -179,7 +179,7 @@ class _SavingListState extends State<SavingList> {
                                             height: 300,
                                             child: Padding(
                                               padding: const EdgeInsets.only(
-                                                  top: 30),
+                                                  top: 10),
                                               child: Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -190,17 +190,30 @@ class _SavingListState extends State<SavingList> {
                                                         MainAxisAlignment
                                                             .spaceEvenly,
                                                     children: [
-                                                      const SizedBox(
-                                                        height: 20,
-                                                      ),
                                                       const Icon(
                                                         Icons
                                                             .attach_money_rounded,
-                                                        color: Colors.pink,
-                                                        size: 30,
+                                                        size: 40,
                                                       ),
                                                       const SizedBox(
                                                         height: 20,
+                                                      ),
+                                                      Container(
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: const [
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left: 30),
+                                                              child: Text(
+                                                                "Target",
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                       Padding(
                                                         padding:

@@ -1,3 +1,4 @@
+import 'package:personal_financial/models/remain_all.dart';
 import 'package:personal_financial/models/remaning_saving.dart';
 import './models/income.dart';
 import 'dart:math';
@@ -37,6 +38,13 @@ class DataRepository {
         .snapshots();
   }
 
+  Stream<QuerySnapshot> getRemainAll() {
+    return ref
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('AllRemaining')
+        .snapshots();
+  }
+
   Future<DocumentReference> addIncome(Income income) async {
     return await ref
         .doc('${FirebaseAuth.instance.currentUser!.email}')
@@ -58,6 +66,13 @@ class DataRepository {
         .add(saving.toJson());
   }
 
+  Future<DocumentReference> addRemainAll(AllRemain remainAll) async {
+    return await ref
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('AllRemaining')
+        .add(remainAll.toJson());
+  }
+
   Future<DocumentReference> addCategory(Category category) async {
     return await ref
         .doc('${FirebaseAuth.instance.currentUser!.email}')
@@ -75,7 +90,6 @@ class DataRepository {
         .set({
       'amount': remaining.amount,
       'date': remaining.date,
-      'uid': FirebaseAuth.instance.currentUser!.uid
     });
   }
 

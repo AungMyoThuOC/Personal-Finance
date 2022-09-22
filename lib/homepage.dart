@@ -252,7 +252,11 @@ class _MyHomePageState extends State<MyHomePage>
                   stream: repository.getAddStream(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (!snapshot.hasData) {
-                      return LinearProgressIndicator();
+                      return Container(
+                          width: 15,
+                          height: 15,
+                          child:
+                              const Center(child: CircularProgressIndicator()));
                     }
                     return Container(
                       color: Colors.white,

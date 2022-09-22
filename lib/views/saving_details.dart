@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:personal_financial/models/remain_all.dart';
 // import 'package:flutter/src/foundation/key.dart';
 // import 'package:flutter/src/widgets/framework.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -17,6 +18,7 @@ import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 // import 'package:top_snackbar_flutter/safe_area_values.dart';
 // import 'package:top_snackbar_flutter/tap_bounce_container.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class SavingDetails extends StatefulWidget {
@@ -76,12 +78,15 @@ class _SavingDetailsState extends State<SavingDetails> {
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         FirebaseFirestore.instance
-            .collectionGroup('Remaining')
+            .collection('User')
+            .doc('${FirebaseAuth.instance.currentUser!.email}')
+            .collection('Saving')
+            .doc(doc.id)
+            .collection("Remaining")
             .get()
-            .then((value) {
-          value.docs.forEach((result) {
+            .then((QuerySnapshot<Map> querySnapshot) {
+          querySnapshot.docs.forEach((result) {
             sumRemain = sumRemain + result.data()['amount'];
-            print(sumRemain);
           });
           setState(() {
             totRemainOne = sumRemain;
@@ -93,6 +98,7 @@ class _SavingDetailsState extends State<SavingDetails> {
 
   @override
   void dispose() {
+    getCollectionData();
     amountController.dispose();
     super.dispose();
   }
@@ -120,7 +126,11 @@ class _SavingDetailsState extends State<SavingDetails> {
                     repository.getRemaining(widget.saving!.autoID.toString()),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
+                    return Container(
+                        width: 5,
+                        height: 5,
+                        child:
+                            const Center(child: CircularProgressIndicator()));
                   }
                   var ds = snapshot.data!.docs;
                   double sum = 0.0;
@@ -179,7 +189,12 @@ class _SavingDetailsState extends State<SavingDetails> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return const CircularProgressIndicator();
+                                    return Container(
+                                        width: 15,
+                                        height: 15,
+                                        child: const Center(
+                                            child:
+                                                CircularProgressIndicator()));
                                   }
                                   var ds = snapshot.data!.docs;
 
@@ -192,7 +207,12 @@ class _SavingDetailsState extends State<SavingDetails> {
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState ==
                                             ConnectionState.waiting) {
-                                          return const CircularProgressIndicator();
+                                          return Container(
+                                              width: 15,
+                                              height: 15,
+                                              child: const Center(
+                                                  child:
+                                                      CircularProgressIndicator()));
                                         }
                                         var ds = snapshot.data!.docs;
 
@@ -204,7 +224,12 @@ class _SavingDetailsState extends State<SavingDetails> {
                                             builder: (context, snapshot) {
                                               if (snapshot.connectionState ==
                                                   ConnectionState.waiting) {
-                                                return const CircularProgressIndicator();
+                                                return Container(
+                                                    width: 5,
+                                                    height: 5,
+                                                    child: const Center(
+                                                        child:
+                                                            CircularProgressIndicator()));
                                               }
                                               var ds = snapshot.data!.docs;
 
@@ -225,7 +250,12 @@ class _SavingDetailsState extends State<SavingDetails> {
                                                             .connectionState ==
                                                         ConnectionState
                                                             .waiting) {
-                                                      return const CircularProgressIndicator();
+                                                      return Container(
+                                                          width: 5,
+                                                          height: 5,
+                                                          child: const Center(
+                                                              child:
+                                                                  CircularProgressIndicator()));
                                                     }
                                                     var ds =
                                                         snapshot.data!.docs;
@@ -237,121 +267,148 @@ class _SavingDetailsState extends State<SavingDetails> {
                                                       totRemain += (ds[i]
                                                               ['amount'])
                                                           .toDouble();
+                                                    return StreamBuilder<
+                                                            QuerySnapshot>(
+                                                        stream: repository
+                                                            .getRemainAll(),
+                                                        builder: (context,
+                                                            snapshot) {
+                                                          if (snapshot
+                                                                  .connectionState ==
+                                                              ConnectionState
+                                                                  .waiting) {
+                                                            return Container(
+                                                                width: 5,
+                                                                height: 5,
+                                                                child: const Center(
+                                                                    child:
+                                                                        CircularProgressIndicator()));
+                                                          }
+                                                          var ds = snapshot
+                                                              .data!.docs;
 
-                                                    return InkWell(
-                                                      onTap: () {
-                                                        if (int.parse(
-                                                                sliderController
-                                                                    .text) >
-                                                            (sumOne -
-                                                                (sum +
-                                                                    totRemainOne))) {
-                                                          showTopSnackBar(
-                                                            context,
-                                                            CustomSnackBar
-                                                                .error(
-                                                              message:
-                                                                  "Your income left  ${sumOne - (sum + totRemainOne)}",
-                                                            ),
-                                                          );
-                                                        } else {
-                                                          if (int.parse(
-                                                                  sliderController
-                                                                      .text) >
-                                                              (widget.saving!
-                                                                  .amount)) {
-                                                            showTopSnackBar(
-                                                              context,
-                                                              CustomSnackBar
-                                                                  .error(
-                                                                message:
-                                                                    "Your goal is to reach ${widget.saving!.amount}",
-                                                              ),
-                                                            );
-                                                          } else {
-                                                            if (int.parse(
-                                                                    sliderController
-                                                                        .text) >
-                                                                (widget.saving!
-                                                                        .amount -
-                                                                    totRemain)) {
-                                                              showTopSnackBar(
-                                                                context,
-                                                                CustomSnackBar
-                                                                    .error(
-                                                                  message:
-                                                                      "Your goal is to reach ${widget.saving!.amount}",
-                                                                ),
-                                                              );
-                                                            } else {
-                                                              Navigator.of(context).pop(
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) =>
-                                                                          SavingDetails(
-                                                                            saving:
-                                                                                widget.saving,
-                                                                            onSubmit:
-                                                                                (String value) {},
-                                                                          )));
-                                                              DataRepository()
-                                                                  .updateRemaining(
-                                                                      widget
-                                                                          .saving!
-                                                                          .autoID
-                                                                          .toString(),
-                                                                      Remaining(
-                                                                        int.parse(
-                                                                            sliderController.text),
-                                                                        date: DateTime
-                                                                            .now(),
-                                                                      ));
-                                                              amountController
-                                                                  .clear();
-                                                              if (totRemain ==
-                                                                  widget.saving!
-                                                                      .amount) {
+                                                          double totRemainOne =
+                                                              0.0;
+                                                          for (int i = 0;
+                                                              i < ds.length;
+                                                              i++)
+                                                            totRemainOne += (ds[
+                                                                        i]
+                                                                    ['amount'])
+                                                                .toDouble();
+                                                          return InkWell(
+                                                            onTap: () {
+                                                              if (int.parse(
+                                                                      sliderController
+                                                                          .text) >
+                                                                  (sumOne -
+                                                                      (sum +
+                                                                          totRemainOne))) {
                                                                 showTopSnackBar(
                                                                   context,
-                                                                  const CustomSnackBar
-                                                                      .success(
+                                                                  CustomSnackBar
+                                                                      .error(
                                                                     message:
-                                                                        "Congratulations",
+                                                                        "Your income left ${(sumOne - (sum + totRemainOne))}",
                                                                   ),
                                                                 );
+                                                              } else {
+                                                                if (int.parse(
+                                                                        sliderController
+                                                                            .text) >
+                                                                    (widget
+                                                                        .saving!
+                                                                        .amount)) {
+                                                                  showTopSnackBar(
+                                                                    context,
+                                                                    CustomSnackBar
+                                                                        .error(
+                                                                      message:
+                                                                          "Your goal is to reach ${widget.saving!.amount}",
+                                                                    ),
+                                                                  );
+                                                                } else {
+                                                                  if (int.parse(
+                                                                          sliderController
+                                                                              .text) >
+                                                                      (widget.saving!
+                                                                              .amount -
+                                                                          totRemain)) {
+                                                                    showTopSnackBar(
+                                                                      context,
+                                                                      CustomSnackBar
+                                                                          .error(
+                                                                        message:
+                                                                            "Your goal is to reach ${widget.saving!.amount}",
+                                                                      ),
+                                                                    );
+                                                                  } else {
+                                                                    Navigator
+                                                                        .pop(
+                                                                      context,
+                                                                    );
+                                                                    DataRepository()
+                                                                        .updateRemaining(
+                                                                            widget.saving!.autoID.toString(),
+                                                                            Remaining(
+                                                                              int.parse(sliderController.text),
+                                                                              date: DateFormat('yyyy-MM-dd – kk:mm:ss').format(DateTime.now()),
+                                                                            ));
+                                                                    DataRepository().addRemainAll(AllRemain(
+                                                                        int.parse(sliderController
+                                                                            .text),
+                                                                        date: DateFormat('yyyy-MM-dd – kk:mm:ss')
+                                                                            .format(DateTime.now())));
+                                                                    amountController
+                                                                        .clear();
+                                                                    if (totRemain ==
+                                                                        widget
+                                                                            .saving!
+                                                                            .amount) {
+                                                                      showTopSnackBar(
+                                                                        context,
+                                                                        const CustomSnackBar
+                                                                            .success(
+                                                                          message:
+                                                                              "Congratulations",
+                                                                        ),
+                                                                      );
+                                                                    }
+                                                                  }
+                                                                }
                                                               }
-                                                            }
-                                                          }
-                                                        }
-                                                      },
-                                                      child: Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                top: 15.0,
-                                                                bottom: 15.0),
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          color:
-                                                              Colors.blueAccent,
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                                  bottomLeft: Radius
-                                                                      .circular(
-                                                                          32.0),
-                                                                  bottomRight: Radius
-                                                                      .circular(
-                                                                          32.0)),
-                                                        ),
-                                                        child: const Text(
-                                                          "Save",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                      ),
-                                                    );
+                                                            },
+                                                            child: Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      top: 15.0,
+                                                                      bottom:
+                                                                          15.0),
+                                                              decoration:
+                                                                  const BoxDecoration(
+                                                                color: Colors
+                                                                    .blueAccent,
+                                                                borderRadius: BorderRadius.only(
+                                                                    bottomLeft:
+                                                                        Radius.circular(
+                                                                            32.0),
+                                                                    bottomRight:
+                                                                        Radius.circular(
+                                                                            32.0)),
+                                                              ),
+                                                              child: const Text(
+                                                                "Save",
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        });
                                                   });
                                             });
                                       });
@@ -369,7 +426,10 @@ class _SavingDetailsState extends State<SavingDetails> {
             stream: repository.getIn(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
+                return Container(
+                    width: 5,
+                    height: 5,
+                    child: const Center(child: CircularProgressIndicator()));
               }
               var ds = snapshot.data!.docs;
 
@@ -394,7 +454,11 @@ class _SavingDetailsState extends State<SavingDetails> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
+                            return Container(
+                                width: 5,
+                                height: 5,
+                                child: const Center(
+                                    child: CircularProgressIndicator()));
                           }
                           var ds = snapshot.data!.docs;
 
@@ -483,7 +547,11 @@ class _SavingDetailsState extends State<SavingDetails> {
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
+                                  return Container(
+                                      width: 5,
+                                      height: 5,
+                                      child: const Center(
+                                          child: CircularProgressIndicator()));
                                 }
                                 var ds = snapshot.data!.docs;
 
@@ -503,7 +571,12 @@ class _SavingDetailsState extends State<SavingDetails> {
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState ==
                                             ConnectionState.waiting) {
-                                          return const CircularProgressIndicator();
+                                          return Container(
+                                              width: 5,
+                                              height: 5,
+                                              child: const Center(
+                                                  child:
+                                                      CircularProgressIndicator()));
                                         }
                                         var ds = snapshot.data!.docs;
 
@@ -530,7 +603,12 @@ class _SavingDetailsState extends State<SavingDetails> {
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==
                                                 ConnectionState.waiting) {
-                                              return const CircularProgressIndicator();
+                                              return Container(
+                                                  width: 5,
+                                                  height: 5,
+                                                  child: const Center(
+                                                      child:
+                                                          CircularProgressIndicator()));
                                             }
                                             var ds = snapshot.data!.docs;
                                             double sum = 0.0;
@@ -612,7 +690,12 @@ class _SavingDetailsState extends State<SavingDetails> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return const CircularProgressIndicator();
+                                    return Container(
+                                        width: 5,
+                                        height: 5,
+                                        child: const Center(
+                                            child:
+                                                CircularProgressIndicator()));
                                   }
                                   var ds = snapshot.data!.docs;
 
@@ -639,7 +722,12 @@ class _SavingDetailsState extends State<SavingDetails> {
                     stream: repository
                         .getRemaining(widget.saving!.autoID.toString()),
                     builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (!snapshot.hasData) return LinearProgressIndicator();
+                      if (!snapshot.hasData)
+                        Container(
+                            width: 15,
+                            height: 15,
+                            child: const Center(
+                                child: CircularProgressIndicator()));
 
                       // return _buildList(context, snapshot.data?.docs ?? []);
                       return Column(
