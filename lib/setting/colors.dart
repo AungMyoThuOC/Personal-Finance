@@ -11,7 +11,26 @@ class ColorPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
-        title: const Text("Colors"),
+        automaticallyImplyLeading: false,
+        title: Row(
+          children: [
+            IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                )),
+            const SizedBox(
+              width: 40,
+            ),
+            const Text(
+              "Colors",
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
       ),
       body: PageWrapper(
           body: Column(

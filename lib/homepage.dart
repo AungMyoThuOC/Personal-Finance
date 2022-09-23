@@ -66,10 +66,37 @@ class _MyHomePageState extends State<MyHomePage>
             title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Icon(
-                    Icons.wallet,
-                    color: Colors.black,
-                    size: 30,
+                  Row(
+                    children: [
+                      Image.asset(
+                        'images/logo.png',
+                        width: 25,
+                        height: 25,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            width: 70,
+                            child: const Text(
+                              "Personal",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ),
+                          Container(
+                            width: 70,
+                            child: const Text(
+                              "Finance",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 11),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
                   ),
                   IconButton(
                       onPressed: () {
@@ -81,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage>
                       ))
                 ]),
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(80.0),
+              preferredSize: const Size.fromHeight(90.0),
               child: TabBar(
                 controller: controller,
                 physics: const BouncingScrollPhysics(),
