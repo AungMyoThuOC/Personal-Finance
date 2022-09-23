@@ -56,6 +56,28 @@ class _SavingListState extends State<SavingList> {
     );
   }
 
+  void deleteRemainAll() {
+    FirebaseFirestore.instance
+        .collection('User')
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('AllRemaining')
+        .where('savingID', isEqualTo: widget.saving.autoID)
+        .get()
+        .then(
+      (snapshot) {
+        snapshot.docs.forEach((element) {
+          FirebaseFirestore.instance
+              .collection('User')
+              .doc('${FirebaseAuth.instance.currentUser!.email}')
+              .collection('AllRemaining')
+              .doc(element.id)
+              .delete()
+              .then((value) => print('success'));
+        });
+      },
+    );
+  }
+
   @override
   void initState() {
     savingController.text = widget.saving.target;
@@ -422,6 +444,7 @@ class _SavingListState extends State<SavingList> {
                               PullDownMenuItem(
                                 title: 'Delete',
                                 onTap: () => {
+                                  deleteRemainAll(),
                                   deleteRemain(widget.saving.autoID!),
                                   DataRepository()
                                       .deleteSaving(widget.saving.autoID!)

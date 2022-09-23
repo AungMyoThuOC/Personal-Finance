@@ -357,8 +357,12 @@ class _SavingDetailsState extends State<SavingDetails> {
                                                                     DataRepository().addRemainAll(AllRemain(
                                                                         int.parse(sliderController
                                                                             .text),
-                                                                        date: DateFormat('yyyy-MM-dd – kk:mm:ss')
-                                                                            .format(DateTime.now())));
+                                                                        date: DateFormat('yyyy-MM-dd – kk:mm:ss').format(DateTime
+                                                                            .now()),
+                                                                        savingID: widget
+                                                                            .saving!
+                                                                            .autoID
+                                                                            .toString()));
                                                                     amountController
                                                                         .clear();
                                                                     if (totRemain ==

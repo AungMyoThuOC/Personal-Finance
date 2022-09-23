@@ -8,10 +8,12 @@ import 'package:personal_financial/models/remaning_saving.dart';
 class AllRemain {
   int amount;
   String date;
+  String savingID;
 
   AllRemain(
     this.amount, {
     required this.date,
+    required this.savingID,
   });
 
   factory AllRemain.fromJson(Map<String, dynamic> json) =>
@@ -28,10 +30,12 @@ class AllRemain {
 }
 
 AllRemain _incomeFromJson(Map<String, dynamic> json) {
-  return AllRemain(json['amount'] as int, date: (json['date'] as String));
+  return AllRemain(json['amount'] as int,
+      date: (json['date'] as String), savingID: json['savingID'] as String);
 }
 
 Map<String, dynamic> _incomeToJson(AllRemain instance) => <String, dynamic>{
       'amount': instance.amount,
       'date': instance.date,
+      'savingID': instance.savingID
     };
